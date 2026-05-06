@@ -2,17 +2,18 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
-import './App.css'
-import { Home } from './views/Home'
-import { Footer } from './views/Footer'
+import Form from './components/react/Form'
+import Login from './views/Login'
+import Register from './views/Register'
+import  Footer  from './components/Footer'
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <div>
-      <Home/>
-      <Footer/>
+    <Footer/>
     </div>
   )
 }

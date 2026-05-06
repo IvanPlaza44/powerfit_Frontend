@@ -1,7 +1,6 @@
-"use client"
-
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
+
 
 export default function CreateAccountForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -159,6 +158,7 @@ export default function CreateAccountForm() {
           </a>
         </p>
       </div>
+
     </div>
   )
 }
