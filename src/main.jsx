@@ -4,6 +4,9 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 
+import "@fontsource/geist-sans"; 
+import "@fontsource/geist-mono";
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>

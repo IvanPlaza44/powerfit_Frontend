@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
+import { Link } from 'react-router-dom'
 
 export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -23,21 +24,21 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
         <div className="flex h-16 items-center justify-between gap-4">
           
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 size-40">
+          <Link to="/" className="flex items-center gap-2 size-40">
             <img src="Logo.png" alt="Logo" />
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
-            <a href="/products" className="text-sm font-medium transition-colors hover:text-primary">
+            <Link to="/products" className={"text-sm font-medium transition-colors hover:text-primary"}>
               All Products
-            </a>
+            </Link>
             
             <div className="relative">
               <button 
                 variant="ghost"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="gap-1 text-sm font-medium text-muted-foreground hover:text-primary flex"
+                className={"text-sm font-medium transition-colors hover:text-primary flex"}
               >
                 Categories <ChevronDown className="size-4" />
               </button>
@@ -76,18 +77,18 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            <button className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
+            <Link to="/favorites" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
               <Heart className="h-5 w-5" />
-            </button>
+            </Link>
 
-            <a href="/cart" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
+            <Link to="/cart_list" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
               <ShoppingCart className="h-5 w-5" />
               {cartCount > 0 && (
                 <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                   {cartCount}
                 </span>
               )}
-            </a>
+            </Link>
 
             {/* Auth / User Menu */}
             <div className="flex items-center border-l pl-2 ml-2">
@@ -100,9 +101,9 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
                   <LogOut className="h-5 w-5" />
                 </button>
               ) : (
-                <a href="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
+                <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
                   <User className="h-5 w-5" />
-                </a>
+                </Link>
               )}
             </div>
 
