@@ -17,7 +17,6 @@ export default function CreateAccountForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log("Form submitted:", { ...formData, accountType })
   }
 
   return (

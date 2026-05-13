@@ -9,7 +9,16 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = ()=>{}
+  const handleSurname = (e)=>{
+    let change = e.target.value
+    console.log(change)
+    setSurname(change)
+  }
+    const handlePassword = (e)=>{
+    let change = e.target.value
+    console.log(change)
+    setPassword(change)
+  }
 
 
   return (
@@ -23,7 +32,7 @@ export default function Login() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 pt-0 space-y-6">
+        <form onSubmit={e => e.preventDefault()} className="p-6 pt-0 space-y-6">
 
           {/* Surname */}
           <div className="space-y-2">
@@ -38,7 +47,7 @@ export default function Login() {
                 required
                 placeholder="Your Surname"
                 value={surname}
-                onChange={(e) => setSurname(e.target.value)}
+                onChange={handleSurname}
                 className="flex h-10 w-full rounded-md border border-input bg-secondary px-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
               />
             </div>
@@ -57,7 +66,7 @@ export default function Login() {
                 required
                 placeholder="Your Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePassword}
                 className="flex h-10 w-full rounded-md border border-input bg-secondary px-10 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 transition-all"
               />
               <button
