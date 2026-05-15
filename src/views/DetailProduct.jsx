@@ -4,14 +4,23 @@ import products from "../mocks/products";
 const DetailProduct = () => {
   const { id } = useParams();
 
-  const product = products.find(p => p.id === Number(id));
+  const product = products.find(
+    (p) => p.id === Number(id)
+  );
 
-  if (!product) return <h1>Producto no encontrado</h1>;
+  if (!product) {
+    return <h1>Producto no encontrado</h1>;
+  }
 
   return (
     <div>
       <h1>{product.name}</h1>
-      <img src={product.image} alt={product.name} />
+
+      <img
+        src={product.image}
+        alt={product.name}
+        width="400"
+      />
 
       <p>{product.description}</p>
       <p>Precio: ${product.price}</p>

@@ -6,14 +6,12 @@ const Products = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // simulamos fetch
     setProducts(productsData);
   }, []);
 
   return (
     <div>
       <h1>Todos los productos</h1>
-
       <p>Cantidad: {products.length}</p>
 
       <CardList products={products} />
