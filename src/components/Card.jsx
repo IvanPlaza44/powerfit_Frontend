@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Card = ({ product }) => {
+const Card = ({ product, addToFavorites }) => {
   return (
     <div
       style={{
@@ -22,6 +22,19 @@ const Card = ({ product }) => {
       <Link to={`/products/${product.id}`}>
         Ver detalle
       </Link>
+
+      <br /><br />
+
+      <button
+        onClick={() => addToFavorites(product)}
+        style={{
+          marginTop: "10px",
+          padding: "8px",
+          cursor: "pointer"
+        }}
+      >
+        Agregar a favoritos
+      </button>
     </div>
   );
 };

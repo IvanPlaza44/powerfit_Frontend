@@ -3,20 +3,20 @@ import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
 import productsData from "../mocks/products";
 
-const Products = () => {
+const Products = ({ addToFavorites }) => {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const category = searchParams.get("category");
 
-    // si NO hay categoría → mostrar todos
+    // mostrar todos
     if (!category) {
       setProducts(productsData);
       return;
     }
 
-    // si hay categoría → filtrar
+    // filtrar por categoría
     const filteredProducts = productsData.filter(
       (product) => product.category === category
     );
@@ -26,12 +26,10 @@ const Products = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      
       <h1 className="text-3xl font-bold mb-4">
         Todos los productos
       </h1>
 
-      {/* mostrar categoría actual */}
       {searchParams.get("category") && (
         <p className="mb-4 text-green-500 font-semibold">
           Categoría seleccionada: {searchParams.get("category")}
@@ -43,7 +41,10 @@ const Products = () => {
       </p>
 
       {products.length > 0 ? (
-        <CardList products={products} />
+        <CardList
+          products={products}
+          addToFavorites={addToFavorites}
+        />
       ) : (
         <h2>No hay productos en esta categoría</h2>
       )}

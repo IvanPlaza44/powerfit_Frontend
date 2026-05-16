@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import products from "../mocks/products";
 
-const DetailProduct = () => {
+const DetailProduct = ({ addToFavorites }) => {
   const { id } = useParams();
 
   const product = products.find(
@@ -25,6 +25,17 @@ const DetailProduct = () => {
       <p>{product.description}</p>
       <p>Precio: ${product.price}</p>
       <p>Stock: {product.stock}</p>
+
+      <button
+        onClick={() => addToFavorites(product)}
+        style={{
+          marginTop: "10px",
+          padding: "8px",
+          cursor: "pointer"
+        }}
+      >
+        Agregar a favoritos
+      </button>
     </div>
   );
 };

@@ -1,16 +1,14 @@
 import Card from "../components/Card";
 
-const CardList = ({ products }) => {
+const CardList = ({ products, addToFavorites }) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "20px",
-        flexWrap: "wrap"
-      }}
-    >
+    <div>
       {products.map((product) => (
-        <Card key={product.id} product={product} />
+        <Card
+          key={product.id}
+          product={product}
+          addToFavorites={addToFavorites}
+        />
       ))}
     </div>
   );
