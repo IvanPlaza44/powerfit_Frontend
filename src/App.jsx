@@ -8,9 +8,11 @@ import Register from "./views/Register";
 import Products from "./components/Products";
 import DetailProduct from "./views/DetailProduct";
 import Favorites from "./views/Favorites";
+import { ShoppinngCart } from "./components/ShoppinngCart";
 
 function App() {
   const [favorites, setFavorites] = useState([]);
+  const [cart, setCart] = useState([]);
 
   const addToFavorites = (product) => {
     const exists = favorites.find(
@@ -25,6 +27,21 @@ function App() {
     }
   };
 
+  const addToCart = (product) => {
+    const exists = cart.find((p) => p.id === product.id);
+
+    if (!exists) {
+      setCart([...cart, product]);
+      alert("Producto agregado al carrito");
+    } else {
+      alert("Ese producto ya está en el carrito");
+    }
+  };
+
+  const removeFromCart = (id) => {
+    setCart(cart.filter((product) => product.id !== id));
+  };
+
   const removeFromFavorites = (id) => {
     setFavorites(
       favorites.filter((product) => product.id !== id)
@@ -33,7 +50,7 @@ function App() {
 
   return (
     <>
-      <NavBar />
+      <NavBar cartCount={cart.length} />
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -41,7 +58,7 @@ function App() {
         <Route
           path="/products"
           element={
-            <Products addToFavorites={addToFavorites} />
+            <Products addToFavorites={addToFavorites} addToCart={addToCart} />
           }
         />
 
@@ -61,6 +78,19 @@ function App() {
               favorites={favorites}
               removeFromFavorites={removeFromFavorites}
             />
+          }
+        />
+
+        <Route
+          path="/cart_list"
+          element={
+            <ShoppinngCart cart={cart} removeFromCart={removeFromCart} />
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ShoppinngCart cart={cart} removeFromCart={removeFromCart} />
           }
         />
 

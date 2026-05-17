@@ -34,7 +34,11 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
               All Products
             </Link>
             
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
               <button 
                 variant="ghost"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
