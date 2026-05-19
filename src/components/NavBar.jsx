@@ -24,7 +24,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
         <div className="flex h-16 items-center justify-between gap-4">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 size-40">
+          <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
             <img src="Logo.png" alt="Logo" />
           </Link>
 
@@ -38,7 +38,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
               <button 
                 variant="ghost"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={"text-sm font-medium transition-colors hover:text-primary flex"}
+                className={"text-sm font-medium transition-colors hover:text-primary flex items-center"}
               >
                 Categories <ChevronDown className="size-4" />
               </button>
