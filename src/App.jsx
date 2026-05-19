@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
-
 import NavBar from "./components/NavBar";
 import Home from "./views/Home";
 import Login from "./views/Login";
@@ -8,6 +7,7 @@ import Register from "./views/Register";
 import Products from "./components/Products";
 import DetailProduct from "./views/DetailProduct";
 import Favorites from "./views/Favorites";
+import Footer from "./components/Footer";
 import { ShoppinngCart } from "./components/ShoppinngCart";
 
 function App() {
@@ -97,6 +97,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      <Footer/>
     </>
   );
 }
