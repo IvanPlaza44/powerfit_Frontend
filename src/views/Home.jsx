@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Hero from "../components/Hero";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      
+      <Hero/>
       <section className="container mx-auto px-6 py-20 text-center">
         <h1 className="text-5xl md:text-6xl font-black uppercase tracking-wide">
           Bienvenido a{" "}

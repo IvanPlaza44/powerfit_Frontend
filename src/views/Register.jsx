@@ -1,24 +1,77 @@
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import { Link } from "react-router-dom"
-
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom"; // <-- Agregado useNavigate
 
 export default function Register() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  // HOOKS
+  const navigate = useNavigate(); // <-- Inicializado para poder redireccionar
+
+  // STATES
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // <-- Agregado el estado que faltaba
 
   const [formData, setFormData] = useState({
-    name: "",
-    lastname: "",
-    surname:"",
+    firstName: "",
+    lastName: "",
+    userName: "",
     email: "",
     password: "",
-    confirmPassword: "",
-  })
+    confirmPassword: "" 
+  });
+
+  // URL BACKEND
+  const URL = "http://localhost:4002/auth";
+
+  // HANDLERS
+  const handleChange = (event) => {
+    let { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+
+    // Validación básica antes de enviar al back
+    if (formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { confirmPassword, ...registerData } = formData;
+
+    fetch(`${URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(registerData), 
+    }) 
+    .then((response) => {
+      const isOk = response.ok;
+      
+      return response.json().then((data) => {
+        return { isOk, data };
+      });
+    })
+    .then(({ isOk, data }) => {
+      if (isOk) {
+        console.log("Registro exitoso:", data);
+        navigate("/home");
+      } else {
+        alert(data.message || "Error en el registro de credenciales");
+      }
+    })
+    .catch((error) => {
+      console.error("Error en la petición:", error);
+      alert("Hubo un problema de conexión con el servidor.");
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
@@ -26,53 +79,62 @@ export default function Register() {
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-white mb-2">Create Account</h1>
           <p className="text-neutral-400 text-sm">
-            Join <span className="text-primary font-bold">POWERFIT</span> and start your fitness journey
+            Join <span className="text-green-500 font-bold">POWERFIT</span> and start your fitness journey
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
+          {/* First Name */}
           <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-white">
+            <label htmlFor="firstName" className="block text-sm font-medium text-white">
               Name
             </label>
             <input
               type="text"
-              id="name"
+              id="firstName"
+              name="firstName"
               placeholder="Jon"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors"
+              value={formData.firstName} 
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
-          {/* Lastname */}
+          {/* Last Name */}
           <div className="space-y-2">
-            <label htmlFor="lastname" className="block text-sm font-medium text-white">
+            <label htmlFor="lastName" className="block text-sm font-medium text-white">
               Lastname
             </label>
             <input
               type="text"
-              id="lastname"
+              id="lastName"
+              name="lastName"
               placeholder="Perez"
-              value={formData.lastname}
-              onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors"
+              value={formData.lastName}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
-          {/* Surname */}
+          {/* Username (Surname) */}
           <div className="space-y-2">
-            <label htmlFor="surname" className="block text-sm font-medium text-white">
-              Surname
+            <label htmlFor="userName" className="block text-sm font-medium text-white">
+              Username
             </label>
             <input
               type="text"
-              id="surname"
-              placeholder="Perez"
-              value={formData.surname}
-              onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors"
+              id="userName"
+              name="userName"
+              placeholder="JonPerez99"
+              value={formData.userName}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
@@ -84,10 +146,13 @@ export default function Register() {
             <input
               type="email"
               id="email"
+              name="email"
               placeholder="you@example.com"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors"
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
@@ -100,10 +165,13 @@ export default function Register() {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
+                name="password"
                 placeholder="Create a password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12"
+                onChange={handleChange}
+                disabled={isLoading}
+                required
+                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12 disabled:opacity-50"
               />
               <button
                 type="button"
@@ -124,10 +192,13 @@ export default function Register() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
+                name="confirmPassword"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12"
+                onChange={handleChange}
+                disabled={isLoading}
+                required
+                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12 disabled:opacity-50"
               />
               <button
                 type="button"
@@ -139,14 +210,13 @@ export default function Register() {
             </div>
           </div>
 
-          
-
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition-colors"
+            disabled={isLoading}
+            className="w-full py-3 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Create Account
+            {isLoading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
@@ -158,7 +228,6 @@ export default function Register() {
           </Link>
         </p>
       </div>
-
     </div>
-  )
+  );
 }
