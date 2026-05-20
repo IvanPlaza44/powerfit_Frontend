@@ -19,8 +19,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
-              Your ultimate destination for fitness equipment, supplements, and apparel. 
-              Power your workout with premium products.
+              Tu destino definitivo para equipamiento fitness, 
+              suplementos y ropa deportiva. Potenciá tus entrenamientos con productos premium.
             </p>
             <div className="mt-4 flex gap-4">
               <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
