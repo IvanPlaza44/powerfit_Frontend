@@ -4,7 +4,7 @@ const Card = ({ product, addToFavorites, addToCart }) => {
   // Verificamos si el producto tiene descuento (asumiendo que viene como un porcentaje, ej: 10)
 const hasDiscount = Number(product.discount) > 0;  
   // Calculamos el precio original tachado en base al precio final y el porcentaje
-  const originalPrice = hasDiscount 
+  const discountPrice = hasDiscount 
     ? (product.price / (1 - product.discount / 100)).toFixed(0)
     : null;
 
@@ -42,13 +42,13 @@ const hasDiscount = Number(product.discount) > 0;
         <div className="mt-2 flex items-baseline gap-2">
           {/* Precio actual */}
           <p className="text-lg font-extrabold text-foreground">
-            ${product.price}
+            ${discountPrice}
           </p>
           
           {/* NUEVO: Precio original tachado si hay descuento */}
           {hasDiscount && (
             <p className="text-xs text-muted-foreground line-through opacity-70">
-              ${originalPrice}
+              ${product.price}
             </p>
           )}
         </div>
