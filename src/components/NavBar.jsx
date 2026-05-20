@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
 import { Link } from 'react-router-dom'
 
-export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
+export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -81,7 +81,12 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            <Link to="/favorites" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
+            <Link 
+              to="/favorites" 
+              className={`rounded-full p-2 text-gray-600 transition-colors ${
+                favoritesCount > 0 ? 'text-red-800 hover:bg-red-200' : 'hover:bg-gray-100'
+              }`}
+            >
               <Heart className="h-5 w-5" />
             </Link>
 
