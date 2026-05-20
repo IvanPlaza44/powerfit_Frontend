@@ -31,7 +31,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
             <Link to="/products" className={"text-sm font-medium transition-colors hover:text-primary"}>
-              All Products
+              Todos los productos
             </Link>
             
             <div
@@ -44,7 +44,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout }) {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={"text-sm font-medium transition-colors hover:text-primary flex items-center"}
               >
-                Categories <ChevronDown className="size-4" />
+                Categorias <ChevronDown className="size-4" />
               </button>
 
               {/* Dropdown Menu */}
