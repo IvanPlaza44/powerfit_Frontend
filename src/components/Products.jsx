@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
-import productsData from "../mocks/products";
 
 const Products = ({ addToFavorites, addToCart }) => {
+
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
 
@@ -15,46 +15,60 @@ const Products = ({ addToFavorites, addToCart }) => {
   const categoryImages = {
     indumentaria:
       "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1000&auto=format&fit=crop",
+
     suplementos:
       "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=1000&auto=format&fit=crop",
+
     equipamiento:
       "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000&auto=format&fit=crop"
   };
 
   useEffect(() => {
-    let filteredProducts = productsData;
 
-    // filtro por categoría (navbar)
-    if (currentCategory) {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.category === currentCategory
+    fetch("http://localhost:4002/products")
+      .then((res) => res.json())
+      .then((data) => {
+
+        // Spring devuelve Page<Product>
+        let filteredProducts = data.content;
+
+        // filtro por categoría
+        if (currentCategory) {
+          filteredProducts = filteredProducts.filter(
+            (product) =>
+              product.category?.name?.toLowerCase() ===
+              currentCategory.toLowerCase()
+          );
+        }
+
+        // filtro por precio
+        if (priceFilter === "low") {
+          filteredProducts = filteredProducts.filter(
+            (product) => product.price < 10000
+          );
+        }
+
+        if (priceFilter === "medium") {
+          filteredProducts = filteredProducts.filter(
+            (product) =>
+              product.price >= 10000 &&
+              product.price <= 20000
+          );
+        }
+
+        if (priceFilter === "high") {
+          filteredProducts = filteredProducts.filter(
+            (product) => product.price > 20000
+          );
+        }
+
+        setProducts(filteredProducts);
+      })
+      .catch((error) =>
+        console.error("Error cargando productos:", error)
       );
-    }
 
-    // filtro por precio
-    if (priceFilter === "low") {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.price < 10000
-      );
-    }
-
-    if (priceFilter === "medium") {
-      filteredProducts = filteredProducts.filter(
-        (product) =>
-          product.price >= 10000 &&
-          product.price <= 20000
-      );
-    }
-
-    if (priceFilter === "high") {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.price > 20000
-      );
-    }
-
-    setProducts(filteredProducts);
-
-  }, [searchParams, currentCategory, priceFilter]);
+  }, [currentCategory, priceFilter]);
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
@@ -65,6 +79,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
       {/* Banner */}
       <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden mb-8 flex items-center p-8 md:p-12 border border-border">
+
         <img
           src={bannerImage}
           alt={currentCategory || "Todos los productos"}
@@ -72,15 +87,14 @@ const Products = ({ addToFavorites, addToCart }) => {
         />
 
         <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl font-black uppercase">
-            {currentCategory
-              ? currentCategory
-              : "Todos los productos"}
+          <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
+            {currentCategory || "Todos los productos"}
           </h1>
         </div>
+
       </div>
 
-      {/* BOTÓN FILTRAR */}
+      {/* Botón filtros */}
       <div className="mb-6">
         <button
           onClick={() =>
@@ -92,9 +106,10 @@ const Products = ({ addToFavorites, addToCart }) => {
         </button>
       </div>
 
-      {/* PANEL FILTRO */}
+      {/* Panel filtros */}
       {showFilters && (
         <div className="mb-6 border border-border p-4 rounded-xl bg-card">
+
           <label className="block mb-2 font-semibold">
             Filtrar por precio
           </label>
@@ -106,6 +121,7 @@ const Products = ({ addToFavorites, addToCart }) => {
             }
             className="w-full p-2 rounded bg-background border border-border"
           >
+
             <option value="">
               Todos los precios
             </option>
@@ -121,6 +137,7 @@ const Products = ({ addToFavorites, addToCart }) => {
             <option value="high">
               Más de $20.000
             </option>
+
           </select>
         </div>
       )}
@@ -137,11 +154,14 @@ const Products = ({ addToFavorites, addToCart }) => {
         />
       ) : (
         <div className="text-center py-12 border border-dashed border-border rounded-xl">
+
           <h2 className="text-xl font-semibold text-muted-foreground">
             No hay productos con esos filtros
           </h2>
+
         </div>
       )}
+
     </div>
   );
 };

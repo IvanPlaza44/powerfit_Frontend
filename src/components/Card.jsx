@@ -32,7 +32,7 @@ const Card = ({ product, addToFavorites, addToCart }) => {
       <div className="mt-4 flex flex-col flex-grow">
         {/*NUEVO: Categoría visible arriba del nombre */}
         <span className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">
-          {product.category || "General"}
+          {product.category?.name || "General"}
         </span>
 
         <h2 className="text-base font-bold text-foreground line-clamp-2 min-h-[3rem]">
