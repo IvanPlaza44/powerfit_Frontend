@@ -24,20 +24,20 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex gap-4">
               <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                <Facebook className="h-5 w-5" />
-                <span >Facebook</span>
+                <Facebook className="h-4 w-4" />
+           
               </Link>
               <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                <Instagram className="h-5 w-5"/>
-                <span >Instagram</span>
+                <Instagram className="h-4 w-4"/>
+       
               </Link>
               <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                <XformerlyTwitter className="h-5 w-5" />
-                <span >Twitter</span>
+                <XformerlyTwitter className="h-4 w-4" />
+     
               </Link>
               <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                <YouTube className="h-5 w-5" />
-                <span >YouTube</span>
+                <YouTube className="h-4 w-4" />
+         
               </Link>
             </div>
           </div>
@@ -45,7 +45,7 @@ export default function Footer() {
           {/* Shop */}
           <div>
             <h3 className="mb-4 font-semibold">Shop</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               <li>
                 <Link to="/products" className="text-muted-foreground transition-colors hover:text-primary">
                   All Products
@@ -72,7 +72,7 @@ export default function Footer() {
           {/* Account */}
           <div>
             <h3 className="mb-4 font-semibold">Account</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               <li>
                 <Link to="/login" className="text-muted-foreground transition-colors hover:text-primary">
                   Login
@@ -89,7 +89,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/wishlist" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link to="/favorites" className="text-muted-foreground transition-colors hover:text-primary">
                   Wishlist
                 </Link>
               </li>
@@ -99,7 +99,7 @@ export default function Footer() {
           {/* Support */}
           <div>
             <h3 className="mb-4 font-semibold">Support</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               <li>
                 <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
                   Contact Us
@@ -124,8 +124,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} POWERFIT. All rights reserved.</p>
+        <div className="mt-5 border-t border-border pt-5 text-center text-sm text-muted-foreground">
+          <p>&copy; {new Date().getFullYear()} POWERFIT. Aplicaciones Interactivas TPO</p>
         </div>
       </div>
     </footer>

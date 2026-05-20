@@ -11,6 +11,8 @@ const Products = ({ addToFavorites, addToCart }) => {
   const [priceFilter, setPriceFilter] = useState("");
 
   const currentCategory = searchParams.get("category");
+  console.log(currentCategory);
+  
 
   const categoryImages = {
     indumentaria:
