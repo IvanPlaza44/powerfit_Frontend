@@ -44,11 +44,11 @@ export default function Footer() {
 
           {/* Shop */}
           <div>
-            <h3 className="mb-4 font-semibold">Shop</h3>
+            <h3 className="mb-4 font-semibold">Compras</h3>
             <ul className="space-y-1 text-sm">
               <li>
                 <Link to="/products" className="text-muted-foreground transition-colors hover:text-primary">
-                  All Products
+                  Todos los productos
                 </Link>
               </li>
               <li>
@@ -71,26 +71,26 @@ export default function Footer() {
 
           {/* Account */}
           <div>
-            <h3 className="mb-4 font-semibold">Account</h3>
+            <h3 className="mb-4 font-semibold">Cuenta</h3>
             <ul className="space-y-1 text-sm">
               <li>
                 <Link to="/login" className="text-muted-foreground transition-colors hover:text-primary">
-                  Login
+                  Inicio de sesion
                 </Link>
               </li>
               <li>
                 <Link to="/register" className="text-muted-foreground transition-colors hover:text-primary">
-                  Register
+                  Registro
                 </Link>
               </li>
               <li>
                 <Link to="/cart" className="text-muted-foreground transition-colors hover:text-primary">
-                  Cart
+                  Carrito
                 </Link>
               </li>
               <li>
                 <Link to="/favorites" className="text-muted-foreground transition-colors hover:text-primary">
-                  Wishlist
+                  Favoritos
                 </Link>
               </li>
             </ul>
@@ -98,26 +98,17 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="mb-4 font-semibold">Support</h3>
+            <h3 className="mb-4 font-semibold">Ayuda</h3>
             <ul className="space-y-1 text-sm">
               <li>
-                <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                  Contact Us
+                <Link to="/contact" className="text-muted-foreground transition-colors hover:text-primary">
+                  Contactanos
                 </Link>
               </li>
+
               <li>
                 <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link to="#" className="text-muted-foreground transition-colors hover:text-primary">
-                  FAQs
+                  Preguntas frecuentes
                 </Link>
               </li>
             </ul>

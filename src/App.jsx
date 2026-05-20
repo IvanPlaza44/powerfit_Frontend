@@ -9,6 +9,7 @@ import DetailProduct from "./views/DetailProduct";
 import Favorites from "./views/Favorites";
 import Footer from "./components/Footer";
 import { ShoppinngCart } from "./components/ShoppinngCart";
+import Contact from "./views/Contact";
 
 function App() {
   const [favorites, setFavorites] = useState([]);
@@ -97,6 +98,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/contact" element={<Contact />} /> 
       </Routes>
       <Footer/>
     </>
