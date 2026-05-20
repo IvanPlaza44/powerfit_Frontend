@@ -6,7 +6,7 @@ export const ShoppinngCart = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  // 🔥 TRAER CARRITO
+  //TRAER CARRITO
   const loadCart = async () => {
     const res = await fetch(
       `http://localhost:4002/cart/${userId}`,
