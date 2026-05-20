@@ -67,6 +67,7 @@ function App() {
           element={
             <DetailProduct
               addToFavorites={addToFavorites}
+              addToCart={addToCart}
             />
           }
         />
