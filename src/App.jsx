@@ -50,7 +50,7 @@ function App() {
 
   return (
     <>
-      <NavBar cartCount={cart.length} />
+      <NavBar favoritesCount={favorites.length} cartCount={cart.length} />
 
       <Routes>
         <Route path="/" element={<Home />} />
