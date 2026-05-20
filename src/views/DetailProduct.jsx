@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+const DetailProduct = ({ addToCart, addToFavorites }) => {
+  const { id } = useParams();
 
-  const DetailProduct = ({ addToCart }) => {
+  const [product, setProduct] = useState(null);
 
-  const handleAddToCart = async (product) => {
+  useEffect(() => {
+    fetch(`http://localhost:4002/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => setProduct(data))
+      .catch((error) => console.error(error));
+  }, [id]);
+
+  const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
 
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=1`,
+    if (!token) {
+      alert("Tenés que iniciar sesión");
+      return;
+    }
+
+    const res = await fetch(
+      `http://localhost:4002/cart/${id}/products/${product.id}?quantity=1`,
       {
         method: "PUT",
         headers: {
@@ -18,47 +31,30 @@ import { useParams } from "react-router-dom";
       }
     );
 
+    if (!res.ok) {
+      alert("No se pudo agregar al carrito");
+      return;
+    }
+
     alert("Agregado al carrito");
   };
-
-  const [product, setProduct] = useState(null);
-
-  useEffect(() => {
-
-    fetch(`http://localhost:4002/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
-      })
-      .catch((error) =>
-        console.error(error)
-      );
-
-  }, [id]);
 
   if (!product) {
     return (
       <div className="flex items-center justify-center py-20">
-        <h1 className="text-2xl font-bold">
-          Cargando producto...
-        </h1>
+        <h1 className="text-2xl font-bold">Cargando producto...</h1>
       </div>
     );
   }
 
-  const hasDiscount =
-    product.discount && product.discount > 0;
+  const hasDiscount = product.discount && product.discount > 0;
 
   const originalPrice = hasDiscount
-    ? (
-        product.price /
-        (1 - product.discount / 100)
-      ).toFixed(0)
+    ? (product.price / (1 - product.discount / 100)).toFixed(0)
     : null;
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
-
       <div className="grid gap-10 lg:grid-cols-2">
 
         <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
@@ -116,24 +112,21 @@ import { useParams } from "react-router-dom";
           <div className="mt-10 flex gap-4">
 
             <button
-              onClick={() =>
-                addToCart(product)
-              }
+              onClick={handleAddToCart}
               className="flex-1 rounded-xl bg-primary px-6 py-4 text-sm font-bold text-primary-foreground"
             >
               Añadir al carrito
             </button>
 
             <button
-              onClick={() =>
-                addToFavorites(product)
-              }
+              onClick={() => addToFavorites?.(product)}
               className="rounded-xl border border-border bg-secondary px-6 py-4 text-xl"
             >
               ❤️
             </button>
 
           </div>
+
         </div>
       </div>
     </div>

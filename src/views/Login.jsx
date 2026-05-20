@@ -6,7 +6,6 @@ import { ClimbingBoxLoader } from "react-spinners";
 export default function Login() {
   const navigate = useNavigate();
 
-  // STATES
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,9 +44,6 @@ export default function Login() {
         return;
       }
 
-      console.log("LOGIN RESPONSE:", data);
-
-      // 🔥 FIX PRINCIPAL: tu backend devuelve access_token
       const token = data.access_token;
 
       if (!token) {
@@ -56,16 +52,8 @@ export default function Login() {
         return;
       }
 
-      // Guardar token correctamente
       localStorage.setItem("token", token);
-
-      // opcional si existe usuario
-      if (data.userId || data.user?.id) {
-        localStorage.setItem("userId", data.userId || data.user?.id);
-      }
-
-      // marcar sesión
-      localStorage.setItem("isLogged", "true");
+      localStorage.setItem("userId", userId);
 
       navigate("/");
     } catch (error) {
@@ -83,15 +71,17 @@ export default function Login() {
         <div className="p-6 text-center space-y-2">
           <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
           <p className="text-muted-foreground text-sm">
-            Sign in to your <span className="text-primary font-bold">POWERFIT</span> account
+            Sign in to your <span className="text-primary font-bold">POWERFIT</span> account 
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 pt-0 space-y-6">
-          
+
           {/* userName */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">userName</label>
+            <label htmlFor="userName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              userName
+            </label>
             <div className="relative">
               <ShieldUser className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -101,15 +91,17 @@ export default function Login() {
                 value={userName}
                 onChange={handleChange}
                 disabled={isLoading}
-                className="flex h-10 w-full rounded-md border bg-secondary px-10 py-2 text-sm"
+                className="flex h-10 w-full rounded-md border border-input bg-secondary px-10 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 placeholder="Your userName"
               />
             </div>
           </div>
 
-          {/* password */}
+          {/* Password */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
+            <label className="text-sm font-medium leading-none">
+              Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -119,41 +111,42 @@ export default function Login() {
                 value={password}
                 onChange={handleChange}
                 disabled={isLoading}
-                className="flex h-10 w-full rounded-md border bg-secondary px-10 py-2 text-sm"
-                placeholder="Your password"
+                className="flex h-10 w-full rounded-md border border-input bg-secondary px-10 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                placeholder="Your Password"
               />
-
               <button
                 type="button"
+                className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-2 text-muted-foreground"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          {/* submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-primary text-white font-bold py-2 rounded-md"
-          >
-            {isLoading ? (
-              <div className="scale-50 flex justify-center">
-                <ClimbingBoxLoader color="#fff" />
-              </div>
-            ) : (
-              "Sign In"
-            )}
-          </button>
+          {/* Submit */}
+          <div className="space-y-4 pt-2">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-bold bg-primary text-primary-foreground h-10 px-4 py-2 w-full"
+            >
+              {isLoading ? (
+                <div className="flex justify-center items-center scale-50">
+                  <ClimbingBoxLoader color="#ffffff" />
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
 
-          <p className="text-center text-sm">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-primary">
-              Register
-            </Link>
-          </p>
+            <p className="text-center text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-primary hover:underline font-medium">
+                Register
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>

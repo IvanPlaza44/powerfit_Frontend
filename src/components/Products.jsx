@@ -26,51 +26,37 @@ const Products = ({ addToFavorites, addToCart }) => {
   };
 
   useEffect(() => {
+      fetch("http://localhost:4002/products")
+        .then((res) => res.json())
+        .then((data) => {
+          let filtered = data.content;
 
-    fetch("http://localhost:4002/products")
-      .then((res) => res.json())
-      .then((data) => {
+          if (currentCategory) {
+            filtered = filtered.filter(
+              (p) =>
+                p.category?.description?.toLowerCase() ===
+                currentCategory.toLowerCase()
+            );
+          }
 
-        // Spring devuelve Page<Product>
-        let filteredProducts = data.content;
+          if (priceFilter === "low") {
+            filtered = filtered.filter((p) => p.price < 10000);
+          }
 
-        // filtro por categoría
-        if (currentCategory) {
-          filteredProducts = filteredProducts.filter(
-            (product) =>
-              product.category?.description?.toLowerCase() ===
-              currentCategory.toLowerCase()
-          );
-        }
+          if (priceFilter === "medium") {
+            filtered = filtered.filter(
+              (p) => p.price >= 10000 && p.price <= 20000
+            );
+          }
 
-        // filtro por precio
-        if (priceFilter === "low") {
-          filteredProducts = filteredProducts.filter(
-            (product) => product.price < 10000
-          );
-        }
+          if (priceFilter === "high") {
+            filtered = filtered.filter((p) => p.price > 20000);
+          }
 
-        if (priceFilter === "medium") {
-          filteredProducts = filteredProducts.filter(
-            (product) =>
-              product.price >= 10000 &&
-              product.price <= 20000
-          );
-        }
-
-        if (priceFilter === "high") {
-          filteredProducts = filteredProducts.filter(
-            (product) => product.price > 20000
-          );
-        }
-
-        setProducts(filteredProducts);
-      })
-      .catch((error) =>
-        console.error("Error cargando productos:", error)
-      );
-
-  }, [currentCategory, priceFilter]);
+          setProducts(filtered);
+        })
+        .catch(() => setProducts([]));
+    }, [currentCategory, priceFilter]);
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]

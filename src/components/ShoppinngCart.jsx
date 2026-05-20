@@ -21,7 +21,6 @@ export const ShoppinngCart = () => {
 
     console.log("CART BACKEND =>", data);
 
-    // 🔥 SIEMPRE ES ARRAY
     setCart(data);
   };
 
@@ -29,7 +28,7 @@ export const ShoppinngCart = () => {
     loadCart();
   }, []);
 
-  // 🔼 SUMAR
+  // SUMAR
   const increase = async (product) => {
     await fetch(
       `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity + 1}`,
@@ -44,7 +43,7 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // 🔽 RESTAR
+  // RESTAR
   const decrease = async (product) => {
     if (product.quantity <= 1) return;
 
@@ -61,7 +60,7 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // ❌ ELIMINAR
+  // ELIMINAR
   const remove = async (productId) => {
     await fetch(
       `http://localhost:4002/cart/${userId}/products/${productId}`,
