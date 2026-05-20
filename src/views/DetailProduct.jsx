@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const DetailProduct = ({
-  addToFavorites,
-  addToCart,
-}) => {
 
-  const { id } = useParams();
+  const DetailProduct = ({ addToCart }) => {
+
+  const handleAddToCart = async (product) => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    await fetch(
+      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=1`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Agregado al carrito");
+  };
 
   const [product, setProduct] = useState(null);
 

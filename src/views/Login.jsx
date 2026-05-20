@@ -47,14 +47,19 @@ export default function Login() {
         return { isOk, data };
       });
     })
+ 
     .then(({ isOk, data }) => {
-      if (isOk) {
-        console.log("Login exitoso:", data);
-        navigate("/home");
-      } else {
-        alert(data.message || "Credenciales incorrectas");
-      }
-    })
+        if (isOk) {
+          localStorage.setItem("token", data.token);
+
+          // 🔥 IMPORTANTE: el backend debe devolver el id del usuario
+          localStorage.setItem("userId", data.userId);
+
+          navigate("/");
+        } else {
+          alert("Login incorrecto");
+        }
+      })
     .catch((error) => {
       console.error("Error en la petición:", error);
       alert("Hubo un problema de conexión con el servidor.");

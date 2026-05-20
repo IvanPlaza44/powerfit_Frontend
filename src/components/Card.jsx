@@ -68,13 +68,33 @@ const hasDiscount = Number(product.discount) > 0;
       {/*NUEVO: Fila de acciones (Añadir al carrito + Favoritos compacto) */}
       <div className="mt-2 grid grid-cols-5 gap-2">
         {/* Botón para añadir al carrito */}
-        <button
-          onClick={() => addToCart && addToCart(product)}
-          className="col-span-4 h-9 rounded-md bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-colors cursor-pointer shadow-md shadow-primary/10"
-        >
-          Añadir al carrito
-        </button>
+        
+      <button
+        onClick={async () => {
+          const token = localStorage.getItem("token");
+          const userId = localStorage.getItem("userId");
 
+          if (!token || !userId) {
+            alert("Tenés que iniciar sesión");
+            return;
+          }
+
+          await fetch(
+            `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=1`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          alert("Agregado al carrito");
+        }}
+        className="..."
+      >
+        Añadir al carrito
+      </button>
         {/* Botón de favoritos transformado en un botón compacto lateral */}
         <button
           onClick={() => addToFavorites(product)}
