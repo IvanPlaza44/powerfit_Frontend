@@ -34,7 +34,7 @@ export const Categories = ({ addToFavorites }) => {
   const uniqueCategories = [
     ...new Set(
       products.map(
-        (p) => p.category?.name
+        (p) => p.category?.description
       )
     )
   ];
@@ -48,7 +48,7 @@ export const Categories = ({ addToFavorites }) => {
         const categoryProducts =
           products.filter(
             (p) =>
-              p.category?.name === category
+              p.category?.description === category
           );
 
         const bannerImage =

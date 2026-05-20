@@ -69,7 +69,7 @@ const DetailProduct = ({
         <div className="flex flex-col justify-center">
 
           <span className="mb-3 text-xs font-black uppercase tracking-[0.25em] text-primary">
-            {product.category?.name || "General"}
+            {product.category?.description || "General"}
           </span>
 
           <h1 className="text-4xl font-black">

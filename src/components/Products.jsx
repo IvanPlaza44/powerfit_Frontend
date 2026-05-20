@@ -36,7 +36,7 @@ const Products = ({ addToFavorites, addToCart }) => {
         if (currentCategory) {
           filteredProducts = filteredProducts.filter(
             (product) =>
-              product.category?.name?.toLowerCase() ===
+              product.category?.description?.toLowerCase() ===
               currentCategory.toLowerCase()
           );
         }
