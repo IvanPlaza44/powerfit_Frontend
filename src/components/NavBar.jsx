@@ -143,7 +143,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
             </form>
             <div className="flex flex-col gap-1">
               <a href="/products" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100">
-                All Products
+                Todos los productos
               </a>
               {categories.map((category) => (
                 <a
