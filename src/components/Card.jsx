@@ -12,8 +12,7 @@ const Card = ({ product, addToFavorites }) => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
 
-        // 🔥 BLOQUEO TOTAL SI NO HAY SESIÓN
-        if (!token || !userId || token === "null" || userId === "undefined") {
+        if (!token || !userId || userId === "undefined") {
           alert("Tenés que iniciar sesión");
           return;
         }
