@@ -29,14 +29,16 @@ const Products = ({ addToFavorites, addToCart }) => {
       fetch("http://localhost:4002/products")
         .then((res) => res.json())
         .then((data) => {
+          console.log("Producto Muestra:", data.content[0]);
           let filtered = data.content;
 
           if (currentCategory) {
-            filtered = filtered.filter(
-              (p) =>
-                p.category?.description?.toLowerCase() ===
-                currentCategory.toLowerCase()
-            );
+            filtered = filtered.filter((p) => {
+              const productCat = p.category?.description ? String(p.category.description).toLowerCase() : "";
+              const searchCat = currentCategory ? String(currentCategory).toLowerCase() : "";
+              
+              return productCat.includes(searchCat) || searchCat.includes(productCat);
+            });
           }
 
           if (priceFilter === "low") {

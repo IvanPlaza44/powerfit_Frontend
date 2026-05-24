@@ -51,16 +51,16 @@ export default function Login() {
             return;
           }
 
-          // 🔥 decode seguro
+          //  decode seguro
           const decoded = jwtDecode(token);
 
-          console.log("JWT:", decoded); // 👈 IMPORTANTE DEBUG
+          console.log("JWT:", decoded); //  IMPORTANTE DEBUG
 
           localStorage.setItem("token", token);
           localStorage.setItem("userId", decoded.userId);
           localStorage.setItem("role", decoded.role);
 
-          navigate("/");
+          window.location.href = "/";
         } catch (error) {
           console.error(error);
           alert("Error en el login");
