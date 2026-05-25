@@ -1,18 +1,31 @@
 import React, { useState } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
+  const navigate = useNavigate() // 👈 Inicializamos el navegador de React Router
+
   // Evaluamos si el usuario viene por propiedad o si ya existe un token en la sesión local
   const isLogged = user || localStorage.getItem("token");
 
   const handleSearch = (e) => {
     e.preventDefault()
-    if (onSearch) onSearch(searchQuery)
+    
+    // Si la propiedad onSearch existe (viejo método), la llamamos por compatibilidad
+    if (onSearch) {
+      onSearch(searchQuery)
+    }
+
+    // 🚀 Redirección inteligente: lleva al usuario a la lista de productos con el filtro puesto
+    if (searchQuery.trim() !== "") {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`)
+    } else {
+      navigate('/products') // Si busca en blanco, muestra todo
+    }
   }
 
   const categories = [

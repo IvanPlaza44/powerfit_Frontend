@@ -11,8 +11,7 @@ const Products = ({ addToFavorites, addToCart }) => {
   const [priceFilter, setPriceFilter] = useState("");
 
   const currentCategory = searchParams.get("category");
-  console.log(currentCategory);
-  
+  const currentSearch = searchParams.get("search"); // 1. Capturamos lo que viene de la barra de búsqueda
 
   const categoryImages = {
     indumentaria:
@@ -32,6 +31,7 @@ const Products = ({ addToFavorites, addToCart }) => {
           console.log("Producto Muestra:", data.content[0]);
           let filtered = data.content;
 
+          // 2. Filtro por Categorías
           if (currentCategory) {
             filtered = filtered.filter((p) => {
               const productCat = p.category?.description ? String(p.category.description).toLowerCase() : "";
@@ -41,6 +41,18 @@ const Products = ({ addToFavorites, addToCart }) => {
             });
           }
 
+          //  3. NUEVO: Filtro por la barra de búsqueda del NavBar
+          if (currentSearch) {
+            const query = currentSearch.toLowerCase();
+            filtered = filtered.filter((p) => {
+              const name = p.name ? p.name.toLowerCase() : "";
+              const description = p.description ? p.description.toLowerCase() : "";
+              // Busca si el término coincide en el nombre O en la descripción del producto
+              return name.includes(query) || description.includes(query);
+            });
+          }
+
+          // 4. Filtros de precio 
           if (priceFilter === "low") {
             filtered = filtered.filter((p) => p.price < 10000);
           }
@@ -58,11 +70,11 @@ const Products = ({ addToFavorites, addToCart }) => {
           setProducts(filtered);
         })
         .catch(() => setProducts([]));
-    }, [currentCategory, priceFilter]);
+    }, [currentCategory, currentSearch, priceFilter]); //  5. Agregamos currentSearch acá para que reaccione al buscar
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
-    : "https://images.unsplash.com/photo-1517838483737-3015b90bb58e?q=80&w=1000&auto=format&fit=crop";
+    : "https://images.unsplash.com/photo-1517834483737-3015b90bb58e?q=80&w=1000&auto=format&fit=crop";
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,7 +90,8 @@ const Products = ({ addToFavorites, addToCart }) => {
 
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
-            {currentCategory || "Todos los productos"}
+            {/* Si está buscando algo, mostramos qué está buscando en el título principal */}
+            {currentSearch ? `Resultados para: "${currentSearch}"` : (currentCategory || "Todos los productos")}
           </h1>
         </div>
 

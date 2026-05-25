@@ -15,28 +15,42 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
 
-    if (!token) {
+    if (!token || !userId) {
       alert("Tenés que iniciar sesión");
       return;
     }
 
-    const res = await fetch(
-      `http://localhost:4002/cart/${id}/products/${product.id}?quantity=1`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      // 1. Apuntamos a la URL correcta de POST (sin el ID del producto al final)
+      const res = await fetch(
+        `http://localhost:4002/cart/${userId}/products`,
+        {
+          method: "POST", // POST válido
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          // 2. Le mandamos el cuerpo (Body) con el formato que espera CartProductRequest en Java
+          
+          body: JSON.stringify({
+            productId: product.id,
+            quantity: 1
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        alert("No se pudo agregar al carrito. Verifica tu sesión.");
+        return;
       }
-    );
 
-    if (!res.ok) {
-      alert("No se pudo agregar al carrito");
-      return;
+      alert("¡Agregado al carrito con éxito! 🛒");
+    } catch (error) {
+      console.error("Error en la petición del carrito:", error);
+      alert("Hubo un error de red al intentar agregar al carrito");
     }
-
-    alert("Agregado al carrito");
   };
 
   if (!product) {
