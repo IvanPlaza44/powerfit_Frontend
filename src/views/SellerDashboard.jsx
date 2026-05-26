@@ -4,7 +4,7 @@ export default function SellerDashboard() {
   const [myProducts, setMyProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "" });
-  const [currentSellerId, setCurrentSellerId] = useState(null); // 👈 Guardamos tu ID aquí
+  const [currentSellerId, setCurrentSellerId] = useState(null); 
 
   const token = localStorage.getItem("token");
 
