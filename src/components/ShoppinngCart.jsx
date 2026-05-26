@@ -7,7 +7,7 @@ export const ShoppinngCart = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  //TRAER CARRITO
+  //traer carrito
   const loadCart = async () => {
     const res = await fetch(
       `http://localhost:4002/cart/${userId}`,
@@ -29,7 +29,7 @@ export const ShoppinngCart = () => {
     loadCart();
   }, []);
 
-  // SUMAR
+  // sumar cantidad
   const increase = async (product) => {
   await fetch(
     `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity + 1}`,
@@ -44,7 +44,7 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // RESTAR
+  // disminuir cantidad
   const decrease = async (product) => {
       if (product.quantity <= 1) return;
 
@@ -61,7 +61,7 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // ELIMINAR
+  // eliminar
   const remove = async (productId) => {
     await fetch(
       `http://localhost:4002/cart/${userId}/products/${productId}`,
@@ -96,13 +96,11 @@ export const ShoppinngCart = () => {
             key={p.id}
             className="flex justify-between items-center border p-4 mb-3"
           >
-            {/* INFO PRODUCTO */}
             <div>
               <h2>{p.product.name}</h2>
               <p>${p.product.price}</p>
             </div>
 
-            {/* CONTROLES */}
           <div className="flex items-center gap-3">
 
             <button
@@ -126,7 +124,7 @@ export const ShoppinngCart = () => {
 
           </div>
 
-            {/* SUBTOTAL */}
+            {/* subtotal */}
             <div className="flex items-center gap-4">
               <p>
                 ${p.product.price * p.quantity}

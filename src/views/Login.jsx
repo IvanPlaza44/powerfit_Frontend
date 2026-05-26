@@ -54,7 +54,7 @@ export default function Login() {
           //  decode seguro
           const decoded = jwtDecode(token);
 
-          console.log("JWT:", decoded); //  IMPORTANTE DEBUG
+          console.log("JWT:", decoded); 
 
           localStorage.setItem("token", token);
           localStorage.setItem("userId", decoded.userId);
