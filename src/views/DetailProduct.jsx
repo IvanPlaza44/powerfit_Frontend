@@ -23,7 +23,6 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
     }
 
     try {
-      // 1. Apuntamos a la URL correcta de POST (sin el ID del producto al final)
       const res = await fetch(
         `http://localhost:4002/cart/${userId}/products`,
         {
