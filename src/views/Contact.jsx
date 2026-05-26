@@ -10,8 +10,6 @@ const Contact = () => {
     <div className="min-h-screen bg-background px-6 py-16">
 
       <div className="mx-auto max-w-6xl">
-
-        {/* Header */}
         <div className="mb-14 text-center">
 
           <h1 className="text-5xl font-black uppercase">
@@ -27,7 +25,6 @@ const Contact = () => {
 
         <div className="grid gap-10 lg:grid-cols-2">
 
-          {/* Formulario */}
           <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
 
             <h2 className="text-2xl font-bold mb-6">
@@ -81,7 +78,6 @@ const Contact = () => {
             </form>
           </div>
 
-          {/* Info */}
           <div className="space-y-6">
 
             <div className="rounded-3xl border border-border bg-card p-6">

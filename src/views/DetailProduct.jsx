@@ -27,12 +27,11 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
       const res = await fetch(
         `http://localhost:4002/cart/${userId}/products`,
         {
-          method: "POST", // POST válido
+          method: "POST", 
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          // 2. Le mandamos el cuerpo (Body) con el formato que espera CartProductRequest en Java
           
           body: JSON.stringify({
             productId: product.id,
@@ -41,12 +40,16 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
         }
       );
 
+      const data = await res.json();
+
+      console.log("RESPUESTA ADD CART =>", data);
+      
       if (!res.ok) {
         alert("No se pudo agregar al carrito. Verifica tu sesión.");
         return;
       }
 
-      alert("¡Agregado al carrito con éxito! 🛒");
+      alert("¡Agregado al carrito con éxito! ");
     } catch (error) {
       console.error("Error en la petición del carrito:", error);
       alert("Hubo un error de red al intentar agregar al carrito");

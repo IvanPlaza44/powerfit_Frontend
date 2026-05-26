@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom"; // <-- Agregado useNavigate
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
   // HOOKS
-  const navigate = useNavigate(); // <-- Inicializado para poder redireccionar
+  const navigate = useNavigate();
 
-  // STATES
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // <-- Agregado el estado que faltaba
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -17,13 +16,12 @@ export default function Register() {
     userName: "",
     email: "",
     password: "",
-    confirmPassword: "" 
+    confirmPassword: "",
+    role: "BUYER" // Inicializamos el estado en BUYER por defecto
   });
 
-  // URL BACKEND
   const URL = "http://localhost:4002/auth";
 
-  // HANDLERS
   const handleChange = (event) => {
     let { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -32,7 +30,6 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validación básica antes de enviar al back
     if (formData.password !== formData.confirmPassword) {
       alert("Las contraseñas no coinciden.");
       return;
@@ -41,6 +38,7 @@ export default function Register() {
     setIsLoading(true);
 
     const { confirmPassword, ...registerData } = formData;
+    //  registerData  incluye automáticamente el campo "role" que espera Java
 
     fetch(`${URL}/register`, {
       method: "POST",
@@ -51,7 +49,6 @@ export default function Register() {
     }) 
     .then((response) => {
       const isOk = response.ok;
-      
       return response.json().then((data) => {
         return { isOk, data };
       });
@@ -60,13 +57,11 @@ export default function Register() {
       if (isOk) {
         console.log("Registro exitoso:", data);
         
-        // 1. Guardamos el token en el LocalStorage para que el carrito y favoritos funcionen
         if (data.access_token) {
           localStorage.setItem("token", data.access_token);
         }
 
         alert("¡Registro exitoso! Bienvenido a POWERFIT.");
-        
         window.location.href = "/";
       } else {
         alert(data.message || "Error en el registro de credenciales");
@@ -77,7 +72,7 @@ export default function Register() {
       alert("Hubo un problema de conexión con el servidor.");
     })
     .finally(() => {
-      setIsLoading(false);
+      isLoading(false);
     });
   };
 
@@ -152,7 +147,7 @@ export default function Register() {
               Mail
             </label>
             <input
-              type="email"
+              type="type"
               id="email"
               name="email"
               placeholder="tucorreo@ejemplo.com"
@@ -162,6 +157,25 @@ export default function Register() {
               required
               className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
+          </div>
+
+          {/* Selector de Tipo de Cuenta (Rol) */}
+          <div className="space-y-2">
+            <label htmlFor="role" className="block text-sm font-medium text-white">
+              Account Type
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              <option value="BUYER">Quiero Comprar (Comprador)</option>
+              <option value="SELLER">Quiero Vender (Vendedor)</option>
+            </select>
           </div>
 
           {/* Password Field */}

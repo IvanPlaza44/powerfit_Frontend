@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card";
 
-// Agregamos la prop addToCart que venía faltando
 export const Categories = ({ addToFavorites, addToCart }) => {
   const [products, setProducts] = useState([]);
 
@@ -56,7 +55,7 @@ export const Categories = ({ addToFavorites, addToCart }) => {
                   key={product.id}
                   product={product}
                   addToFavorites={addToFavorites}
-                  addToCart={addToCart}
+                  addToCart={addToCart} 
                 />
               ))}
             </div>

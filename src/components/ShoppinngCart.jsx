@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export const ShoppinngCart = () => {
   const [cart, setCart] = useState([]);
@@ -6,7 +7,7 @@ export const ShoppinngCart = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  //TRAER CARRITO
+  //traer carrito
   const loadCart = async () => {
     const res = await fetch(
       `http://localhost:4002/cart/${userId}`,
@@ -28,10 +29,10 @@ export const ShoppinngCart = () => {
     loadCart();
   }, []);
 
-  // SUMAR
+  // sumar cantidad
   const increase = async (product) => {
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity + 1}`,
+  await fetch(
+    `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity + 1}`,
       {
         method: "PUT",
         headers: {
@@ -43,12 +44,12 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // RESTAR
+  // disminuir cantidad
   const decrease = async (product) => {
-    if (product.quantity <= 1) return;
+      if (product.quantity <= 1) return;
 
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity - 1}`,
+  await fetch(
+    `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity - 1}`,
       {
         method: "PUT",
         headers: {
@@ -60,7 +61,7 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  // ELIMINAR
+  // eliminar
   const remove = async (productId) => {
     await fetch(
       `http://localhost:4002/cart/${userId}/products/${productId}`,
@@ -75,10 +76,10 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  const total = cart.reduce(
-    (acc, p) => acc + p.price * p.quantity,
-    0
-  );
+    const total = cart.reduce(
+      (acc, p) => acc + p.product.price * p.quantity,
+      0
+    );
 
   return (
     <div className="p-6">
@@ -95,36 +96,46 @@ export const ShoppinngCart = () => {
             key={p.id}
             className="flex justify-between items-center border p-4 mb-3"
           >
-            {/* INFO PRODUCTO */}
             <div>
-              <h2>{p.name}</h2>
-              <p>${p.price}</p>
+              <h2>{p.product.name}</h2>
+              <p>${p.product.price}</p>
             </div>
 
-            {/* CONTROLES */}
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
 
-              <button onClick={() => decrease(p)}>
-                -
-              </button>
+            <button
+              onClick={() => decrease(p)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-lg font-bold text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50"
+              disabled={p.quantity <= 1}
+            >
+              -
+            </button>
 
-              <span>{p.quantity}</span>
+            <span className="min-w-[30px] text-center text-lg font-bold">
+              {p.quantity}
+            </span>
 
-              <button onClick={() => increase(p)}>
-                +
-              </button>
+            <button
+              onClick={() => increase(p)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-lg font-bold text-foreground transition-all hover:bg-primary hover:text-white"
+            >
+              +
+            </button>
 
-            </div>
+          </div>
 
-            {/* SUBTOTAL */}
+            {/* subtotal */}
             <div className="flex items-center gap-4">
               <p>
-                ${p.price * p.quantity}
+                ${p.product.price * p.quantity}
               </p>
 
-              <button onClick={() => remove(p.id)}>
-                ❌
-              </button>
+            <button
+              onClick={() => remove(p.product.id)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-500/30 bg-red-500/10 text-sm transition-all hover:bg-red-500 hover:text-white"
+            >
+              ✕
+            </button>
             </div>
 
           </div>
@@ -134,6 +145,16 @@ export const ShoppinngCart = () => {
       <h2 className="mt-6 text-xl font-bold">
         Total: ${total}
       </h2>
+      <div className="mt-8 flex justify-end">
+
+      <Link
+        to="/checkout"
+        className="rounded-xl bg-primary px-8 py-4 text-sm font-bold text-primary-foreground transition hover:scale-105"
+      >
+        Finalizar compra
+      </Link>
+
+    </div>
     </div>
   );
 };

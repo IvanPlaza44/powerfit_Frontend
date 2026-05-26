@@ -12,6 +12,8 @@ import Footer from "./components/Footer";
 import { ShoppinngCart } from "./components/ShoppinngCart";
 import Contact from "./views/Contact";
 import CreateProduct from "./views/CreateProduct";
+import Checkout from "./views/Checkout";
+import SellerDashboard from "./views/SellerDashboard";
 import SwitchSeller from "./views/SwitchSeller";
 import MyProducts from "./views/MyProducts";
 
@@ -73,6 +75,8 @@ function App() {
         <Route path="/switch-seller" element={<SwitchSeller />} />
         <Route path="/my-products" element={<MyProducts />} />  
         <Route path="/create-product" element={<CreateProduct />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
       </Routes>
 
       <Footer />

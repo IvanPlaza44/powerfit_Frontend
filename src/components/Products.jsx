@@ -30,7 +30,7 @@ const Products = ({ addToFavorites, addToCart }) => {
           console.log("Producto Muestra:", data.content[0]);
           let filtered = data.content;
 
-          // 2. Filtro por Categorías
+          // filtro x categoria
           if (currentCategory) {
             filtered = filtered.filter((p) => {
               const productCat = p.category?.description ? String(p.category.description).toLowerCase() : "";
@@ -40,18 +40,17 @@ const Products = ({ addToFavorites, addToCart }) => {
             });
           }
 
-          //  3. NUEVO: Filtro por la barra de búsqueda del NavBar
+          //  barra busqueda
           if (currentSearch) {
             const query = currentSearch.toLowerCase();
             filtered = filtered.filter((p) => {
               const name = p.name ? p.name.toLowerCase() : "";
               const description = p.description ? p.description.toLowerCase() : "";
-              // Busca si el término coincide en el nombre O en la descripción del producto
               return name.includes(query) || description.includes(query);
             });
           }
 
-          // Ordenar por precio
+          // orden x precio
       if (sortOrder === "asc") {
         filtered = [...filtered].sort((a, b) => {
 
@@ -109,7 +108,6 @@ const Products = ({ addToFavorites, addToCart }) => {
 
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
-            {/* Si está buscando algo, mostramos qué está buscando en el título principal */}
             {currentSearch ? `Resultados para: "${currentSearch}"` : (currentCategory || "Todos los productos")}
           </h1>
         </div>
