@@ -8,8 +8,7 @@ const Products = ({ addToFavorites, addToCart }) => {
   const [searchParams] = useSearchParams();
 
   const [showFilters, setShowFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState("");
-
+  const [sortOrder, setSortOrder] = useState("");
   const currentCategory = searchParams.get("category");
   const currentSearch = searchParams.get("search"); // 1. Capturamos lo que viene de la barra de búsqueda
 
@@ -52,25 +51,45 @@ const Products = ({ addToFavorites, addToCart }) => {
             });
           }
 
-          // 4. Filtros de precio 
-          if (priceFilter === "low") {
-            filtered = filtered.filter((p) => p.price < 10000);
-          }
+          // Ordenar por precio
+      if (sortOrder === "asc") {
+        filtered = [...filtered].sort((a, b) => {
 
-          if (priceFilter === "medium") {
-            filtered = filtered.filter(
-              (p) => p.price >= 10000 && p.price <= 20000
-            );
-          }
+          const finalPriceA =
+            a.discount > 0
+              ? a.price - (a.price * a.discount) / 100
+              : a.price;
 
-          if (priceFilter === "high") {
-            filtered = filtered.filter((p) => p.price > 20000);
-          }
+          const finalPriceB =
+            b.discount > 0
+              ? b.price - (b.price * b.discount) / 100
+              : b.price;
+
+          return finalPriceA - finalPriceB;
+        });
+      }
+
+      if (sortOrder === "desc") {
+        filtered = [...filtered].sort((a, b) => {
+
+          const finalPriceA =
+            a.discount > 0
+              ? a.price - (a.price * a.discount) / 100
+              : a.price;
+
+          const finalPriceB =
+            b.discount > 0
+              ? b.price - (b.price * b.discount) / 100
+              : b.price;
+
+          return finalPriceB - finalPriceA;
+        });
+      }
 
           setProducts(filtered);
         })
         .catch(() => setProducts([]));
-    }, [currentCategory, currentSearch, priceFilter]); //  5. Agregamos currentSearch acá para que reaccione al buscar
+    }, [currentCategory, currentSearch, sortOrder]);
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
@@ -105,7 +124,7 @@ const Products = ({ addToFavorites, addToCart }) => {
           }
           className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
         >
-          Filtrar
+          Ordenar
         </button>
       </div>
 
@@ -114,31 +133,27 @@ const Products = ({ addToFavorites, addToCart }) => {
         <div className="mb-6 border border-border p-4 rounded-xl bg-card">
 
           <label className="block mb-2 font-semibold">
-            Filtrar por precio
+            Ordenar por precio
           </label>
 
           <select
-            value={priceFilter}
+            value={sortOrder}
             onChange={(e) =>
-              setPriceFilter(e.target.value)
+              setSortOrder(e.target.value)
             }
             className="w-full p-2 rounded bg-background border border-border"
           >
 
             <option value="">
-              Todos los precios
+              Sin ordenar
             </option>
 
-            <option value="low">
-              Menos de $10.000
+            <option value="asc">
+              Menor a mayor
             </option>
 
-            <option value="medium">
-              Entre $10.000 y $20.000
-            </option>
-
-            <option value="high">
-              Más de $20.000
+            <option value="desc">
+              Mayor a menor
             </option>
 
           </select>
