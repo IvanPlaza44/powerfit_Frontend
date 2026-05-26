@@ -13,6 +13,7 @@ import { ShoppinngCart } from "./components/ShoppinngCart";
 import Contact from "./views/Contact";
 import CreateProduct from "./views/CreateProduct";
 import Checkout from "./views/Checkout";
+import SellerDashboard from "./views/SellerDashboard";
 
 function App() {
   const [favorites, setFavorites] = useState([]);
@@ -71,6 +72,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/create-product" element={<CreateProduct />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
       </Routes>
 
       <Footer />

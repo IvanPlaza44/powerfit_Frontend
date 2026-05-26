@@ -1,30 +1,54 @@
-import React, { useState } from 'react'
-import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
+import React, { useState, useEffect } from 'react'
+import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, PlusCircle } from "lucide-react"
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [userRole, setUserRole] = useState("") // Estado para guardar el rol (BUYER o SELLER)
 
-  const navigate = useNavigate() // 👈 Inicializamos el navegador de React Router
+  const navigate = useNavigate()
 
-  // Evaluamos si el usuario viene por propiedad o si ya existe un token en la sesión local
   const isLogged = user || localStorage.getItem("token");
+
+  //  Leer y decodificar el token para saber el rol real del usuario
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        // Los JWT tienen 3 partes separadas por puntos; la del medio (índice 1) tiene los datos (payload)
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        
+        const payload = JSON.parse(jsonPayload);
+        console.log("Datos del Token:", payload);
+
+        // Guardamos el rol en el estado. 
+        setUserRole(payload.role || ""); 
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        setUserRole("");
+      }
+    } else {
+      setUserRole("");
+    }
+  }, [isLogged]); // Se ejecuta cada vez que cambia el estado de logueo
 
   const handleSearch = (e) => {
     e.preventDefault()
-    
-    // Si la propiedad onSearch existe (viejo método), la llamamos por compatibilidad
-    if (onSearch) {
-      onSearch(searchQuery)
-    }
+    if (onSearch) onSearch(searchQuery)
 
-    // 🚀 Redirección inteligente: lleva al usuario a la lista de productos con el filtro puesto
     if (searchQuery.trim() !== "") {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`)
     } else {
-      navigate('/products') // Si busca en blanco, muestra todo
+      navigate('/products')
     }
   }
 
@@ -36,12 +60,12 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
-      <nav className="container mx-auto px-4 ">
-        <div className="flex h-16 items-center justify-between gap-4 ">
+      <nav className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between gap-4">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 size-24 transition-transform duration-300 hover:scale-110">
-            <img src="Logo2.png" alt="Logo2" />
+          <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
+            <img src="Logo.png" alt="Logo" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -78,6 +102,25 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                 </div>
               )}
             </div>
+
+            {/* 👑 BOTÓN EXCLUSIVO PARA VENDEDOR (Escritorio) */}
+            {isLogged && userRole === "SELLER" && (
+              <div className="flex items-center gap-2">
+                <Link 
+                  to="/seller-dashboard" 
+                  className="text-sm font-medium text-neutral-300 hover:text-primary transition-colors"
+                >
+                  Mis Productos
+                </Link>
+                <Link 
+                  to="/create-product" 
+                  className="flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  Publicar Producto
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -105,7 +148,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               <Heart className="h-5 w-5" />
             </Link>
 
-            <Link to="/cart" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
+            <Link to="/cart_list" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
               <ShoppingCart className="h-5 w-5" />
               {cartCount > 0 && (
                 <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
@@ -177,6 +220,17 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                   {category.name}
                 </a>
               ))}
+              
+              {/*  BOTÓN EXCLUSIVO PARA VENDEDOR (Mobile) */}
+              {isLogged && userRole === "SELLER" && (
+                <Link 
+                  to="/create-product" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-2 rounded-md bg-red-600 px-3 py-2 text-sm font-bold text-white text-center hover:bg-red-700 transition-colors"
+                >
+                  + Publicar Producto
+                </Link>
+              )}
             </div>
           </div>
         )}
