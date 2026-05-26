@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom"; 
+import { Plus, SearchX } from "lucide-react";
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
 
   useEffect(() => {
     const fetchMyProducts = async () => {
       const token = localStorage.getItem("token");
       try {
-
-        const res = await fetch("http://localhost:4002/products", {
+  
+        const res = await fetch("http://localhost:4002/products/seller", {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
         if (res.ok) {
           const data = await res.json();
+
           setProducts(data.content || data); 
         }
       } catch (error) {
@@ -30,6 +34,17 @@ const MyProducts = () => {
     fetchMyProducts();
   }, []);
 
+ 
+  const filteredProducts = products.filter((product) => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase().trim();
+    const productName = product.name ? product.name.toLowerCase() : "";
+    const productDesc = product.description ? product.description.toLowerCase() : "";
+
+    return productName.includes(query) || productDesc.includes(query);
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground p-6 md:p-12">
       <div className="container mx-auto max-w-5xl">
@@ -41,7 +56,7 @@ const MyProducts = () => {
             <p className="text-sm text-muted-foreground">Administrá las publicaciones de tu tienda.</p>
           </div>
           
-          {/* Botón único de Cargar un nuevo producto */}
+          {/* Botón de Cargar un nuevo producto */}
           <Link to="/create-product">
             <button className="flex items-center gap-2 bg-primary text-primary-foreground font-bold px-5 py-3 rounded-lg hover:scale-105 transition-all cursor-pointer">
               <Plus size={20} />
@@ -57,9 +72,17 @@ const MyProducts = () => {
           <div className="text-center bg-card border border-border rounded-xl p-12">
             <p className="text-muted-foreground mb-4">Aún no publicaste ningún producto.</p>
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center bg-card border border-border rounded-xl p-12 flex flex-col items-center justify-center gap-3">
+            <SearchX size={40} className="text-muted-foreground" />
+            <p className="text-muted-foreground">No encontramos productos que coincidan con "{searchQuery}".</p>
+            <Link to="/my-products" className="text-sm text-primary font-bold uppercase tracking-wider hover:underline">
+              Limpiar búsqueda
+            </Link>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div key={product.id} className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition-all flex flex-col justify-between">
                 {product.image && (
                   <img 
