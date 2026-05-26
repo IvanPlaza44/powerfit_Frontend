@@ -103,23 +103,48 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               )}
             </div>
 
-            {/* 👑 BOTÓN EXCLUSIVO PARA VENDEDOR (Escritorio) */}
+            {/* BOTÓN EXCLUSIVO PARA VENDEDOR (Escritorio) */}
             {isLogged && userRole === "SELLER" && (
               <div className="flex items-center gap-2">
-                <Link 
-                  to="/seller-dashboard" 
-                  className="text-sm font-medium text-neutral-300 hover:text-primary transition-colors"
-                >
+                <Link to="/seller-dashboard" className="text-sm font-medium text-neutral-300 hover:text-primary transition-colors">
                   Mis Productos
                 </Link>
-                <Link 
-                  to="/create-product" 
-                  className="flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors"
-                >
+                <Link to="/create-product" className="flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors">
                   <PlusCircle className="h-4 w-4" />
                   Publicar Producto
                 </Link>
               </div>
+            )}
+
+            {/*BOTÓN PARA PASAR DE BUYER A SELLER (Escritorio) */}
+            {isLogged && userRole === "BUYER" && (
+              <button
+                onClick={async () => {
+                  if (!window.confirm("¿Querés convertir tu cuenta en perfil Vendedor?")) return;
+                  try {
+                    const res = await fetch("http://localhost:4002/auth/upgrade-to-seller", {
+                      method: "PUT",
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                      }
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      // Guardamos el nuevo token con el rol SELLER incorporado
+                      localStorage.setItem("token", data.accessToken || data.access_token);
+                      alert("¡Felicitaciones! Ahora sos Vendedor.");
+                      window.location.reload(); // Recargamos para actualizar el NavBar
+                    } else {
+                      alert("Hubo un error al procesar la solicitud.");
+                    }
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }}
+                className="text-xs font-bold bg-neutral-800 text-green-500 border border-green-500/30 hover:bg-green-500 hover:text-black px-3 py-1.5 rounded-md transition-all"
+              >
+                Quiero Vender
+              </button>
             )}
           </div>
 
