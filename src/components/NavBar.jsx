@@ -7,24 +7,22 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
-  const navigate = useNavigate() // 👈 Inicializamos el navegador de React Router
+  const navigate = useNavigate()
 
-  // Evaluamos si el usuario viene por propiedad o si ya existe un token en la sesión local
   const isLogged = user || localStorage.getItem("token");
 
   const handleSearch = (e) => {
     e.preventDefault()
     
-    // Si la propiedad onSearch existe (viejo método), la llamamos por compatibilidad
     if (onSearch) {
       onSearch(searchQuery)
     }
 
-    // 🚀 Redirección inteligente: lleva al usuario a la lista de productos con el filtro puesto
+  
     if (searchQuery.trim() !== "") {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`)
     } else {
-      navigate('/products') // Si busca en blanco, muestra todo
+      navigate('/products') 
     }
   }
 
@@ -41,7 +39,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
-            <img src="Logo2.png" alt="Logo2" />
+            <img src="Logo.png" alt="Logo" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -83,10 +81,10 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
-                placeholder="Search products..."
+                placeholder="Buscar Productos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-red-500"
@@ -130,7 +128,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                   title="Cerrar sesión"
                 >
                   <LogOut className="h-5 w-5" />
-                  <span className="text-xs font-medium text-neutral-400">Log Out</span>
+                  <span className="text-xs font-medium text-neutral-400">Cerrar Sesión</span>
                 </button>
               ) : (
                 <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100" title="Iniciar sesión">

@@ -85,9 +85,9 @@ export default function Register() {
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md border border-neutral-800 rounded-lg p-8">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Create Account</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Crea tu cuenta</h1>
           <p className="text-neutral-400 text-sm">
-            Join <span className="text-green-500 font-bold">POWERFIT</span> and start your fitness journey
+            Unete a  <span className="text-green-500 font-bold">POWERFIT</span> y empieza una vida fitness
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export default function Register() {
           {/* First Name */}
           <div className="space-y-2">
             <label htmlFor="firstName" className="block text-sm font-medium text-white">
-              Name
+              Nombre
             </label>
             <input
               type="text"
@@ -113,7 +113,7 @@ export default function Register() {
           {/* Last Name */}
           <div className="space-y-2">
             <label htmlFor="lastName" className="block text-sm font-medium text-white">
-              Lastname
+              Apellido
             </label>
             <input
               type="text"
@@ -131,7 +131,7 @@ export default function Register() {
           {/* Username (Surname) */}
           <div className="space-y-2">
             <label htmlFor="userName" className="block text-sm font-medium text-white">
-              Username
+              Usuario
             </label>
             <input
               type="text"
@@ -149,13 +149,13 @@ export default function Register() {
           {/* Email Field */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-white">
-              Email
+              Mail
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              placeholder="you@example.com"
+              placeholder="tucorreo@ejemplo.com"
               value={formData.email}
               onChange={handleChange}
               disabled={isLoading}
@@ -167,14 +167,14 @@ export default function Register() {
           {/* Password Field */}
           <div className="space-y-2">
             <label htmlFor="password" className="block text-sm font-medium text-white">
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
-                placeholder="Create a password"
+                placeholder="Crea una contraseña"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isLoading}
@@ -194,14 +194,14 @@ export default function Register() {
           {/* Confirm Password Field */}
           <div className="space-y-2">
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">
-              Confirm Password
+              Confirma tu contraseña
             </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Confirm your password"
+                placeholder="Confirma tu contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={isLoading}
@@ -224,15 +224,15 @@ export default function Register() {
             disabled={isLoading}
             className="w-full py-3 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Creating Account..." : "Create Account"}
+            {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
           </button>
         </form>
 
         {/* Sign In Link */}
         <p className="text-center text-neutral-400 text-sm mt-6">
-          Already have an account?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <Link to="/login" className="text-green-500 hover:text-green-400 transition-colors">
-            Sign In
+            Ingresa aqui
           </Link>
         </p>
       </div>

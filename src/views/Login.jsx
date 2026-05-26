@@ -45,6 +45,7 @@ export default function Login() {
           }
 
           const token = data.access_token;
+          const role = data.role;
 
           if (!token) {
             alert("No se recibió token");
@@ -58,12 +59,12 @@ export default function Login() {
 
           localStorage.setItem("token", token);
           localStorage.setItem("userId", decoded.userId);
-          localStorage.setItem("role", decoded.role);
+          localStorage.setItem("role", role);
 
           window.location.href = "/";
         } catch (error) {
           console.error(error);
-          alert("Error en el login");
+          alert("Error en el Login");
         } finally {
           setIsLoading(false);
         }
@@ -74,9 +75,10 @@ export default function Login() {
       <div className="w-full max-w-md border border-border bg-card rounded-lg shadow-xl overflow-hidden">
 
         <div className="p-6 text-center space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-foreground">Bienvenido de Vuelta!</h1>
           <p className="text-muted-foreground text-sm">
-            Sign in to your <span className="text-primary font-bold">POWERFIT</span> account 
+            Ingresa con tu cuenta <span className="text-primary font-bold">POWERFIT</span>
+
           </p>
         </div>
 
@@ -84,7 +86,7 @@ export default function Login() {
 
           {/* userName */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">userName</label>
+            <label className="text-sm font-medium">Usuario</label>
             <div className="relative">
               <ShieldUser className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -95,13 +97,14 @@ export default function Login() {
                 onChange={handleChange}
                 disabled={isLoading}
                 className="w-full h-10 rounded-md border bg-secondary px-10 text-sm"
+                placeholder="Tu Usuario"
               />
             </div>
           </div>
 
           {/* Password */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
+            <label className="text-sm font-medium">Contraseña</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -112,6 +115,7 @@ export default function Login() {
                 onChange={handleChange}
                 disabled={isLoading}
                 className="w-full h-10 rounded-md border bg-secondary px-10 text-sm"
+                placeholder="Tu contraseña"
               />
               <button
                 type="button"
@@ -129,13 +133,13 @@ export default function Login() {
             disabled={isLoading}
             className="w-full h-10 bg-primary text-white rounded-md font-bold"
           >
-            {isLoading ? "Loading..." : "Sign In"}
+            {isLoading ? "Ingresando..." : "Ingresar"}
           </button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            ¿Aún no tenes una cuenta?{" "}
             <Link to="/register" className="text-primary">
-              Register
+              Registrate
             </Link>
           </p>
 

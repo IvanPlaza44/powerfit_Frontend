@@ -56,7 +56,7 @@ export const Categories = ({ addToFavorites, addToCart }) => {
                   key={product.id}
                   product={product}
                   addToFavorites={addToFavorites}
-                  addToCart={addToCart} // <-- Ahora sí se pasa al Card
+                  addToCart={addToCart}
                 />
               ))}
             </div>

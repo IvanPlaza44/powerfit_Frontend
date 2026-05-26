@@ -6,29 +6,29 @@ const Hero = () => {
   return (
     <div>
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary">
-        <div className="container mx-auto px-4 py-20 md:py-32">
-          <div className="grid items-center gap-12 md:grid-cols-2">
-            <div className="space-y-6">
-              <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+        <div className="container mx-auto px-4 py-20 md:py-15">
+          <div className="grid items-center md:grid-cols-2">
+            <div className="space-y-5">
+              <h1 className="text-7xl font-bold leading-tight tracking-tight md:text-7xl">
                 Potenciá Tu
                 <span className="block text-primary">Entrenamiento</span>
               </h1>
 
               <p className="max-w-md text-lg text-muted-foreground">
                 Equipamiento fitness, suplementos y ropa deportiva de primera calidad 
-                para ayudarte a cumplir tus objetivos. Entrená más fuerte, recuperate más rápido y rendí al máximo.
+                para llevar tu entrenamiento al próximo nivel. Entrená más fuerte, recuperate más rápido y rendí al máximo.
               </p>
 
               <div className="flex flex-wrap gap-4">
                 <Link to="/products">
-                  <button className="gap-2 rounded-md p-2 flex items-center bg-green-200 text-gray-600 transition-transform hover:bg-green-300">
+                  <button className="gap-2 rounded-md p-2 flex items-center bg-primary text-black transition-transform hover:scale-105">
                     Comprar Ahora <ArrowRight className="h-4 w-4" />
                   </button>
                 </Link>
 
                 <Link to="/products?category=equipamiento">
-                  <button className="flex items-center p-2">
-                    Ver Equipamiento
+                  <button className="gap-2 rounded-md p-2 flex items-center transition-transform hover:scale-105">
+                    Ver Equipamiento 
                   </button>
                 </Link>
               </div>

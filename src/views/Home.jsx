@@ -1,49 +1,22 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Hero from "../components/Hero";
+import { Receipt } from "lucide-react";
 
 const Home = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Hero/>
-      <section className="container mx-auto px-6 py-20 text-center">
-        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-wide">
-          Bienvenido a{" "}
-          <span className="text-primary">
-            POWERFIT
-          </span>
-        </h1>
-
-        <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Todo lo que necesitás para llevar tu entrenamiento al próximo nivel.
-          Encontrá suplementos, indumentaria deportiva y equipamiento fitness
-          pensado para acompañarte en cada rutina.
-        </p>
-
-        <div className="mt-8 flex justify-center gap-4">
-          <Link
-            to="/products"
-            className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-bold hover:scale-105 transition-all"
-          >
-            Ver productos
-          </Link>
-
-          <Link
-            to="/register"
-            className="border border-border px-6 py-3 rounded-lg font-bold hover:border-primary transition-all"
-          >
-            Crear cuenta
-          </Link>
-        </div>
-      </section>
 
       <section className="container mx-auto px-6 py-10">
         <h2 className="text-3xl font-bold text-center mb-10">
-          ¿Qué podés encontrar?
+          Conoce nuestras categorias
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
           <div className="bg-card border border-border rounded-xl p-6 hover:scale-105 transition-all">
             <h3 className="text-xl font-bold text-primary">
               Suplementos
@@ -74,15 +47,27 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="container mx-auto px-6 py-20 text-center">
+      <section className="container mx-auto px-6 pt-15 text-center">
         <h2 className="text-4xl font-bold">
           Entrená fuerte. Equipate mejor.
         </h2>
 
         <p className="mt-4 text-muted-foreground">
-          POWERFIT te acompaña en cada objetivo.
+          <span className="text-2xl font-bold tracking-tight">
+          POWER<span className="text-primary">FIT</span>
+        </span> te acompaña en cada objetivo.
         </p>
       </section>
+      <div className="flex flex-wrap p-6 justify-center">
+        <Link to="/switch-seller">
+        <button className="gap-2 rounded-md p-2 flex items-center bg-primary text-black transition-transform hover:scale-105">
+          <Receipt/>
+          Quiero convertierme en vendedor
+          <Receipt/>
+        </button>
+      </Link>
+      </div>
+      
     </div>
   );
 };
