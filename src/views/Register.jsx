@@ -6,7 +6,6 @@ export default function Register() {
   // HOOKS
   const navigate = useNavigate();
 
-  // STATES
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +20,8 @@ export default function Register() {
     role: "BUYER" // Inicializamos el estado en BUYER por defecto
   });
 
-  // URL BACKEND
   const URL = "http://localhost:4002/auth";
 
-  // HANDLERS
   const handleChange = (event) => {
     let { name, value } = event.target;
     setFormData({ ...formData, [name]: value });

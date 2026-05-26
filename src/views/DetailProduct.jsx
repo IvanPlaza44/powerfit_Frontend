@@ -27,12 +27,11 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
       const res = await fetch(
         `http://localhost:4002/cart/${userId}/products`,
         {
-          method: "POST", // POST válido
+          method: "POST", 
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          // 2. Le mandamos el cuerpo (Body) con el formato que espera CartProductRequest en Java
           
           body: JSON.stringify({
             productId: product.id,

@@ -8,7 +8,6 @@ export default function SellerDashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 1. Extraer el ID del Vendedor desde el Token al cargar la pantalla
   useEffect(() => {
     if (token) {
       try {
@@ -18,8 +17,6 @@ export default function SellerDashboard() {
         
         console.log("Payload completo del token en Dashboard:", payload);
         
-        // 🚀 Buscamos el ID del usuario en el token. 
-        // Si notas que no filtra, mirá la consola de F12 para ver si tus compañeros lo llamaron 'userId' o 'user_id' en vez de 'id'
         const sellerId = payload.id || payload.userId || payload.user_id;
         setCurrentSellerId(sellerId);
       } catch (error) {
@@ -28,18 +25,15 @@ export default function SellerDashboard() {
     }
   }, [token]);
 
-  // 2. Cargar los productos y filtrar por seller_id
   useEffect(() => {
-    if (!currentSellerId) return; // Esperamos a tener el ID del vendedor para filtrar
+    if (!currentSellerId) return; 
 
     fetch("http://localhost:4002/products")
       .then((res) => res.json())
       .then((data) => {
         const allProducts = data.content || [];
         
-        // 🚀 FILTRO MÁGICO: Solo dejamos los productos que pertenecen al vendedor logueado
         const filtered = allProducts.filter((p) => {
-          // Buscamos cómo viene el seller_id en la entidad de Java. Puede ser p.sellerId, p.seller_id o p.seller.id
           const productSellerId = p.seller?.id || p.sellerId || p.seller_id;
           return Number(productSellerId) === Number(currentSellerId);
         });
@@ -47,9 +41,8 @@ export default function SellerDashboard() {
         setMyProducts(filtered);
       })
       .catch((err) => console.error("Error al cargar productos:", err));
-  }, [currentSellerId]); // Se vuelve a ejecutar cuando descubrimos el currentSellerId
+  }, [currentSellerId]); 
 
-  // 3. Eliminar Producto
   const handleDelete = async (id) => {
     if (!window.confirm("¿Estás seguro de que querés eliminar este producto?")) return;
 
@@ -70,7 +63,6 @@ export default function SellerDashboard() {
     }
   };
 
-  // 4. Seleccionar producto para editar
   const startEdit = (product) => {
     setEditingProduct(product);
     setFormData({
@@ -81,7 +73,6 @@ export default function SellerDashboard() {
     });
   };
 
-  // 5. Guardar Cambios (Update)
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -96,7 +87,7 @@ export default function SellerDashboard() {
 
       if (res.ok) {
         const updatedProduct = await res.json();
-        alert("¡Producto actualizado exitosamente! 🔄");
+        alert("¡Producto actualizado exitosamente!");
         
         setMyProducts(myProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
         setEditingProduct(null);
@@ -110,7 +101,7 @@ export default function SellerDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black uppercase text-foreground mb-6">Mis Productos Publicados 📦</h1>
+      <h1 className="text-3xl font-black uppercase text-foreground mb-6">Mis productos pblicados </h1>
 
       {editingProduct && (
         <div className="mb-8 p-6 border border-border bg-card rounded-xl max-w-lg">
@@ -126,7 +117,7 @@ export default function SellerDashboard() {
             />
             <textarea
               className="p-2 border border-border bg-background rounded"
-              placeholder="Descripción"
+              placeholder="Descripcion"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
@@ -195,7 +186,7 @@ export default function SellerDashboard() {
             ) : (
               <tr>
                 <td colSpan="5" className="p-8 text-center text-muted-foreground font-medium">
-                  Aún no tenés productos publicados.
+                  Aun no tenés productos publicados.
                 </td>
               </tr>
             )}
