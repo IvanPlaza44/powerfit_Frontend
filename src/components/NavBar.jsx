@@ -20,12 +20,12 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
-      <nav className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
+      <nav className="container mx-auto px-4 ">
+        <div className="flex h-16 items-center justify-between gap-4 ">
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
-            <img src="Logo.png" alt="Logo" />
+            <img src="Logo2.png" alt="Logo2" />
           </Link>
 
           {/* Desktop Navigation */}
