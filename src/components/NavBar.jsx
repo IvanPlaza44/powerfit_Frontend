@@ -1,15 +1,30 @@
 import React, { useState } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
+  const navigate = useNavigate() 
+
+  const isLogged = user || localStorage.getItem("token");
+
   const handleSearch = (e) => {
     e.preventDefault()
-    if (onSearch) onSearch(searchQuery)
+    
+
+    if (onSearch) {
+      onSearch(searchQuery)
+    }
+
+  
+    if (searchQuery.trim() !== "") {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`)
+    } else {
+      navigate('/products') 
+    }
   }
 
   const categories = [
@@ -20,15 +35,14 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
-      <nav className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
+      <nav className="container mx-auto px-4 ">
+        <div className="flex h-16 items-center justify-between gap-4 ">
           
-          {/* Logo */}
+    
           <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
-            <img src="Logo.png" alt="Logo" />
+            <img src="Logo.png" alt="Logo2" />
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
             <Link to="/products" className={"text-sm font-medium transition-colors hover:text-primary"}>
               Todos los productos
@@ -40,7 +54,6 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
               <button 
-                variant="ghost"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={"text-sm font-medium transition-colors hover:text-primary flex items-center"}
               >
@@ -68,7 +81,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
                 placeholder="Search products..."
@@ -101,16 +114,24 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
 
             {/* Auth / User Menu */}
             <div className="flex items-center border-l pl-2 ml-2">
-              {user ? (
+              {isLogged ? (
                 <button 
-                  onClick={logout}
-                  className="flex items-center gap-2 rounded-md p-2 text-red-500 hover:bg-red-50"
+                  onClick={() => {
+                    if (logout) {
+                      logout();
+                    } else {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }}
+                  className="flex items-center gap-1 rounded-md p-2 text-red-500 hover:bg-red-50/10 transition-colors"
                   title="Cerrar sesión"
                 >
                   <LogOut className="h-5 w-5" />
+                  <span className="text-xs font-medium text-neutral-400">Log Out</span>
                 </button>
               ) : (
-                <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
+                <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100" title="Iniciar sesión">
                   <User className="h-5 w-5" />
                 </Link>
               )}

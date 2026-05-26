@@ -10,7 +10,7 @@ const Products = ({ addToFavorites, addToCart }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState("");
   const currentCategory = searchParams.get("category");
-  const currentSearch = searchParams.get("search"); // 1. Capturamos lo que viene de la barra de búsqueda
+  const currentSearch = searchParams.get("search"); 
 
   const categoryImages = {
     indumentaria:
@@ -92,7 +92,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
-    : "https://images.unsplash.com/photo-1517834483737-3015b90bb58e?q=80&w=1000&auto=format&fit=crop";
+    : "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1000&auto=format&fit=crop";
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -108,7 +108,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
-            {currentSearch ? `Resultados para: "${currentSearch}"` : (currentCategory || "Todos los productos")}
+            {currentSearch ? `${currentSearch}` : (currentCategory || "Todos los productos")}
           </h1>
         </div>
 
