@@ -59,7 +59,15 @@ export default function Register() {
     .then(({ isOk, data }) => {
       if (isOk) {
         console.log("Registro exitoso:", data);
-        navigate("/home");
+        
+        // 1. Guardamos el token en el LocalStorage para que el carrito y favoritos funcionen
+        if (data.access_token) {
+          localStorage.setItem("token", data.access_token);
+        }
+
+        alert("¡Registro exitoso! Bienvenido a POWERFIT.");
+        
+        window.location.href = "/";
       } else {
         alert(data.message || "Error en el registro de credenciales");
       }

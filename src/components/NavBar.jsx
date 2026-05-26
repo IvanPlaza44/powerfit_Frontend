@@ -1,15 +1,31 @@
 import React, { useState } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut } from "lucide-react"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
+  const navigate = useNavigate() // 👈 Inicializamos el navegador de React Router
+
+  // Evaluamos si el usuario viene por propiedad o si ya existe un token en la sesión local
+  const isLogged = user || localStorage.getItem("token");
+
   const handleSearch = (e) => {
     e.preventDefault()
-    if (onSearch) onSearch(searchQuery)
+    
+    // Si la propiedad onSearch existe (viejo método), la llamamos por compatibilidad
+    if (onSearch) {
+      onSearch(searchQuery)
+    }
+
+    // 🚀 Redirección inteligente: lleva al usuario a la lista de productos con el filtro puesto
+    if (searchQuery.trim() !== "") {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`)
+    } else {
+      navigate('/products') // Si busca en blanco, muestra todo
+    }
   }
 
   const categories = [
@@ -40,7 +56,6 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
               <button 
-                variant="ghost"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={"text-sm font-medium transition-colors hover:text-primary flex items-center"}
               >
@@ -101,16 +116,24 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
 
             {/* Auth / User Menu */}
             <div className="flex items-center border-l pl-2 ml-2">
-              {user ? (
+              {isLogged ? (
                 <button 
-                  onClick={logout}
-                  className="flex items-center gap-2 rounded-md p-2 text-red-500 hover:bg-red-50"
+                  onClick={() => {
+                    if (logout) {
+                      logout();
+                    } else {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }}
+                  className="flex items-center gap-1 rounded-md p-2 text-red-500 hover:bg-red-50/10 transition-colors"
                   title="Cerrar sesión"
                 >
                   <LogOut className="h-5 w-5" />
+                  <span className="text-xs font-medium text-neutral-400">Log Out</span>
                 </button>
               ) : (
-                <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100">
+                <Link to="/login" className="rounded-md p-2 text-gray-600 hover:bg-gray-100" title="Iniciar sesión">
                   <User className="h-5 w-5" />
                 </Link>
               )}

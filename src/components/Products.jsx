@@ -8,11 +8,9 @@ const Products = ({ addToFavorites, addToCart }) => {
   const [searchParams] = useSearchParams();
 
   const [showFilters, setShowFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState("");
-
+  const [sortOrder, setSortOrder] = useState("");
   const currentCategory = searchParams.get("category");
-  console.log(currentCategory);
-  
+  const currentSearch = searchParams.get("search"); // 1. Capturamos lo que viene de la barra de búsqueda
 
   const categoryImages = {
     indumentaria:
@@ -26,55 +24,76 @@ const Products = ({ addToFavorites, addToCart }) => {
   };
 
   useEffect(() => {
+      fetch("http://localhost:4002/products")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Producto Muestra:", data.content[0]);
+          let filtered = data.content;
 
-    fetch("http://localhost:4002/products")
-      .then((res) => res.json())
-      .then((data) => {
+          // 2. Filtro por Categorías
+          if (currentCategory) {
+            filtered = filtered.filter((p) => {
+              const productCat = p.category?.description ? String(p.category.description).toLowerCase() : "";
+              const searchCat = currentCategory ? String(currentCategory).toLowerCase() : "";
+              
+              return productCat.includes(searchCat) || searchCat.includes(productCat);
+            });
+          }
 
-        // Spring devuelve Page<Product>
-        let filteredProducts = data.content;
+          //  3. NUEVO: Filtro por la barra de búsqueda del NavBar
+          if (currentSearch) {
+            const query = currentSearch.toLowerCase();
+            filtered = filtered.filter((p) => {
+              const name = p.name ? p.name.toLowerCase() : "";
+              const description = p.description ? p.description.toLowerCase() : "";
+              // Busca si el término coincide en el nombre O en la descripción del producto
+              return name.includes(query) || description.includes(query);
+            });
+          }
 
-        // filtro por categoría
-        if (currentCategory) {
-          filteredProducts = filteredProducts.filter(
-            (product) =>
-              product.category?.description?.toLowerCase() ===
-              currentCategory.toLowerCase()
-          );
-        }
+          // Ordenar por precio
+      if (sortOrder === "asc") {
+        filtered = [...filtered].sort((a, b) => {
 
-        // filtro por precio
-        if (priceFilter === "low") {
-          filteredProducts = filteredProducts.filter(
-            (product) => product.price < 10000
-          );
-        }
+          const finalPriceA =
+            a.discount > 0
+              ? a.price - (a.price * a.discount) / 100
+              : a.price;
 
-        if (priceFilter === "medium") {
-          filteredProducts = filteredProducts.filter(
-            (product) =>
-              product.price >= 10000 &&
-              product.price <= 20000
-          );
-        }
+          const finalPriceB =
+            b.discount > 0
+              ? b.price - (b.price * b.discount) / 100
+              : b.price;
 
-        if (priceFilter === "high") {
-          filteredProducts = filteredProducts.filter(
-            (product) => product.price > 20000
-          );
-        }
+          return finalPriceA - finalPriceB;
+        });
+      }
 
-        setProducts(filteredProducts);
-      })
-      .catch((error) =>
-        console.error("Error cargando productos:", error)
-      );
+      if (sortOrder === "desc") {
+        filtered = [...filtered].sort((a, b) => {
 
-  }, [currentCategory, priceFilter]);
+          const finalPriceA =
+            a.discount > 0
+              ? a.price - (a.price * a.discount) / 100
+              : a.price;
+
+          const finalPriceB =
+            b.discount > 0
+              ? b.price - (b.price * b.discount) / 100
+              : b.price;
+
+          return finalPriceB - finalPriceA;
+        });
+      }
+
+          setProducts(filtered);
+        })
+        .catch(() => setProducts([]));
+    }, [currentCategory, currentSearch, sortOrder]);
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
-    : "https://images.unsplash.com/photo-1517838483737-3015b90bb58e?q=80&w=1000&auto=format&fit=crop";
+    : "https://images.unsplash.com/photo-1517834483737-3015b90bb58e?q=80&w=1000&auto=format&fit=crop";
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -90,7 +109,8 @@ const Products = ({ addToFavorites, addToCart }) => {
 
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
-            {currentCategory || "Todos los productos"}
+            {/* Si está buscando algo, mostramos qué está buscando en el título principal */}
+            {currentSearch ? `Resultados para: "${currentSearch}"` : (currentCategory || "Todos los productos")}
           </h1>
         </div>
 
@@ -104,7 +124,7 @@ const Products = ({ addToFavorites, addToCart }) => {
           }
           className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
         >
-          Filtrar
+          Ordenar
         </button>
       </div>
 
@@ -113,31 +133,27 @@ const Products = ({ addToFavorites, addToCart }) => {
         <div className="mb-6 border border-border p-4 rounded-xl bg-card">
 
           <label className="block mb-2 font-semibold">
-            Filtrar por precio
+            Ordenar por precio
           </label>
 
           <select
-            value={priceFilter}
+            value={sortOrder}
             onChange={(e) =>
-              setPriceFilter(e.target.value)
+              setSortOrder(e.target.value)
             }
             className="w-full p-2 rounded bg-background border border-border"
           >
 
             <option value="">
-              Todos los precios
+              Sin ordenar
             </option>
 
-            <option value="low">
-              Menos de $10.000
+            <option value="asc">
+              Menor a mayor
             </option>
 
-            <option value="medium">
-              Entre $10.000 y $20.000
-            </option>
-
-            <option value="high">
-              Más de $20.000
+            <option value="desc">
+              Mayor a menor
             </option>
 
           </select>

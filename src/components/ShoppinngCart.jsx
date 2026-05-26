@@ -1,157 +1,139 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-export const ShoppinngCart = ({
-  cart = [],
-  removeFromCart,
-  increaseQuantity,
-  decreaseQuantity
-}) => {
+export const ShoppinngCart = () => {
+  const [cart, setCart] = useState([]);
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  //TRAER CARRITO
+  const loadCart = async () => {
+    const res = await fetch(
+      `http://localhost:4002/cart/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    console.log("CART BACKEND =>", data);
+
+    setCart(data);
+  };
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  // SUMAR
+  const increase = async (product) => {
+    await fetch(
+      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity + 1}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    loadCart();
+  };
+
+  // RESTAR
+  const decrease = async (product) => {
+    if (product.quantity <= 1) return;
+
+    await fetch(
+      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity - 1}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    loadCart();
+  };
+
+  // ELIMINAR
+  const remove = async (productId) => {
+    await fetch(
+      `http://localhost:4002/cart/${userId}/products/${productId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    loadCart();
+  };
 
   const total = cart.reduce(
-    (acc, product) =>
-      acc + product.price * product.quantity,
+    (acc, p) => acc + p.price * p.quantity,
     0
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="p-6">
 
       <h1 className="text-2xl font-bold mb-6">
-        Carrito de compras
+        Carrito
       </h1>
 
       {cart.length === 0 ? (
-
-        <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-muted-foreground">
-
-          <p className="text-lg font-medium">
-            No hay productos en el carrito.
-          </p>
-
-          <p className="mt-2 text-sm text-muted-foreground">
-            Agrega productos desde la sección de productos para verlos aquí.
-          </p>
-
-          <Link
-            to="/products"
-            className="mt-4 inline-flex rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/95 transition-colors"
-          >
-            Ir a productos
-          </Link>
-
-        </div>
-
+        <p>No hay productos en el carrito</p>
       ) : (
+        cart.map((p) => (
+          <div
+            key={p.id}
+            className="flex justify-between items-center border p-4 mb-3"
+          >
+            {/* INFO PRODUCTO */}
+            <div>
+              <h2>{p.name}</h2>
+              <p>${p.price}</p>
+            </div>
 
-        <>
-          <div className="space-y-4">
+            {/* CONTROLES */}
+            <div className="flex items-center gap-3">
 
-            {cart.map((product) => (
+              <button onClick={() => decrease(p)}>
+                -
+              </button>
 
-              <div
-                key={product.id}
-                className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 md:flex-row md:items-center md:justify-between"
-              >
+              <span>{p.quantity}</span>
 
-                <div className="flex items-center gap-4">
-
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-24 w-24 rounded-xl object-contain"
-                  />
-
-                  <div>
-
-                    <h2 className="text-lg font-semibold text-foreground">
-                      {product.name}
-                    </h2>
-
-                    <p className="text-sm text-muted-foreground">
-                      {product.category?.description || "Sin categoría"}
-                    </p>
-
-                    <p className="mt-2 text-base font-bold text-foreground">
-                      ${product.price}
-                    </p>
-
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-
-                  {/* Cantidad */}
-                  <div className="flex items-center gap-3 border border-border rounded-lg px-3 py-2">
-
-                    <button
-                      onClick={() =>
-                        decreaseQuantity(product.id)
-                      }
-                      className="text-lg font-bold"
-                    >
-                      -
-                    </button>
-
-                    <span className="font-semibold">
-                      {product.quantity}
-                    </span>
-
-                    <button
-                      onClick={() =>
-                        increaseQuantity(product.id)
-                      }
-                      className="text-lg font-bold"
-                    >
-                      +
-                    </button>
-
-                  </div>
-
-                  {/* Subtotal */}
-                  <p className="font-bold text-lg">
-                    $
-                    {product.price *
-                      product.quantity}
-                  </p>
-
-                  {/* Remover */}
-                  <button
-                    onClick={() =>
-                      removeFromCart(product.id)
-                    }
-                    className="rounded-md border border-border bg-secondary px-4 py-2 text-sm font-semibold text-foreground hover:bg-foreground/5 transition-colors"
-                  >
-                    Remover
-                  </button>
-
-                </div>
-
-              </div>
-            ))}
-          </div>
-
-          {/* TOTAL */}
-          <div className="mt-8 flex justify-end">
-
-            <div className="rounded-2xl border border-border bg-card p-6 w-full max-w-sm">
-
-              <h2 className="text-xl font-bold mb-4">
-                Resumen
-              </h2>
-
-              <div className="flex items-center justify-between text-lg font-semibold">
-
-                <span>Total:</span>
-
-                <span>${total}</span>
-
-              </div>
+              <button onClick={() => increase(p)}>
+                +
+              </button>
 
             </div>
+
+            {/* SUBTOTAL */}
+            <div className="flex items-center gap-4">
+              <p>
+                ${p.price * p.quantity}
+              </p>
+
+              <button onClick={() => remove(p.id)}>
+                ❌
+              </button>
+            </div>
+
           </div>
-        </>
+        ))
       )}
+
+      <h2 className="mt-6 text-xl font-bold">
+        Total: ${total}
+      </h2>
     </div>
   );
 };

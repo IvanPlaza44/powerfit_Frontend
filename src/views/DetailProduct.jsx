@@ -1,51 +1,74 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const DetailProduct = ({
-  addToFavorites,
-  addToCart,
-}) => {
-
+const DetailProduct = ({ addToCart, addToFavorites }) => {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-
     fetch(`http://localhost:4002/products/${id}`)
       .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
-      })
-      .catch((error) =>
-        console.error(error)
+      .then((data) => setProduct(data))
+      .catch((error) => console.error(error));
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (!token || !userId) {
+      alert("Tenés que iniciar sesión");
+      return;
+    }
+
+    try {
+      // 1. Apuntamos a la URL correcta de POST (sin el ID del producto al final)
+      const res = await fetch(
+        `http://localhost:4002/cart/${userId}/products`,
+        {
+          method: "POST", // POST válido
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          // 2. Le mandamos el cuerpo (Body) con el formato que espera CartProductRequest en Java
+          
+          body: JSON.stringify({
+            productId: product.id,
+            quantity: 1
+          }),
+        }
       );
 
-  }, [id]);
+      if (!res.ok) {
+        alert("No se pudo agregar al carrito. Verifica tu sesión.");
+        return;
+      }
+
+      alert("¡Agregado al carrito con éxito! 🛒");
+    } catch (error) {
+      console.error("Error en la petición del carrito:", error);
+      alert("Hubo un error de red al intentar agregar al carrito");
+    }
+  };
 
   if (!product) {
     return (
       <div className="flex items-center justify-center py-20">
-        <h1 className="text-2xl font-bold">
-          Cargando producto...
-        </h1>
+        <h1 className="text-2xl font-bold">Cargando producto...</h1>
       </div>
     );
   }
 
-  const hasDiscount =
-    product.discount && product.discount > 0;
+  const hasDiscount = product.discount && product.discount > 0;
 
   const originalPrice = hasDiscount
-    ? (
-        product.price /
-        (1 - product.discount / 100)
-      ).toFixed(0)
+    ? (product.price / (1 - product.discount / 100)).toFixed(0)
     : null;
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
-
       <div className="grid gap-10 lg:grid-cols-2">
 
         <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
@@ -103,24 +126,21 @@ const DetailProduct = ({
           <div className="mt-10 flex gap-4">
 
             <button
-              onClick={() =>
-                addToCart(product)
-              }
+              onClick={handleAddToCart}
               className="flex-1 rounded-xl bg-primary px-6 py-4 text-sm font-bold text-primary-foreground"
             >
               Añadir al carrito
             </button>
 
             <button
-              onClick={() =>
-                addToFavorites(product)
-              }
+              onClick={() => addToFavorites?.(product)}
               className="rounded-xl border border-border bg-secondary px-6 py-4 text-xl"
             >
               ❤️
             </button>
 
           </div>
+
         </div>
       </div>
     </div>
