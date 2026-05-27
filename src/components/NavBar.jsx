@@ -118,7 +118,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground cursor-pointer" />
               <input
                 type="search"
-                placeholder={isSeller ? "Buscar en mis productos..." : "Search products..."}
+                placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary"
@@ -194,7 +194,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="search"
-                  placeholder={isSeller ? "Buscar en mis productos..." : "Search products..."}
+                  placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-md border-0 bg-gray-100 py-2 pl-10 pr-4 text-sm"
