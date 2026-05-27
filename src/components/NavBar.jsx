@@ -118,7 +118,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground cursor-pointer" />
               <input
                 type="search"
-                placeholder={isSeller ? "Buscar en mis productos..." : "Search products..."}
+                placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary"
@@ -140,7 +140,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                   <Heart className="h-5 w-5" />
                 </Link>
 
-                <Link to="/cart_list" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
+                <Link to="/cart" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
                   <ShoppingCart className="h-5 w-5" />
                   {cartCount > 0 && (
                     <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
@@ -194,7 +194,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   type="search"
-                  placeholder={isSeller ? "Buscar en mis productos..." : "Search products..."}
+                  placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-md border-0 bg-gray-100 py-2 pl-10 pr-4 text-sm"
