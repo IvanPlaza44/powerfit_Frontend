@@ -9,41 +9,47 @@ const Card = ({ product, addToFavorites }) => {
 
 
     const handleAddToCart = async () => {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
-        if (!token || !userId || userId === "undefined") {
-          alert("Tenés que iniciar sesión");
-          return;
-        }
+  // Validación extra por si las dudas el userId quedó como string "undefined"
+  if (!token || !userId || userId === "undefined") {
+    alert("Tenés que iniciar sesión");
+    return;
+  }
 
-        try {
-          const res = await fetch(
-            `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=1`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+  try {
+    // Usamos la misma ruta y método POST que sí funciona en DetailProduct
+    const res = await fetch(
+      `http://localhost:4002/cart/${userId}/products`,
+      {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1
+        }),
+      }
+    );
 
-          const data = await res.text();
+    const data = await res.json();
 
-          if (!res.ok) {
-            console.log("ERROR BACK:", data);
-            alert(data);
-            return;
-          }
+    console.log("RESPUESTA ADD CART (CARD) =>", data);
+    
+    if (!res.ok) {
+      alert("No se pudo agregar al carrito. Verifica tu sesión.");
+      return;
+    }
 
-          alert("Agregado al carrito");
-        } catch (err) {
-          console.error("Error de red:", err);
-          alert("Error de conexión con el servidor");
-        }
-      };
-
+    alert("¡Agregado al carrito con éxito!");
+  } catch (error) {
+    console.error("Error en la petición del carrito desde Card:", error);
+    alert("Hubo un error de red al intentar agregar al carrito");
+  }
+};
     return (
     <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 relative">
 

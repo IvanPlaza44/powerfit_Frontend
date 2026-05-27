@@ -47,7 +47,7 @@ const SwitchSeller = () => {
 
         alert("¡Felicitaciones! Ahora sos vendedor oficial de POWERFIT 🎉");
         
-        navigate("/my-products"); 
+        navigate("/login"); 
       } else {
         alert("Hubo un problema al procesar tu solicitud. Intentá nuevamente.");
       }

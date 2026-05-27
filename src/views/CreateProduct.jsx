@@ -87,7 +87,7 @@ export default function CreateProduct() {
 
       if (res.ok) {
         alert("¡Producto publicado con éxito!");
-        navigate("/products"); 
+        navigate("/my-products"); 
       } else {
         const errorData = await res.json().catch(() => ({}));
         alert(`Error al publicar en backend: ${errorData.message || "Verificá tu rol de vendedor"}`);

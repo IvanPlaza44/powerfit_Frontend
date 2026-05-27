@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom"; // <-- Agregado useNavigate
+import { Link, useNavigate } from "react-router-dom"; 
 
 export default function Register() {
   // HOOKS
-  const navigate = useNavigate(); // <-- Inicializado para poder redireccionar
+  const navigate = useNavigate(); 
 
   // STATES
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // <-- Agregado el estado que faltaba
+  const [isLoading, setIsLoading] = useState(false); 
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -20,10 +20,10 @@ export default function Register() {
     confirmPassword: "" 
   });
 
-  // URL BACKEND
+
   const URL = "http://localhost:4002/auth";
 
-  // HANDLERS
+
   const handleChange = (event) => {
     let { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -32,7 +32,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validación básica antes de enviar al back
+
     if (formData.password !== formData.confirmPassword) {
       alert("Las contraseñas no coinciden.");
       return;
@@ -60,14 +60,13 @@ export default function Register() {
       if (isOk) {
         console.log("Registro exitoso:", data);
         
-        // 1. Guardamos el token en el LocalStorage para que el carrito y favoritos funcionen
         if (data.access_token) {
           localStorage.setItem("token", data.access_token);
         }
 
         alert("¡Registro exitoso! Bienvenido a POWERFIT.");
         
-        window.location.href = "/";
+        window.location.href = "/login";
       } else {
         alert(data.message || "Error en el registro de credenciales");
       }
