@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export const ShoppinngCart = () => {
   const [cart, setCart] = useState([]);
@@ -146,6 +147,16 @@ export const ShoppinngCart = () => {
       <h2 className="mt-6 text-xl font-bold">
         Total: ${total}
       </h2>
+      <div className="mt-8 flex justify-end">
+
+      <Link
+        to="/checkout"
+        className="rounded-xl bg-primary px-8 py-4 text-sm font-bold text-primary-foreground transition hover:scale-105"
+      >
+        Finalizar compra
+      </Link>
+
+    </div>
     </div>
   );
 };

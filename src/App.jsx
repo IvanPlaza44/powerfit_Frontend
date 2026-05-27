@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import { ShoppinngCart } from "./components/ShoppinngCart";
 import Contact from "./views/Contact";
 import CreateProduct from "./views/CreateProduct";
+import Checkout from "./views/Checkout";
 
 function App() {
   const [favorites, setFavorites] = useState([]);
@@ -69,6 +70,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/create-product" element={<CreateProduct />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
 
       <Footer />
