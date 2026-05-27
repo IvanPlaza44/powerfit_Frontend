@@ -226,9 +226,9 @@ export default function CreateProduct() {
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary transition-all cursor-pointer"
               >
                 <option value="" className="bg-card">Seleccionar</option>
-                <option value="1" className="bg-card">1 - Indumentaria</option>
-                <option value="2" className="bg-card">2 - Suplementos</option>
-                <option value="3" className="bg-card">3 - Equipamiento</option>
+                <option value="1" className="bg-card">Equipamiento</option>
+                <option value="2" className="bg-card">Suplementos</option>
+                <option value="3" className="bg-card">Indumentaria</option>
               </select>
             </div>
           </div>
