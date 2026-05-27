@@ -41,6 +41,10 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
         }
       );
 
+      const data = await res.json();
+
+      console.log("RESPUESTA ADD CART =>", data);
+      
       if (!res.ok) {
         alert("No se pudo agregar al carrito. Verifica tu sesión.");
         return;

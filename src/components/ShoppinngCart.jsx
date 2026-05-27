@@ -102,19 +102,28 @@ export const ShoppinngCart = () => {
             </div>
 
             {/* CONTROLES */}
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
 
-              <button onClick={() => decrease(p)}>
-                -
-              </button>
+            <button
+              onClick={() => decrease(p)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-lg font-bold text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50"
+              disabled={p.quantity <= 1}
+            >
+              -
+            </button>
 
-              <span>{p.quantity}</span>
+            <span className="min-w-[30px] text-center text-lg font-bold">
+              {p.quantity}
+            </span>
 
-              <button onClick={() => increase(p)}>
-                +
-              </button>
+            <button
+              onClick={() => increase(p)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-lg font-bold text-foreground transition-all hover:bg-primary hover:text-white"
+            >
+              +
+            </button>
 
-            </div>
+          </div>
 
             {/* SUBTOTAL */}
             <div className="flex items-center gap-4">
@@ -122,8 +131,12 @@ export const ShoppinngCart = () => {
                 ${p.product.price * p.quantity}
               </p>
 
-            <button onClick={() => remove(p.product.id)}>                ❌
-              </button>
+            <button
+              onClick={() => remove(p.product.id)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-500/30 bg-red-500/10 text-sm transition-all hover:bg-red-500 hover:text-white"
+            >
+              ✕
+            </button>
             </div>
 
           </div>
