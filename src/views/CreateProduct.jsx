@@ -44,7 +44,7 @@ export default function CreateProduct() {
       });
 
       if (res.ok) {
-        alert("¡Producto publicado con éxito! 🚀");
+        alert("¡Producto publicado con éxito! ");
         navigate("/products"); // Redirige al catálogo
       } else {
         const errorData = await res.json().catch(() => ({}));
