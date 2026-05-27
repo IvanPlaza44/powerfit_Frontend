@@ -40,7 +40,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
         <div className="flex h-16 items-center justify-between gap-4 ">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
+          <Link to="/" className="flex items-center gap-2 size-24 transition-transform duration-300 hover:scale-110">
             <img src="Logo2.png" alt="Logo2" />
           </Link>
 

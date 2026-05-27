@@ -30,8 +30,8 @@ export const ShoppinngCart = () => {
 
   // SUMAR
   const increase = async (product) => {
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity + 1}`,
+  await fetch(
+    `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity + 1}`,
       {
         method: "PUT",
         headers: {
@@ -45,10 +45,10 @@ export const ShoppinngCart = () => {
 
   // RESTAR
   const decrease = async (product) => {
-    if (product.quantity <= 1) return;
+      if (product.quantity <= 1) return;
 
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.id}?quantity=${product.quantity - 1}`,
+  await fetch(
+    `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity - 1}`,
       {
         method: "PUT",
         headers: {
@@ -75,10 +75,10 @@ export const ShoppinngCart = () => {
     loadCart();
   };
 
-  const total = cart.reduce(
-    (acc, p) => acc + p.price * p.quantity,
-    0
-  );
+    const total = cart.reduce(
+      (acc, p) => acc + p.product.price * p.quantity,
+      0
+    );
 
   return (
     <div className="p-6">
@@ -97,8 +97,8 @@ export const ShoppinngCart = () => {
           >
             {/* INFO PRODUCTO */}
             <div>
-              <h2>{p.name}</h2>
-              <p>${p.price}</p>
+              <h2>{p.product.name}</h2>
+              <p>${p.product.price}</p>
             </div>
 
             {/* CONTROLES */}
@@ -119,11 +119,10 @@ export const ShoppinngCart = () => {
             {/* SUBTOTAL */}
             <div className="flex items-center gap-4">
               <p>
-                ${p.price * p.quantity}
+                ${p.product.price * p.quantity}
               </p>
 
-              <button onClick={() => remove(p.id)}>
-                ❌
+            <button onClick={() => remove(p.product.id)}>                ❌
               </button>
             </div>
 
