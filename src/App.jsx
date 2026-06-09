@@ -85,7 +85,6 @@ function App() {
       if (res.ok) {
         const newFavoriteRecord = await res.json();
         setFavorites([...favorites, newFavoriteRecord]);
-        alert("¡Agregado a tus favoritos! ❤️");
       } else {
         alert("Hubo un error en el servidor al agregar a favoritos.");
       }
