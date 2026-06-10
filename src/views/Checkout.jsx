@@ -13,16 +13,6 @@ const Checkout = () => {
     dispatch(setForm({ [e.target.name]: e.target.value }));
   };
 
-  const handleShippingChange = (e) => {
-    const method = e.target.value;
-
-    let cost = 0;
-    if (method === "motorbike") cost = 1500;
-    if (method === "delivery") cost = 2500;
-
-    dispatch(setShipping({ method, cost }));
-  };
-
   const cartTotal = cartItems.reduce(
     (acc, item) =>
       acc + (item.product?.price || 0) * (item.quantity || 1),
@@ -39,11 +29,6 @@ const Checkout = () => {
 
   const handlePurchase = async (e) => {
     e.preventDefault();
-
-    if (!isFormValid) {
-      alert("Completa todos los campos");
-      return;
-    }
 
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
@@ -65,12 +50,9 @@ const Checkout = () => {
         return;
       }
 
-      await res.json();
-
       dispatch(resetCheckout());
 
       alert("Compra realizada con éxito");
-
       navigate("/products");
     } catch (error) {
       console.error(error);
@@ -81,7 +63,7 @@ const Checkout = () => {
   const shippingOptions = [
     { value: "pickup", label: "Retiro en sucursal", cost: 0 },
     { value: "motorbike", label: "Motomensajería", cost: 1500 },
-    { value: "delivery", label: "Envío a domicilio", cost: 2500 }
+    { value: "delivery", label: "Envío a domicilio", cost: 2500 },
   ];
 
   return (
@@ -94,6 +76,7 @@ const Checkout = () => {
         onSubmit={handlePurchase}
         className="space-y-5 rounded-3xl border border-border bg-card p-8 shadow-sm"
       >
+        {/* FORM */}
         <input
           name="fullName"
           placeholder="Nombre completo"
@@ -126,45 +109,51 @@ const Checkout = () => {
           className="w-full rounded-xl border p-4"
         />
 
-        <select
-          value={checkout.shipping.method}
-          onChange={(e) => {
-            const selected = shippingOptions.find(
-              (opt) => opt.value === e.target.value
-            );
+        {/* SHIPPING MEJORADO */}
+        <div className="space-y-3">
+          <label className="text-sm font-bold text-muted-foreground">
+            Método de envío
+          </label>
 
-            dispatch(setShipping({
-              method: selected.value,
-              cost: selected.cost
-            }));
-          }}
-          className="w-full rounded-xl border p-4"
-        >
-          {shippingOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-
-        <div className="p-4 bg-secondary rounded-xl">
-          <p>Subtotal: ${cartTotal}</p>
-          <p>Envío: ${checkout.shipping.cost}</p>
-          <p className="font-bold">
-            Total: ${finalTotal}
-          </p>
+          <div className="grid gap-3">
+            {shippingOptions.map((opt) => (
+              <button
+                type="button"
+                key={opt.value}
+                onClick={() =>
+                  dispatch(
+                    setShipping({
+                      method: opt.value,
+                      cost: opt.cost,
+                    })
+                  )
+                }
+                className={`flex justify-between items-center rounded-xl border p-4 transition ${
+                  checkout.shipping.method === opt.value
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-card"
+                }`}
+              >
+                <span className="font-medium">{opt.label}</span>
+                <span className="font-bold">
+                  ${opt.cost}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-4 rounded-xl border p-4 bg-secondary">
+        <div className="rounded-xl bg-secondary p-4 space-y-1">
           <p>Subtotal: ${cartTotal}</p>
           <p>Envío: ${checkout.shipping.cost}</p>
 
           <hr className="my-2" />
 
-          <p className="font-bold text-lg">
-            Total: ${cartTotal + checkout.shipping.cost}
+          <p className="text-lg font-black">
+            Total: ${finalTotal}
           </p>
         </div>
+
         <button
           disabled={!isFormValid}
           type="submit"
