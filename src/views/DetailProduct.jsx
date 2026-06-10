@@ -2,15 +2,13 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../redux/detailProductSlice";
-import { fetchCart } from "../redux/cartSlice";
+import { addToCart, fetchCart } from "../redux/cartSlice";
 
-const DetailProduct = ({ addToCart, addToFavorites }) => {
-
+const DetailProduct = ({ addToFavorites }) => {
   const { id } = useParams();
-
   const dispatch = useDispatch();
 
-  const { product } = useSelector(
+  const { product, loading } = useSelector(
     (state) => state.detailProduct
   );
 
@@ -19,141 +17,58 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
   }, [dispatch, id]);
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
 
-    if (!token || !userId) {
+    if (!userId || userId === "undefined") {
       alert("Tenés que iniciar sesión");
       return;
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:4002/cart/${userId}/products`,
-        {
-          method: "POST", 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          
-          body: JSON.stringify({
-            productId: product.id,
-            quantity: 1
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      console.log("RESPUESTA ADD CART =>", data);
-      
-      if (!res.ok) {
-        alert("No se pudo agregar al carrito. Verifica tu sesión.");
-        return;
-      }
+      await dispatch(
+        addToCart({
+          userId,
+          productId: product.id,
+        })
+      ).unwrap();
 
       dispatch(fetchCart(userId));
 
       alert("Producto agregado al carrito");
-
-    
-    } catch (error) {
-      console.error("Error en la petición del carrito:", error);
-      alert("Hubo un error de red al intentar agregar al carrito");
+    } catch (err) {
+      console.error(err);
+      alert("Error al agregar al carrito");
     }
   };
 
-  if (!product) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <h1 className="text-2xl font-bold">Cargando producto...</h1>
-      </div>
-    );
-  }
+  if (loading || !product) return <h1>Cargando...</h1>;
 
-  const hasDiscount = product.discount && product.discount > 0;
+  const hasDiscount = product.discount > 0;
 
   const originalPrice = hasDiscount
     ? (product.price / (1 - product.discount / 100)).toFixed(0)
     : null;
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12">
-      <div className="grid gap-10 lg:grid-cols-2">
+    <div className="p-10">
+      <img src={product.image} className="w-80" />
 
-        <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
 
-          <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-secondary">
+      <p className="text-3xl font-black">${product.price}</p>
 
-            {hasDiscount && (
-              <span className="absolute left-5 top-5 z-10 rounded-full bg-red-500 px-3 py-1 text-xs font-extrabold text-white shadow-md">
-                -{product.discount}% OFF
-              </span>
-            )}
+      {hasDiscount && (
+        <p className="line-through">${originalPrice}</p>
+      )}
 
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-full w-full object-contain p-6"
-            />
-          </div>
-        </div>
+      <button onClick={handleAddToCart}>
+        Añadir al carrito
+      </button>
 
-        <div className="flex flex-col justify-center">
-
-          <span className="mb-3 text-xs font-black uppercase tracking-[0.25em] text-primary">
-            {product.category?.description || "General"}
-          </span>
-
-          <h1 className="text-4xl font-black">
-            {product.name}
-          </h1>
-
-          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-            {product.description}
-          </p>
-
-          <div className="mt-8 flex items-center gap-4">
-
-            <span className="text-4xl font-black">
-              ${product.price}
-            </span>
-
-            {hasDiscount && (
-              <span className="text-xl line-through text-muted-foreground">
-                ${originalPrice}
-              </span>
-            )}
-
-          </div>
-
-          <div className="mt-4">
-            <span className="rounded-full bg-green-500/10 px-4 py-2 text-sm font-semibold text-green-500">
-              Stock disponible: {product.stock}
-            </span>
-          </div>
-
-          <div className="mt-10 flex gap-4">
-
-            <button
-              onClick={handleAddToCart}
-              className="flex-1 rounded-xl bg-primary px-6 py-4 text-sm font-bold text-primary-foreground"
-            >
-              Añadir al carrito
-            </button>
-
-            <button
-              onClick={() => addToFavorites?.(product)}
-              className="rounded-xl border border-border bg-secondary px-6 py-4 text-xl"
-            >
-              ❤️
-            </button>
-
-          </div>
-
-        </div>
-      </div>
+      <button onClick={() => addToFavorites?.(product)}>
+        ❤️
+      </button>
     </div>
   );
 };

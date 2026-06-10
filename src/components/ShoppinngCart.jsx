@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart } from "../redux/cartSlice";
+import {
+  fetchCart,
+  updateCartItem,
+  removeFromCart,
+} from "../redux/cartSlice";
 
 export const ShoppinngCart = () => {
   const dispatch = useDispatch();
 
-  const { items: cart, loading: isLoading } = useSelector(
-    (state) => state.cart
-  );
+  const { items: cart, loading } = useSelector((state) => state.cart);
 
-  const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
-
 
   useEffect(() => {
     if (userId) {
@@ -20,48 +20,39 @@ export const ShoppinngCart = () => {
     }
   }, [dispatch, userId]);
 
-  const increase = async (product) => {
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity + 1}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    dispatch(fetchCart(userId));
+  const increase = (p) => {
+    dispatch(
+      updateCartItem({
+        userId,
+        productId: p.product.id,
+        quantity: p.quantity + 1,
+      })
+    ).then(() => dispatch(fetchCart(userId)));
   };
 
-  const decrease = async (product) => {
-    if (product.quantity <= 1) return;
+  const decrease = (p) => {
+    if (p.quantity <= 1) return;
 
-    await fetch(
-      `http://localhost:4002/cart/${userId}/products/${product.product.id}?quantity=${product.quantity - 1}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    dispatch(fetchCart(userId));
+    dispatch(
+      updateCartItem({
+        userId,
+        productId: p.product.id,
+        quantity: p.quantity - 1,
+      })
+    ).then(() => dispatch(fetchCart(userId)));
   };
 
-  const remove = async (productId) => {
-    await fetch(`http://localhost:4002/cart/${userId}/products/${productId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    dispatch(fetchCart(userId));
+  const remove = (productId) => {
+    dispatch(removeFromCart({ userId, productId }))
+      .then(() => dispatch(fetchCart(userId)));
   };
 
-  const total = cart.reduce((acc, p) => acc + p.product.price * p.quantity, 0);
+  const total = cart.reduce(
+    (acc, p) => acc + p.product.price * p.quantity,
+    0
+  );
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <h1 className="text-2xl font-bold">Cargando carrito...</h1>
@@ -71,104 +62,96 @@ export const ShoppinngCart = () => {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-black mb-8 text-foreground tracking-tight">
+      <h1 className="text-3xl font-black mb-8 text-foreground">
         Tu Carrito
       </h1>
 
       {cart.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-sm">
-          <p className="text-muted-foreground mb-6 text-lg">
-            No hay productos en tu carrito todavía.
+        <div className="rounded-2xl border border-border bg-card p-12 text-center">
+          <p className="text-muted-foreground mb-6">
+            No hay productos en tu carrito
           </p>
+
           <Link
             to="/"
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground transition-all hover:opacity-90"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white"
           >
             Explorar productos
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm divide-y divide-border">
+        <>
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
             {cart.map((p) => (
               <div
                 key={p.id}
-                className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-5 first:pt-0 last:pb-0 gap-4"
+                className="flex flex-col sm:flex-row justify-between items-center gap-4"
               >
+                {/* Producto */}
                 <div className="flex items-center gap-4">
-                  {p.product.image && (
-                    <div className="h-16 w-16 min-w-[64px] rounded-xl bg-secondary p-2 flex items-center justify-center overflow-hidden border border-border">
-                      <img
-                        src={p.product.image}
-                        alt={p.product.name}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                  )}
+                  <img
+                    src={p.product.image}
+                    className="h-16 w-16 object-contain bg-secondary rounded-lg p-2"
+                  />
+
                   <div>
-                    <h2 className="font-bold text-foreground line-clamp-1">
-                      {p.product.name}
-                    </h2>
-                    <p className="text-sm text-muted-foreground font-medium mt-0.5">
-                      ${p.product.price.toLocaleString()} c/u
+                    <h2 className="font-bold">{p.product.name}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      ${p.product.price} c/u
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between w-full sm:w-auto gap-8">
-                  <div className="flex items-center gap-2 bg-secondary p-1 rounded-xl border border-border">
-                    <button
-                      onClick={() => decrease(p)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold text-foreground transition-colors hover:bg-background disabled:opacity-30 disabled:hover:bg-transparent"
-                      disabled={p.quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span className="min-w-[28px] text-center font-extrabold text-sm text-foreground">
-                      {p.quantity}
-                    </span>
-                    <button
-                      onClick={() => increase(p)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold text-foreground transition-colors hover:bg-background"
-                    >
-                      +
-                    </button>
-                  </div>
+                {/* Cantidad */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => decrease(p)}
+                    className="h-8 w-8 rounded bg-secondary"
+                  >
+                    -
+                  </button>
 
-                  <div className="flex items-center gap-4 ml-auto sm:ml-0">
-                    <p className="font-black text-lg text-foreground min-w-[80px] text-right">
-                      ${(p.product.price * p.quantity).toLocaleString()}
-                    </p>
-                    <button
-                      onClick={() => remove(p.product.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white"
-                      title="Eliminar producto"
-                    >
-                      ✕
-                    </button>
-                  </div>
+                  <span className="font-bold">{p.quantity}</span>
+
+                  <button
+                    onClick={() => increase(p)}
+                    className="h-8 w-8 rounded bg-secondary"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Total + delete */}
+                <div className="flex items-center gap-4">
+                  <p className="font-black">
+                    ${p.product.price * p.quantity}
+                  </p>
+
+                  <button
+                    onClick={() => remove(p.product.id)}
+                    className="text-red-500 font-bold"
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground font-medium">
-                Total estimado
-              </p>
-              <h2 className="text-3xl font-black text-foreground mt-0.5">
-                ${total.toLocaleString()}
-              </h2>
-            </div>
+          {/* TOTAL */}
+          <div className="mt-6 flex justify-between items-center">
+            <h2 className="text-2xl font-black">
+              Total: ${total}
+            </h2>
+
             <Link
               to="/checkout"
-              className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-[0.98]"
+              className="bg-primary text-white px-6 py-3 rounded-xl font-bold"
             >
               Finalizar compra
             </Link>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
