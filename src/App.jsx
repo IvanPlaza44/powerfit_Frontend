@@ -17,7 +17,6 @@ import Checkout from "./views/Checkout";
 import SellerDashboard from "./views/SellerDashboard";
 import SwitchSeller from "./views/SwitchSeller";
 import MyProducts from "./views/MyProducts";
-
 import { fetchCart } from "./redux/cartSlice";
 
 function App() {
