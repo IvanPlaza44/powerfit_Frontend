@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
 import { useDispatch, useSelector } from "react-redux"; 
 import { addFavoriteAsync } from "../redux/favoritesSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/productSlice";
 
 const Products = ({addToCart }) => {
