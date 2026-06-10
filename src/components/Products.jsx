@@ -6,7 +6,7 @@ import { addFavoriteAsync } from "../redux/favoritesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/productSlice";
 
-const Products = ({ addToFavorites, addToCart }) => {
+const Products = ({addToCart }) => {
   const [searchParams] = useSearchParams();
 
   const [showFilters, setShowFilters] = useState(false);
