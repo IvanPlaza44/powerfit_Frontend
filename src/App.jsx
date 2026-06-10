@@ -28,37 +28,7 @@ function App() {
   const userId = localStorage.getItem("userId");
   const role = localStorage.getItem("role")?.toUpperCase() || "";
 
-  useEffect(() => {
-    if (token && userId) {
-      dispatch(fetchCart(userId));
-    }
-  }, [dispatch, token, userId]);
 
-  // FAVORITOS (lo dejás igual por ahora)
-  useEffect(() => {
-    const fetchFavoritesFromDB = async () => {
-      if (!token || !userId || role.includes("SELLER") || userId === "undefined") return;
-
-      try {
-        const res = await fetch(`http://localhost:4002/favorites/user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (res.status === 204) {
-          setFavorites([]);
-        } else if (res.ok) {
-          const data = await res.json();
-          setFavorites(data);
-        }
-      } catch (error) {
-        console.error("Error al cargar favoritos iniciales:", error);
-      }
-    };
-
-    fetchFavoritesFromDB();
-  }, [token, userId, role]);
 
   const addToFavorites = async (product) => {
     if (!token || !userId || userId === "undefined") {
@@ -130,8 +100,6 @@ function App() {
           path="/products"
           element={
             <Products
-              addToFavorites={addToFavorites}
-              favorites={favorites}
             />
           }
         />
@@ -139,7 +107,8 @@ function App() {
         <Route
           path="/products/:id"
           element={
-            <DetailProduct addToFavorites={addToFavorites} />
+            <DetailProduct
+            />
           }
         />
 
@@ -147,8 +116,8 @@ function App() {
           path="/favorites"
           element={
             <Favorites
-              favorites={favorites.map((fav) => fav.product).filter(Boolean)}
-              removeFromFavorites={removeFromFavorites}
+              /* Mapeamos el array para pasarle solo los objetos "product" puros a la vista */
+
             />
           }
         />

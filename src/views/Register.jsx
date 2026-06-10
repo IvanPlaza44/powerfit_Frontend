@@ -1,28 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom"; 
+import { useDispatch, useSelector } from "react-redux"; 
+import { registerUser } from "../redux/registerSlice";
 
 export default function Register() {
-  // HOOKS
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
 
-  // STATES
+  // Consumimos el estado global de Redux
+  const { loading, error, success } = useSelector((state) => state.register);
+
+  // STATES LOCALES DE CONTROL VISUAL
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    userName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "" 
   });
-
-
-  const URL = "http://localhost:4002/auth";
-
 
   const handleChange = (event) => {
     let { name, value } = event.target;
@@ -32,52 +32,18 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden.");
+      alert("Las contraseñas no coinciden.");///QUITARRRRRRRRRRRRRRRRRRRRR
       return;
     }
 
-    setIsLoading(true);
-
+    // Desestructuramos para quitar confirmPassword antes de mandar al backend
     const { confirmPassword, ...registerData } = formData;
+    console.log(registerData);
+    
 
-    fetch(`${URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(registerData), 
-    }) 
-    .then((response) => {
-      const isOk = response.ok;
-      
-      return response.json().then((data) => {
-        return { isOk, data };
-      });
-    })
-    .then(({ isOk, data }) => {
-      if (isOk) {
-        console.log("Registro exitoso:", data);
-        
-        if (data.access_token) {
-          localStorage.setItem("token", data.access_token);
-        }
-
-        alert("¡Registro exitoso! Bienvenido a POWERFIT.");
-        
-        window.location.href = "/login";
-      } else {
-        alert(data.message || "Error en el registro de credenciales");
-      }
-    })
-    .catch((error) => {
-      console.error("Error en la petición:", error);
-      alert("Hubo un problema de conexión con el servidor.");
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
+    // Despachamos el Thunk enviándole el payload limpio
+    dispatch(registerUser(registerData));
   };
 
   return (
@@ -86,16 +52,14 @@ export default function Register() {
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-white mb-2">Crea tu cuenta</h1>
           <p className="text-neutral-400 text-sm">
-            Unete a  <span className="text-green-500 font-bold">POWERFIT</span> y empieza una vida fitness
+            Únete a <span className="text-green-500 font-bold">POWERFIT</span> y empieza una vida fitness
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* First Name */}
           <div className="space-y-2">
-            <label htmlFor="firstName" className="block text-sm font-medium text-white">
-              Nombre
-            </label>
+            <label htmlFor="firstName" className="block text-sm font-medium text-white">Nombre</label>
             <input
               type="text"
               id="firstName"
@@ -103,7 +67,7 @@ export default function Register() {
               placeholder="Jon"
               value={formData.firstName} 
               onChange={handleChange}
-              disabled={isLoading}
+              disabled={loading}
               required
               className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
@@ -111,9 +75,7 @@ export default function Register() {
 
           {/* Last Name */}
           <div className="space-y-2">
-            <label htmlFor="lastName" className="block text-sm font-medium text-white">
-              Apellido
-            </label>
+            <label htmlFor="lastName" className="block text-sm font-medium text-white">Apellido</label>
             <input
               type="text"
               id="lastName"
@@ -121,35 +83,31 @@ export default function Register() {
               placeholder="Perez"
               value={formData.lastName}
               onChange={handleChange}
-              disabled={isLoading}
+              disabled={loading}
               required
               className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
-          {/* Username (Surname) */}
+          {/* username */}
           <div className="space-y-2">
-            <label htmlFor="userName" className="block text-sm font-medium text-white">
-              Usuario
-            </label>
+            <label htmlFor="username" className="block text-sm font-medium text-white">Usuario</label>
             <input
               type="text"
-              id="userName"
-              name="userName"
+              id="username"
+              name="username"
               placeholder="JonPerez99"
-              value={formData.userName}
+              value={formData.username}
               onChange={handleChange}
-              disabled={isLoading}
+              disabled={loading}
               required
               className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
-          {/* Email Field */}
+          {/* Email */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-white">
-              Mail
-            </label>
+            <label htmlFor="email" className="block text-sm font-medium text-white">Mail</label>
             <input
               type="email"
               id="email"
@@ -157,17 +115,15 @@ export default function Register() {
               placeholder="tucorreo@ejemplo.com"
               value={formData.email}
               onChange={handleChange}
-              disabled={isLoading}
+              disabled={loading}
               required
               className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors disabled:opacity-50"
             />
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-white">
-              Contraseña
-            </label>
+            <label htmlFor="password" className="block text-sm font-medium text-white">Contraseña</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -176,7 +132,7 @@ export default function Register() {
                 placeholder="Crea una contraseña"
                 value={formData.password}
                 onChange={handleChange}
-                disabled={isLoading}
+                disabled={loading}
                 required
                 className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12 disabled:opacity-50"
               />
@@ -190,11 +146,9 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Confirm Password Field */}
+          {/* Confirm Password */}
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">
-              Confirma tu contraseña
-            </label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">Confirma tu contraseña</label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -203,7 +157,7 @@ export default function Register() {
                 placeholder="Confirma tu contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                disabled={isLoading}
+                disabled={loading}
                 required
                 className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-green-500 transition-colors pr-12 disabled:opacity-50"
               />
@@ -220,10 +174,10 @@ export default function Register() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full py-3 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
+            {loading ? "Creando cuenta..." : "Crear Cuenta"}
           </button>
         </form>
 
@@ -231,7 +185,7 @@ export default function Register() {
         <p className="text-center text-neutral-400 text-sm mt-6">
           ¿Ya tienes una cuenta?{" "}
           <Link to="/login" className="text-green-500 hover:text-green-400 transition-colors">
-            Ingresa aqui
+            Ingresa aquí
           </Link>
         </p>
       </div>
