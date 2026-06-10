@@ -11,11 +11,11 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [userData, setUserData] = useState({
-    userName: "",
+    username: "",
     password: "",
   });
 
-  const { userName, password } = userData;
+  const { username, password } = userData;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -84,16 +84,16 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="p-6 pt-0 space-y-6">
 
-          {/* userName */}
+          {/* username */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Usuario</label>
             <div className="relative">
               <ShieldUser className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
-                name="userName"
+                name="username"
                 type="text"
                 required
-                value={userName}
+                value={username}
                 onChange={handleChange}
                 disabled={isLoading}
                 className="w-full h-10 rounded-md border bg-secondary px-10 text-sm"

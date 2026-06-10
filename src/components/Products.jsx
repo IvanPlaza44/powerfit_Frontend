@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
+import { useDispatch, useSelector } from "react-redux"; 
+import { addFavoriteAsync } from "../redux/favoritesSlice";
 
-const Products = ({ addToFavorites, addToCart }) => {
+const Products = ({ addToCart }) => {
+  const {favorites,error,loading} = useSelector((state)=>state.favorites)
+  const dispatch = useDispatch();
 
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
@@ -90,6 +94,33 @@ const Products = ({ addToFavorites, addToCart }) => {
         .catch(() => setProducts([]));
     }, [currentCategory, currentSearch, sortOrder]);
 
+
+    const handleAddToFavorites = (product) => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role")?.toUpperCase() || "";
+
+    if (!token || !userId || userId === "undefined") {
+      alert("Tenés que iniciar sesión para guardar favoritos.");
+      return;
+    }
+
+    if (role.includes("SELLER")) {
+      alert("Los perfiles de vendedor no pueden gestionar listas de favoritos.");
+      return;
+    }
+
+    // Validamos si ya existe en el estado global de Redux
+    const exists = favorites.some((fav) => fav.product?.id === product.id);
+    if (exists) {
+      alert("Este producto ya está en tus favoritos.");
+      return;
+    }
+
+    // Despachamos el thunk enviando el producto entero
+    dispatch(addFavoriteAsync(product));
+  };
+
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
     : "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1000&auto=format&fit=crop";
@@ -165,7 +196,7 @@ const Products = ({ addToFavorites, addToCart }) => {
       {products.length > 0 ? (
         <CardList
           products={products}
-          addToFavorites={addToFavorites}
+          addToFavorites={handleAddToFavorites}
           addToCart={addToCart}
         />
       ) : (

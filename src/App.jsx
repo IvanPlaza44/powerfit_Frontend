@@ -24,30 +24,6 @@ function App() {
   const userId = localStorage.getItem("userId");
   const role = localStorage.getItem("role")?.toUpperCase() || "";
 
-  useEffect(() => {
-    const fetchFavoritesFromDB = async () => {
-      if (!token || !userId || role.includes("SELLER") || userId === "undefined") return;
-
-      try {
-        const res = await fetch(`http://localhost:4002/favorites/user/${userId}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        
-        if (res.status === 204) {
-          setFavorites([]);
-        } else if (res.ok) {
-          const data = await res.json();
-          setFavorites(data);
-        }
-      } catch (error) {
-        console.error("Error al cargar favoritos iniciales:", error);
-      }
-    };
-
-    fetchFavoritesFromDB();
-  }, [token, userId, role]);
 
 
   const addToFavorites = async (product) => {
@@ -131,8 +107,6 @@ function App() {
           path="/products"
           element={
             <Products
-              addToFavorites={addToFavorites}
-              favorites={favorites}
             />
           }
         />
@@ -141,7 +115,6 @@ function App() {
           path="/products/:id"
           element={
             <DetailProduct
-              addToFavorites={addToFavorites}
             />
           }
         />
@@ -151,8 +124,7 @@ function App() {
           element={
             <Favorites
               /* Mapeamos el array para pasarle solo los objetos "product" puros a la vista */
-              favorites={favorites.map((fav) => fav.product).filter(Boolean)}
-              removeFromFavorites={removeFromFavorites}
+
             />
           }
         />
