@@ -3,15 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, ShieldUser } from "lucide-react";
 import { ClimbingBoxLoader } from "react-spinners";
 import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../redux/cartSlice";
+import { loginUser } from "../redux/loginSlice";
 
 export default function Login() {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Consumimos el estado global de Redux
+  const { loading, error} = useSelector((state) => state.login);
+
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [userData, setUserData] = useState({
     username: "",
@@ -25,55 +29,40 @@ export default function Login() {
     setUserData({ ...userData, [name]: value });
   };
 
-  const URL = "http://localhost:4002/auth";
-
   const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
+    e.preventDefault();
 
-        try {
-          const response = await fetch(`${URL}/authenticate`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-          });
+    console.log(userData);
 
-          const data = await response.json();
+    const result = await dispatch(
+      loginUser(userData)
+    );
 
-          if (!response.ok) {
-            alert("Login incorrecto");
-            return;
-          }
+    if (loginUser.fulfilled.match(result)) {
+      const data = result.payload;
 
-          const token = data.access_token;
-          const role = data.role;
+      const token = data.access_token;
 
-          if (!token) {
-            alert("No se recibió token");
-            return;
-          }
+      if (!token) {
+        alert("No se recibió token");
+        return;
+      }
 
-          //  decode seguro
-          const decoded = jwtDecode(token);
+      const decoded = jwtDecode(token);
 
-          console.log("JWT:", decoded); 
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", decoded.userId);
+      localStorage.setItem("role", data.role);
 
-          localStorage.setItem("token", token);
-          localStorage.setItem("userId", decoded.userId);
-          localStorage.setItem("role", role);
+      dispatch(fetchCart());
 
-          dispatch(fetchCart(decoded.userId));
+      navigate("/");
+    }
 
-          window.location.href = "/";
-        } catch (error) {
-          console.error(error);
-          alert("Error en el Login");
-        } finally {
-          setIsLoading(false);
-        }
-      };
+    if (loginUser.rejected.match(result)) {
+      alert(error || "Login incorrecto");
+    }
+  };
 
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center px-4 py-16">
@@ -100,7 +89,7 @@ export default function Login() {
                 required
                 value={username}
                 onChange={handleChange}
-                disabled={isLoading}
+                disabled={loading}
                 className="w-full h-10 rounded-md border bg-secondary px-10 text-sm"
                 placeholder="Tu Usuario"
               />
@@ -118,7 +107,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={handleChange}
-                disabled={isLoading}
+                disabled={loading}
                 className="w-full h-10 rounded-md border bg-secondary px-10 text-sm"
                 placeholder="Tu contraseña"
               />
@@ -135,10 +124,10 @@ export default function Login() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={loading}
             className="w-full h-10 bg-primary text-white rounded-md font-bold"
           >
-            {isLoading ? "Ingresando..." : "Ingresar"}
+            {loading ? "Ingresando..." : "Ingresar"}
           </button>
 
           <p className="text-center text-sm text-muted-foreground">

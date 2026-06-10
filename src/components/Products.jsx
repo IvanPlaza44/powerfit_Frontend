@@ -3,10 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
 import { useDispatch, useSelector } from "react-redux"; 
 import { addFavoriteAsync } from "../redux/favoritesSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/productSlice";
 
-const Products = ({addToCart }) => {
+const Products = ({ addToFavorites, addToCart }) => {
   const [searchParams] = useSearchParams();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -221,7 +220,7 @@ const Products = ({addToCart }) => {
 
       {filteredProducts.length > 0 ? (
         <CardList
-          products={filteredProducts}
+          products={products}
           addToFavorites={addToFavorites}
           addToCart={addToCart}
         />
