@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import NavBar from "./components/NavBar";
 import Home from "./views/Home";
@@ -17,13 +18,24 @@ import SellerDashboard from "./views/SellerDashboard";
 import SwitchSeller from "./views/SwitchSeller";
 import MyProducts from "./views/MyProducts";
 
+import { fetchCart } from "./redux/cartSlice";
+
 function App() {
   const [favorites, setFavorites] = useState([]);
+
+  const dispatch = useDispatch();
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const role = localStorage.getItem("role")?.toUpperCase() || "";
 
+  useEffect(() => {
+    if (token && userId) {
+      dispatch(fetchCart(userId));
+    }
+  }, [dispatch, token, userId]);
+
+  // FAVORITOS (lo dejás igual por ahora)
   useEffect(() => {
     const fetchFavoritesFromDB = async () => {
       if (!token || !userId || role.includes("SELLER") || userId === "undefined") return;
@@ -31,10 +43,10 @@ function App() {
       try {
         const res = await fetch(`http://localhost:4002/favorites/user/${userId}`, {
           headers: {
-            "Authorization": `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        
+
         if (res.status === 204) {
           setFavorites([]);
         } else if (res.ok) {
@@ -49,9 +61,7 @@ function App() {
     fetchFavoritesFromDB();
   }, [token, userId, role]);
 
-
   const addToFavorites = async (product) => {
-
     if (!token || !userId || userId === "undefined") {
       alert("Tenés que iniciar sesión para guardar favoritos.");
       return;
@@ -69,51 +79,41 @@ function App() {
     }
 
     try {
-
       const res = await fetch("http://localhost:4002/favorites", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId: Number(userId),
-          productId: product.id
-        })
+          productId: product.id,
+        }),
       });
 
       if (res.ok) {
         const newFavoriteRecord = await res.json();
         setFavorites([...favorites, newFavoriteRecord]);
-      } else {
-        alert("Hubo un error en el servidor al agregar a favoritos.");
       }
     } catch (error) {
       console.error("Error de red al agregar favorito:", error);
     }
   };
 
-
   const removeFromFavorites = async (productId) => {
-
     const favoriteRecord = favorites.find((fav) => fav.product?.id === productId);
-    
     if (!favoriteRecord) return;
 
     try {
-
       const res = await fetch(`http://localhost:4002/favorites/${favoriteRecord.id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (res.ok) {
-
         setFavorites(favorites.filter((fav) => fav.product?.id !== productId));
-      } else {
-        alert("No se pudo eliminar el favorito de la base de datos.");
       }
     } catch (error) {
       console.error("Error de red al eliminar favorito:", error);
@@ -140,9 +140,7 @@ function App() {
         <Route
           path="/products/:id"
           element={
-            <DetailProduct
-              addToFavorites={addToFavorites}
-            />
+            <DetailProduct addToFavorites={addToFavorites} />
           }
         />
 
@@ -150,7 +148,6 @@ function App() {
           path="/favorites"
           element={
             <Favorites
-              /* Mapeamos el array para pasarle solo los objetos "product" puros a la vista */
               favorites={favorites.map((fav) => fav.product).filter(Boolean)}
               removeFromFavorites={removeFromFavorites}
             />
@@ -158,11 +155,12 @@ function App() {
         />
 
         <Route path="/cart" element={<ShoppinngCart />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/switch-seller" element={<SwitchSeller />} />
-        <Route path="/my-products" element={<MyProducts />} />  
+        <Route path="/my-products" element={<MyProducts />} />
         <Route path="/create-product" element={<CreateProduct />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />

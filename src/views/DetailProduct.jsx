@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../redux/detailProductSlice";
+import { fetchCart } from "../redux/cartSlice";
 
 const DetailProduct = ({ addToCart, addToFavorites }) => {
 
@@ -51,6 +52,10 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
         alert("No se pudo agregar al carrito. Verifica tu sesión.");
         return;
       }
+
+      dispatch(fetchCart(userId));
+
+      alert("Producto agregado al carrito");
 
     
     } catch (error) {

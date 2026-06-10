@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "../redux/cartSlice";
 
 const Card = ({ product, addToFavorites }) => {
+  const dispatch = useDispatch();
   const hasDiscount = Number(product.discount) > 0;
 
   const discountPrice = hasDiscount
@@ -8,7 +11,7 @@ const Card = ({ product, addToFavorites }) => {
     : product.price;
 
 
-    const handleAddToCart = async () => {
+  const handleAddToCart = async () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
@@ -43,8 +46,9 @@ const Card = ({ product, addToFavorites }) => {
       alert("No se pudo agregar al carrito. Verifica tu sesión.");
       return;
     }
-
+    dispatch(fetchCart(userId));
     alert("¡Agregado al carrito con éxito!");
+    
   } catch (error) {
     console.error("Error en la petición del carrito desde Card:", error);
     alert("Hubo un error de red al intentar agregar al carrito");

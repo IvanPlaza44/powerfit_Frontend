@@ -3,9 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, ShieldUser } from "lucide-react";
 import { ClimbingBoxLoader } from "react-spinners";
 import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "../redux/cartSlice";
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +63,8 @@ export default function Login() {
           localStorage.setItem("token", token);
           localStorage.setItem("userId", decoded.userId);
           localStorage.setItem("role", role);
+
+          dispatch(fetchCart(decoded.userId));
 
           window.location.href = "/";
         } catch (error) {
