@@ -19,12 +19,15 @@ export const fetchFavorites = createAsyncThunk('favorites/fetchFavorites',
 // Thunk para agregar un favorito
 export const addFavoriteAsync = createAsyncThunk('favorites/addFavorite',
   async (product) => {
+        console.log("PRODUCTO RECIBIDO:", product);
+
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const payload = {
         userId: Number(userId),      // ¿En tu FavoriteRequest se llama userId?
         productId: Number(product.id) // ¿O tal vez se llama idProducto / productoId?
       };
+    console.log("PAYLOAD:", payload);
 
     const response = await axios.post(
         "http://localhost:4002/favorites",
@@ -36,6 +39,7 @@ export const addFavoriteAsync = createAsyncThunk('favorites/addFavorite',
           }
         }
       );
+    console.log("RESPUESTA FAVORITO:", response.data);
 
     return response.data; // Devuelve el registro creado
   }
@@ -68,17 +72,6 @@ const favoritesSlice = createSlice({
         state.error = action.error.message
       })
       // AGREGAR FAVORITOS
-
-
-
-
-
-
-
-
-
-
-
 
       .addCase(addFavoriteAsync.fulfilled, (state, action) => {
         state.loading = false;

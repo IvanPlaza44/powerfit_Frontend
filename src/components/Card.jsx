@@ -61,7 +61,12 @@ const Card = ({ product, addToFavorites }) => {
         Añadir al carrito
       </button>
 
-      <button onClick={() => addToFavorites?.(product)}>
+      <button
+        onClick={() => {
+          console.log("CLICK FAVORITO", product);
+          addToFavorites?.(product);
+        }}
+      >
         ❤️
       </button>
     </div>

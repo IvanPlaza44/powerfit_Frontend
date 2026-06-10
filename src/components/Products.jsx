@@ -20,6 +20,8 @@ const Products = ({ addToFavorites, addToCart }) => {
     (state) => state.products
   );
 
+  const { favorites } = useSelector((state) => state.favorites);
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -107,9 +109,9 @@ const Products = ({ addToFavorites, addToCart }) => {
 
 
     const handleAddToFavorites = (product) => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-    const role = localStorage.getItem("role")?.toUpperCase() || "";
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      const role = localStorage.getItem("role")?.toUpperCase() || "";
 
     if (!token || !userId || userId === "undefined") {
       alert("Tenés que iniciar sesión para guardar favoritos.");
@@ -130,6 +132,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
     // Despachamos el thunk enviando el producto entero
     dispatch(addFavoriteAsync(product));
+    alert("Producto agregado a favoritos");
   };
 
   const bannerImage = currentCategory
@@ -221,8 +224,8 @@ const Products = ({ addToFavorites, addToCart }) => {
       {filteredProducts.length > 0 ? (
         <CardList
           products={products}
-          addToFavorites={addToFavorites}
-          addToCart={addToCart}
+          addToFavorites={handleAddToFavorites}
+          //addToCart={addToCart}
         />
       ) : (
         <div className="text-center py-12 border border-dashed border-border rounded-xl">
