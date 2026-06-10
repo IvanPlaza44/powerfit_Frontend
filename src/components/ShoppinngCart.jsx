@@ -1,32 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCart } from "../redux/cartSlice";
 
 export const ShoppinngCart = () => {
-  const [cart, setCart] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  const { items: cart, loading: isLoading } = useSelector(
+    (state) => state.cart
+  );
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  const loadCart = async () => {
-    try {
-      const res = await fetch(`http://localhost:4002/cart/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      setCart(data);
-    } catch (error) {
-      console.error("Error al cargar el carrito:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
-    loadCart();
-  }, []);
+    if (userId) {
+      dispatch(fetchCart(userId));
+    }
+  }, [dispatch, userId]);
 
   const increase = async (product) => {
     await fetch(
@@ -38,7 +30,7 @@ export const ShoppinngCart = () => {
         },
       }
     );
-    loadCart();
+    dispatch(fetchCart(userId));
   };
 
   const decrease = async (product) => {
@@ -53,7 +45,7 @@ export const ShoppinngCart = () => {
         },
       }
     );
-    loadCart();
+    dispatch(fetchCart(userId));
   };
 
   const remove = async (productId) => {
@@ -63,7 +55,8 @@ export const ShoppinngCart = () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    loadCart();
+
+    dispatch(fetchCart(userId));
   };
 
   const total = cart.reduce((acc, p) => acc + p.product.price * p.quantity, 0);

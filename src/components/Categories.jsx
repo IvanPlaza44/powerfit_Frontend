@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from "react";
 import Card from "./Card";
+import React from "react";
+import { useSelector } from "react-redux";
 
 export const Categories = ({ addToFavorites, addToCart }) => {
-  const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:4002/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.content || []);
-      })
-      .catch((error) => console.error("Error cargando productos:", error));
-  }, []);
+const { products } = useSelector(
+  (state) => state.products
+);
 
   const categoryImages = {
     indumentaria: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop",

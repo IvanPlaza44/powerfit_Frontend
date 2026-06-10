@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, Package } from "lucide-react"
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from "react-redux";
 
-export default function NavBar({ onSearch, user, cartCount = 0, logout, favoritesCount }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+export default function NavBar({onSearch, user, logout, favoritesCount
+}) {  
   const [searchQuery, setSearchQuery] = useState("")
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isSeller, setIsSeller] = useState(false);
-
   const navigate = useNavigate() 
-
+  const cartItems = useSelector(
+    (state) => state.cart.items
+  );
+  const cartCount = cartItems?.length || 0;
   const isLogged = user || localStorage.getItem("token");
 
   useEffect(() => {

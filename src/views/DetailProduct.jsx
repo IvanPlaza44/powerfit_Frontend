@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductById } from "../redux/detailProductSlice";
+import { fetchCart } from "../redux/cartSlice";
 
 const DetailProduct = ({ addToCart, addToFavorites }) => {
+
   const { id } = useParams();
 
-  const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
+
+  const { product } = useSelector(
+    (state) => state.detailProduct
+  );
 
   useEffect(() => {
-    fetch(`http://localhost:4002/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => setProduct(data))
-      .catch((error) => console.error(error));
-  }, [id]);
+    dispatch(fetchProductById(id));
+  }, [dispatch, id]);
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
@@ -47,6 +52,10 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
         alert("No se pudo agregar al carrito. Verifica tu sesión.");
         return;
       }
+
+      dispatch(fetchCart(userId));
+
+      alert("Producto agregado al carrito");
 
     
     } catch (error) {
