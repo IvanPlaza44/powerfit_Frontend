@@ -52,7 +52,7 @@ export default function CreateProduct() {
     setLoading(true);
 
     try {
-      // 1. SUBIR LA IMAGEN A IMGBB FIRST
+      // SUBIR LA IMAGEN A IMGBB 
       const imageData = new FormData();
       imageData.append("image", imageFile);
 

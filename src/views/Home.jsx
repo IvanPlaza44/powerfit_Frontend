@@ -61,8 +61,8 @@ const Home = () => {
       <div className="flex flex-wrap p-6 justify-center">
         <Link to="/switch-seller">
         <button className="gap-2 rounded-md p-2 flex items-center bg-primary text-black transition-transform hover:scale-105">
-          <Receipt/>
-          Quiero convertierme en vendedor
+          
+          QUIERO VENDER MIS PRODUCTOS EN POWERFIT
           <Receipt/>
         </button>
       </Link>

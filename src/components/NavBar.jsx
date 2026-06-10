@@ -59,23 +59,22 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
       <nav className="container mx-auto px-4 ">
-        <div className="flex h-16 items-center justify-between gap-4 ">
+        <div className="flex h-25 items-center justify-between gap-4 ">
           
 
           <Link to="/" className="flex items-center gap-2 size-40 transition-transform duration-300 hover:scale-110">
             <img src="Logo.png" alt="Logo2" />
           </Link>
-
   
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-6 md:flex text-l">
             {isSeller ? (
-              <Link to="/my-products" className="text-sm font-bold text-primary flex items-center gap-1.5 transition-colors">
+              <Link to="/my-products" className="font-bold text-primary flex items-center gap-1.5 transition-colors">
                 <Package className="size-4" />
                 Mis productos
               </Link>
             ) : (
-              <Link to="/products" className="text-sm font-medium transition-colors hover:text-primary">
-                Todos los productos
+              <Link to="/products" className="transition-colors hover:text-primary">
+                Productos
               </Link>
             )}
             
@@ -88,7 +87,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               >
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-0.5"
+                  className="transition-colors hover:text-primary flex items-center gap-0.5"
                 >
                   Categorías <ChevronDown className="size-4" />
                 </button>
@@ -113,15 +112,15 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
           </div>
 
    
-          <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex">
-            <div className="relative w-full">
+          <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex text-m">
+            <div className="relative w-full ">
               <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground cursor-pointer" />
               <input
                 type="search"
                 placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary"
+                className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary"
               />
             </div>
           </form>
@@ -131,27 +130,36 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
     
             {!isSeller && (
               <>
+                {/* LINK DE FAVORITOS */}
                 <Link 
                   to="/favorites" 
-                  className={`rounded-full p-2 text-gray-600 transition-colors ${
-                    favoritesCount > 0 ? 'text-red-800 hover:bg-red-200' : 'hover:bg-gray-100'
-                  }`}
+                  className="rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100"
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart 
+                    size={24}
+                    className={
+                      favoritesCount > 0 
+                        ? 'text-red-600 fill-red-600' // Borde y relleno rojo si hay favoritos
+                        : 'text-gray-600 fill-none'   // Borde gris y sin relleno si está vacío
+                    } 
+                  />
                 </Link>
 
-                <Link to="/cart" className="relative rounded-md p-2 text-gray-600 hover:bg-gray-100">
-                  <ShoppingCart className="h-5 w-5" />
+                {/* LINK DEL CARRITO */}
+                <Link 
+                  to="/cart" 
+                  className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 transition-colors"
+                >
                   {cartCount > 0 && (
-                    <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white transform translate-x-1 -translate-y-1">
                       {cartCount}
                     </span>
                   )}
+                  <ShoppingCart size={24}/>
                 </Link>
               </>
             )}
-
-
+            
             <div className="flex items-center border-l pl-2 ml-2">
               {isLogged ? (
                 <button 
@@ -213,7 +221,7 @@ export default function NavBar({ onSearch, user, cartCount = 0, logout, favorite
               ) : (
                 <>
                   <a href="/products" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100">
-                    Todos los productos
+                    Productos
                   </a>
                   {categories.map((category) => (
                     <a

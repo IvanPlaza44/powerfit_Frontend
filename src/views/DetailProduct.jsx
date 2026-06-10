@@ -52,7 +52,7 @@ const DetailProduct = ({ addToCart, addToFavorites }) => {
         return;
       }
 
-      alert("¡Agregado al carrito con éxito! ");
+    
     } catch (error) {
       console.error("Error en la petición del carrito:", error);
       alert("Hubo un error de red al intentar agregar al carrito");
