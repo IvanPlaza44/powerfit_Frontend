@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, Package } from "lucide-react"
+import { ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, Package } from "lucide-react"
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
+import SearchBar from './SearchBar'; // Asegúrate de que la ruta coincida con donde creaste el archivo
 
-export default function NavBar({onSearch, user, logout, favoritesCount
+export default function NavBar({ user, logout, favoritesCount
 }) {  
-  const [searchQuery, setSearchQuery] = useState("")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isSeller, setIsSeller] = useState(false);
-  const navigate = useNavigate() 
+  const navigate = useNavigate(); 
   const cartItems = useSelector(
     (state) => state.cart.items
   );
@@ -36,23 +36,6 @@ export default function NavBar({onSearch, user, logout, favoritesCount
       window.removeEventListener("storage_role_changed", checkRole);
     };
   }, []);
-
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-    
-    if (onSearch) {
-      onSearch(searchQuery)
-    }
-
-    const basePath = isSeller ? "/my-products" : "/products";
-
-    if (searchQuery.trim() !== "") {
-      navigate(`${basePath}?search=${encodeURIComponent(searchQuery)}`)
-    } else {
-      navigate(basePath) 
-    }
-  }
 
   const categories = [
     { name: "Indumentaria", href: "/products?category=indumentaria" },
@@ -116,18 +99,10 @@ export default function NavBar({onSearch, user, logout, favoritesCount
           </div>
 
    
-          <form onSubmit={handleSearch} className="hidden flex-1 max-w-md md:flex text-m">
-            <div className="relative w-full ">
-              <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground cursor-pointer" />
-              <input
-                type="search"
-                placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </form>
+          <SearchBar 
+            isSeller={isSeller} 
+            formClassName="hidden flex-1 max-w-md md:flex text-m" 
+          />
 
           <div className="flex items-center gap-2">
             
@@ -201,18 +176,10 @@ export default function NavBar({onSearch, user, logout, favoritesCount
 
         {mobileMenuOpen && (
           <div className="border-t border-gray-100 py-4 md:hidden">
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="search"
-                  placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-md border-0 bg-gray-100 py-2 pl-10 pr-4 text-sm"
-                />
-              </div>
-            </form>
+            <SearchBar 
+              isSeller={isSeller} 
+              formClassName="mb-4" 
+            />
             <div className="flex flex-col gap-1">
               {isSeller ? (
                 <Link 

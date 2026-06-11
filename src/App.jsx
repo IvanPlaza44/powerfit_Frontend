@@ -31,7 +31,12 @@ function App() {
   const userId = localStorage.getItem("userId");
   const role = localStorage.getItem("role")?.toUpperCase() || "";
 
-
+  useEffect(() => {
+    if (token && userId) {
+      dispatch(fetchCart());
+      dispatch(fetchFavorites());
+    }
+  }, [dispatch, token, userId]);
 
   return (
     <>
