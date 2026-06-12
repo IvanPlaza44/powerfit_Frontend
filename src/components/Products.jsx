@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardList from "../views/CardList";
 import { useDispatch, useSelector } from "react-redux"; 
-import { addFavoriteAsync } from "../redux/favoritesSlice";
+import { addFavoriteAsync, removeFavoriteAsync } from "../redux/favoritesSlice";
 import { fetchProducts } from "../redux/productSlice";
+import { fetchFavorites } from "../redux/favoritesSlice";
 
 const Products = ({ addToFavorites, addToCart }) => {
   const [searchParams] = useSearchParams();
@@ -24,6 +25,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
   useEffect(() => {
     dispatch(fetchProducts());
+    dispatch(fetchFavorites());
   }, [dispatch]);
 
   let filteredProducts = [...products];
@@ -107,33 +109,39 @@ const Products = ({ addToFavorites, addToCart }) => {
       "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000&auto=format&fit=crop",
   };
 
-
-    const handleAddToFavorites = (product) => {
+    const handleAddToFavorites = async (product) => {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
       const role = localStorage.getItem("role")?.toUpperCase() || "";
 
-    if (!token || !userId || userId === "undefined") {
-      alert("Tenés que iniciar sesión para guardar favoritos.");
-      return;
-    }
+      if (!token || !userId || userId === "undefined") {
+        alert("Tenés que iniciar sesión para guardar favoritos.");
+        return;
+      }
 
-    if (role.includes("SELLER")) {
-      alert("Los perfiles de vendedor no pueden gestionar listas de favoritos.");
-      return;
-    }
+      if (role.includes("SELLER")) {
+        alert("Los perfiles de vendedor no pueden gestionar listas de favoritos.");
+        return;
+      }
 
-    // Validamos si ya existe en el estado global de Redux
-    const exists = favorites.some((fav) => fav.product?.id === product.id);
-    if (exists) {
-      alert("Este producto ya está en tus favoritos.");
-      return;
-    }
+      const existingFavorite = favorites.find(
+        (fav) => fav.product?.id === product.id
+      );
 
-    // Despachamos el thunk enviando el producto entero
-    dispatch(addFavoriteAsync(product));
-    alert("Producto agregado a favoritos");
-  };
+      try {
+        if (existingFavorite) {
+          await dispatch(
+            removeFavoriteAsync(existingFavorite.id)
+          ).unwrap();
+        } else {
+          await dispatch(
+            addFavoriteAsync(product)
+          ).unwrap();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   const bannerImage = currentCategory
     ? categoryImages[currentCategory]
@@ -223,7 +231,7 @@ const Products = ({ addToFavorites, addToCart }) => {
 
       {filteredProducts.length > 0 ? (
         <CardList
-          products={products}
+          products={filteredProducts}
           addToFavorites={handleAddToFavorites}
           //addToCart={addToCart}
         />

@@ -2,18 +2,24 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Thunk para traer favoritos de la BD
-export const fetchFavorites = createAsyncThunk('favorites/fetchFavorites',
-  
+export const fetchFavorites = createAsyncThunk(
+  "favorites/fetchFavorites",
   async () => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    const {data} = await axios(`http://localhost:4002/favorites/user/${userId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    return data;
+
+    const { data } = await axios(
+      `http://localhost:4002/favorites/user/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return Array.isArray(data) ? data : [];
   }
 );
-
 
 
 // Thunk para agregar un favorito
@@ -43,6 +49,32 @@ export const addFavoriteAsync = createAsyncThunk('favorites/addFavorite',
 
     return response.data; // Devuelve el registro creado
   }
+
+  
+);
+
+export const removeFavoriteAsync = createAsyncThunk(
+  "favorites/removeFavorite",
+  async (favoriteId, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(
+        `http://localhost:4002/favorites/${favoriteId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return favoriteId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error al eliminar favorito"
+      );
+    }
+  }
 );
 
 
@@ -64,8 +96,10 @@ const favoritesSlice = createSlice({
         state.error = null
       })
       .addCase(fetchFavorites.fulfilled, (state, action) => {
-        state.loading = false
-        state.favorites = action.payload;
+        state.loading = false;
+        state.favorites = Array.isArray(action.payload)
+          ? action.payload
+          : [];
       })
       .addCase(fetchFavorites.rejected, (state, action)=>{
         state.loading = false,
@@ -86,7 +120,15 @@ const favoritesSlice = createSlice({
 
 
       //eLIMINAR FAVORITOS
+      .addCase(removeFavoriteAsync.fulfilled, (state, action) => {
+        state.favorites = state.favorites.filter(
+          fav => fav.id !== action.payload
+        );
+      })
 
+      .addCase(removeFavoriteAsync.rejected, (state, action) => {
+        state.error = action.payload;
+      })
 
 
 

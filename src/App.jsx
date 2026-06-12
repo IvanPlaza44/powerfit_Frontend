@@ -33,7 +33,7 @@ function App() {
 
   useEffect(() => {
     if (token && userId) {
-      dispatch(fetchCart());
+      dispatch(fetchCart(userId));
       dispatch(fetchFavorites());
     }
   }, [dispatch, token, userId]);

@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart, fetchCart } from "../redux/cartSlice";
+import { useSelector } from "react-redux";
+import { Heart } from "lucide-react";
 
 const Card = ({ product, addToFavorites }) => {
+  const { favorites } = useSelector((state) => state.favorites);
+
+  const isFavorite = favorites.some(
+    (fav) => fav.product?.id === product.id
+  );
+
   const dispatch = useDispatch();
 
   const handleAddToCart = async () => {
@@ -62,15 +70,27 @@ const Card = ({ product, addToFavorites }) => {
       </button>
 
       <button
-        onClick={() => {
-          console.log("CLICK FAVORITO", product);
-          addToFavorites?.(product);
-        }}
+        onClick={() => addToFavorites?.(product)}
+        className={`mt-2 flex items-center justify-center rounded-md border-2 py-2 transition-all duration-300
+          ${
+            isFavorite
+              ? "border-red-500 bg-red-500/10"
+              : "border-gray-500 hover:border-red-500"
+          }`}
       >
-        ❤️
+        <Heart
+          size={22}
+          fill={isFavorite ? "currentColor" : "none"}
+          className={
+            isFavorite
+              ? "text-red-500"
+              : "text-gray-400"
+          }
+        />
       </button>
     </div>
   );
 };
 
 export default Card;
+

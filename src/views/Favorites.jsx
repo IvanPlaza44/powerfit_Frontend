@@ -10,6 +10,7 @@ const Favorites = () => {
     useEffect(()=>{
       dispatch(fetchFavorites())
     },[dispatch])
+    
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen bg-background text-foreground">
@@ -23,14 +24,12 @@ const Favorites = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-          {favorites.map((fav, index) => (
-            <Card
-              key={fav.id}
-              product={fav.product}
-              /* Al clickear el corazón dentro de favoritos, se ejecutará la eliminación */
-              /* addToFavorites={() => removeFromFavorites(product.id)}*/
-            />
-          ))}
+          {favorites.map((fav) => (
+          <div key={fav.id}>
+            <Card product={fav.product} />
+
+          </div>
+        ))}
         </div>
       )}
     </div>
