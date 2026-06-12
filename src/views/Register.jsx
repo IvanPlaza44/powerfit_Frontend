@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useDispatch, useSelector } from "react-redux"; 
+import { jwtDecode } from "jwt-decode";
 import { registerUser } from "../redux/registerSlice";
+import { loginUser } from "../redux/loginSlice";
+import { fetchCart } from "../redux/cartSlice";
 
 export default function Register() {
   const navigate = useNavigate(); 
@@ -29,21 +32,53 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden.");///QUITARRRRRRRRRRRRRRRRRRRRR
+      alert("Las contraseñas no coinciden.");
       return;
     }
 
     // Desestructuramos para quitar confirmPassword antes de mandar al backend
     const { confirmPassword, ...registerData } = formData;
-    console.log(registerData);
-    
 
-    // Despachamos el Thunk enviándole el payload limpio
-    dispatch(registerUser(registerData));
+    const result = await dispatch(registerUser(registerData));
+
+    if (registerUser.fulfilled.match(result)) {
+      const loginResult = await dispatch(
+        loginUser({ username: registerData.username, password: registerData.password })
+      );
+
+      if (loginUser.fulfilled.match(loginResult)) {
+        const data = loginResult.payload;
+        const token = data.access_token;
+
+        if (!token) {
+          alert("Cuenta creada, pero no se recibió token de inicio de sesión.");
+          navigate("/");
+          return;
+        }
+
+        const decoded = jwtDecode(token);
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("userId", decoded.userId);
+        localStorage.setItem("role", data.role);
+
+        dispatch(fetchCart());
+        navigate("/");
+        return;
+      }
+
+      alert("Cuenta creada, pero no se pudo iniciar sesión automáticamente.");
+      navigate("/login");
+      return;
+    }
+
+    if (registerUser.rejected.match(result)) {
+      alert(error || "No se pudo registrar el usuario.");
+    }
   };
 
   return (
