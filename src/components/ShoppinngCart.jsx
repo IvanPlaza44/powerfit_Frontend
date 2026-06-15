@@ -6,6 +6,7 @@ import {
   updateCartItem,
   removeFromCart,
 } from "../redux/cartSlice";
+import toast from "react-hot-toast";
 
 export const ShoppinngCart = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export const ShoppinngCart = () => {
     }
   }, [dispatch, userId]);
 
+  /*
   const increase = (p) => {
     dispatch(
       updateCartItem({
@@ -27,8 +29,34 @@ export const ShoppinngCart = () => {
         productId: p.product.id,
         quantity: p.quantity + 1,
       })
-    ).then(() => dispatch(fetchCart(userId)));
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCart(userId));
+      })
+      .catch(() => {
+        toast.error("No hay stock suficiente");
+      });
   };
+  */
+const increase = (p) => {
+  dispatch(
+    updateCartItem({
+      userId,
+      productId: p.product.id,
+      quantity: p.quantity + 1,
+    })
+  ).then((result) => {
+    console.log("RESULTADO:", result);
+
+    if (result.type.includes("rejected")) {
+      alert("No hay stock suficiente");
+      return;
+    }
+
+    dispatch(fetchCart(userId));
+  });
+};
 
   const decrease = (p) => {
     if (p.quantity <= 1) return;
@@ -47,10 +75,14 @@ export const ShoppinngCart = () => {
       .then(() => dispatch(fetchCart(userId)));
   };
 
-  const total = cart.reduce(
-    (acc, p) => acc + p.product.price * p.quantity,
-    0
-  );
+  const total = cart.reduce((acc, p) => {
+    const finalPrice =
+      p.product.discount > 0
+        ? p.product.price - (p.product.price * p.product.discount) / 100
+        : p.product.price;
+
+    return acc + finalPrice * p.quantity;
+  }, 0);
 
   if (loading) {
     return (
@@ -97,7 +129,11 @@ export const ShoppinngCart = () => {
                   <div>
                     <h2 className="font-bold">{p.product.name}</h2>
                     <p className="text-sm text-muted-foreground">
-                      ${p.product.price} c/u
+                      $
+                      {p.product.discount > 0
+                        ? p.product.price - (p.product.price * p.product.discount) / 100
+                        : p.product.price}
+                      {" "}c/u
                     </p>
                   </div>
                 </div>
@@ -124,7 +160,10 @@ export const ShoppinngCart = () => {
                 {/* Total + delete */}
                 <div className="flex items-center gap-4">
                   <p className="font-black">
-                    ${p.product.price * p.quantity}
+                    $
+                    {(p.product.discount > 0
+                      ? p.product.price - (p.product.price * p.product.discount) / 100
+                      : p.product.price) * p.quantity}
                   </p>
 
                   <button

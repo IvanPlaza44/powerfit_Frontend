@@ -34,16 +34,20 @@ export const addToCart = createAsyncThunk(
 // UPDATE PRODUCT
 export const updateCartItem = createAsyncThunk(
   "cart/updateCartItem",
-  async ({ userId, productId, quantity }) => {
-    const token = localStorage.getItem("token");
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.put(
-      `http://localhost:4002/cart/${userId}/products/${productId}?quantity=${quantity}`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      await axios.put(
+        `http://localhost:4002/cart/${userId}/products/${productId}?quantity=${quantity}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    return userId;
+      return userId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
   }
 );
 

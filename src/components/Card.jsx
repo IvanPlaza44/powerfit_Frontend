@@ -32,6 +32,8 @@ const Card = ({ product, addToFavorites }) => {
       dispatch(fetchCart(userId));
 
       alert("Agregado al carrito");
+      //toast.success("Prueba");
+
     } catch (err) {
       console.error(err);
       alert("Error al agregar al carrito");
@@ -47,13 +49,35 @@ const Card = ({ product, addToFavorites }) => {
   return (
     <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5">
 
-      <div className="aspect-square flex items-center justify-center bg-secondary rounded-lg">
-        <img src={product.image} alt={product.name} />
+      <div className="relative aspect-square overflow-hidden flex items-center justify-center bg-secondary rounded-lg">
+
+        {hasDiscount && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+            -{product.discount}%
+          </span>
+        )}
+
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <h2 className="mt-3 font-bold">{product.name}</h2>
 
-      <p className="font-black">${discountPrice}</p>
+      <div className="mt-2 flex items-center gap-2">
+        <p className="font-black text-lg">
+          ${discountPrice}
+        </p>
+
+        {hasDiscount && (
+          <p className="text-sm text-gray-500 line-through">
+            ${product.price}
+          </p>
+        )}
+      </div>
+
 
       <Link
         to={`/products/${product.id}`}

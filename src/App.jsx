@@ -20,6 +20,8 @@ import MyProducts from "./views/MyProducts";
 import { fetchCart } from "./redux/cartSlice";
 import { useSelector } from "react-redux";
 import { fetchFavorites } from "./redux/favoritesSlice";
+import { Toaster } from "react-hot-toast";
+
 
 function App() {
 
@@ -40,6 +42,8 @@ function App() {
 
   return (
     <>
+      <Toaster position="top-right" />
+
       <NavBar favoritesCount={favorites.length} />
 
       <Routes>

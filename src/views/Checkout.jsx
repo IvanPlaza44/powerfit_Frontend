@@ -136,7 +136,7 @@ const Checkout = () => {
               >
                 <span className="font-medium">{opt.label}</span>
                 <span className="font-bold">
-                  ${opt.cost}
+                  {opt.cost===0 ? "Gratis" : `$${opt.cost}`}
                 </span>
               </button>
             ))}
