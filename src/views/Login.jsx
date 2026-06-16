@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../redux/cartSlice";
 import { loginUser } from "../redux/loginSlice";
+import { fetchFavorites } from "../redux/favoritesSlice"; 
 
 export default function Login() {
 
@@ -54,9 +55,16 @@ export default function Login() {
       localStorage.setItem("userId", decoded.userId);
       localStorage.setItem("role", data.role);
 
-      dispatch(fetchCart());
+      dispatch(fetchCart(decoded.userId));
+      dispatch(fetchFavorites());
+      
+      console.log("ROL:", data.role);
 
-      navigate("/");
+      if (data.role?.toUpperCase().includes("SELLER")) {
+        navigate("/my-products");
+      } else {
+        navigate("/");
+      }
     }
 
     if (loginUser.rejected.match(result)) {

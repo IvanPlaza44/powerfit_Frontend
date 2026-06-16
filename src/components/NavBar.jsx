@@ -3,13 +3,16 @@ import { ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, Package } from
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import SearchBar from './SearchBar'; // Asegúrate de que la ruta coincida con donde creaste el archivo
-
+import { useDispatch } from "react-redux";
+import { clearCart } from "../redux/cartSlice";
+import { clearFavorites } from "../redux/favoritesSlice";
 export default function NavBar({ user, logout, favoritesCount
 }) {  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isSeller, setIsSeller] = useState(false);
   const navigate = useNavigate(); 
+  const dispatch = useDispatch(); 
   const cartItems = useSelector(
     (state) => state.cart.items
   );
@@ -142,14 +145,13 @@ export default function NavBar({ user, logout, favoritesCount
             <div className="flex items-center border-l pl-2 ml-2">
               {isLogged ? (
                 <button 
-                  onClick={() => {
-                    if (logout) {
-                      logout();
-                    } else {
-                      localStorage.clear();
-                      window.location.reload();
-                    }
-                  }}
+                onClick={() => {
+                  dispatch(clearCart());
+                  dispatch(clearFavorites());
+
+                  localStorage.clear();
+                  navigate("/");
+                }}
                   className="flex items-center gap-1 rounded-md p-2 text-red-500 hover:bg-red-50/10 transition-colors"
                   title="Cerrar sesión"
                 >

@@ -87,7 +87,13 @@ const favoritesSlice = createSlice({
     favorites: [], 
     error: null,
     loading: false },
-  reducers: {},
+  reducers: {
+  clearFavorites: (state) => {
+    state.favorites = [];
+    state.loading = false;
+    state.error = null;
+  },
+},
   extraReducers: (builder) => {
     builder
       // TRAER TODOS LOS FAVORITES
@@ -135,5 +141,7 @@ const favoritesSlice = createSlice({
 
   },
 });
+
+export const { clearFavorites } = favoritesSlice.actions;
 
 export default favoritesSlice.reducer;
