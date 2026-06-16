@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setForm, setShipping, resetCheckout } from "../redux/checkoutSlice";
+import { setForm, setShipping } from "../redux/checkoutSlice";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -27,39 +27,6 @@ const Checkout = () => {
     checkout.form.address &&
     checkout.form.city;
 
-  const handlePurchase = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-
-    try {
-      const res = await fetch("http://localhost:4002/purchase", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: Number(userId),
-        }),
-      });
-
-      if (!res.ok) {
-        alert("Error en la compra");
-        return;
-      }
-
-      dispatch(resetCheckout());
-
-      alert("Compra realizada con éxito");
-      navigate("/products");
-    } catch (error) {
-      console.error(error);
-      alert("Error de red");
-    }
-  };
-
   const shippingOptions = [
     { value: "pickup", label: "Retiro en sucursal", cost: 0 },
     { value: "motorbike", label: "Motomensajería", cost: 1500 },
@@ -73,7 +40,7 @@ const Checkout = () => {
       </h1>
 
       <form
-        onSubmit={handlePurchase}
+        //onSubmit={handlePurchase}
         className="space-y-5 rounded-3xl border border-border bg-card p-8 shadow-sm"
       >
         {/* FORM */}
@@ -109,7 +76,6 @@ const Checkout = () => {
           className="w-full rounded-xl border p-4"
         />
 
-        {/* SHIPPING MEJORADO */}
         <div className="space-y-3">
           <label className="text-sm font-bold text-muted-foreground">
             Método de envío
@@ -156,7 +122,8 @@ const Checkout = () => {
 
         <button
           disabled={!isFormValid}
-          type="submit"
+          type="button"
+          onClick={() => navigate("/payment")}
           className="w-full rounded-xl bg-primary py-4 font-bold disabled:opacity-50"
         >
           Confirmar compra

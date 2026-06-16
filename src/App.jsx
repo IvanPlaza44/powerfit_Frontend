@@ -21,7 +21,7 @@ import { fetchCart } from "./redux/cartSlice";
 import { useSelector } from "react-redux";
 import { fetchFavorites } from "./redux/favoritesSlice";
 import { Toaster } from "react-hot-toast";
-
+import Payment from "./views/Payment";
 
 function App() {
 
@@ -85,6 +85,7 @@ function App() {
         <Route path="/create-product" element={<CreateProduct />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
 
       <Footer />
