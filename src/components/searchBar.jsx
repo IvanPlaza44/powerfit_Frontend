@@ -1,33 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setSearch } from "../redux/filterSlice";
 
 export default function SearchBar({ isSeller, formClassName }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSearch = (e) => {
+  const applySearch = (value) => {
+    dispatch(setSearch(value.trim()));
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const basePath = isSeller ? "/my-products" : "/products";
-
-    if (searchQuery.trim() !== "") {
-      navigate(`${basePath}?search=${encodeURIComponent(searchQuery)}`);
-    } else {
-      navigate(basePath);
-    }
+    applySearch(searchQuery);
   };
 
   return (
-    <form onSubmit={handleSearch} className={formClassName}>
+    <form onSubmit={handleSubmit} className={formClassName}>
       <div className="relative w-full">
-        <Search onClick={handleSearch} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground cursor-pointer" />
+
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+
         <input
           type="search"
-          placeholder={isSeller ? "Buscar en mis productos..." : "Buscar productos..."}
+          placeholder={
+            isSeller
+              ? "Buscar en mis productos..."
+              : "Buscar productos..."
+          }
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-md border-0 bg-secondary py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary"
+          onChange={(e) => {
+            const val = e.target.value;
+            setSearchQuery(val);
+
+            if (val === "") {
+              dispatch(setSearch(""));
+            }
+          }}
+          className="w-full bg-secondary py-2 pl-10 pr-4 rounded-md"
         />
       </div>
     </form>

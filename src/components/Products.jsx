@@ -8,9 +8,12 @@ import {
 } from "../redux/favoritesSlice";
 import { fetchProducts } from "../redux/productSlice";
 import { setSortOrder } from "../redux/filterSlice";
+import { useSearchParams } from "react-router-dom";
+import { setCategory, setSearch } from "../redux/filterSlice";
 
 const Products = () => {
   const dispatch = useDispatch();
+  const [params] = useSearchParams();
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -23,11 +26,33 @@ const Products = () => {
   );
 
   const { favorites } = useSelector((state) => state.favorites);
+  
+  const categoryImages = {
+    indumentaria:
+      "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    suplementos:
+      "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=1600&auto=format&fit=crop",
+    equipamiento:
+      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1600&auto=format&fit=crop",
+  };
 
   useEffect(() => {
     dispatch(fetchProducts());
     dispatch(fetchFavorites());
   }, [dispatch]);
+  
+  useEffect(() => {
+    const categoryParam = params.get("category");
+    const searchParam = params.get("search");
+
+    if (categoryParam) {
+      dispatch(setCategory(categoryParam));
+    }
+
+    if (searchParam) {
+      dispatch(setSearch(searchParam));
+    }
+  }, [params, dispatch]);
 
   let filteredProducts = [...products];
 
@@ -123,13 +148,34 @@ const Products = () => {
   return (
     <div className="container mx-auto px-4 py-8">
 
-      {/* HEADER */}
+      {/* HEADER 
       <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden mb-8 flex items-center p-8 md:p-12 border border-border">
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
             {search
               ? search
               : category || "Todos los productos"}
+          </h1>
+        </div>
+      </div> */}
+      <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden mb-8 flex items-center p-8 md:p-12 border border-border">
+
+        {/* IMAGEN DE FONDO */}
+        {category && categoryImages[category.toLowerCase()] && (
+          <img
+            src={categoryImages[category.toLowerCase()]}
+            alt={category}
+            className="absolute inset-0 w-full h-full object-cover brightness-[0.4]"
+          />
+        )}
+
+        {/* OVERLAY (para que el texto se lea bien) */}
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* TEXTO */}
+        <div className="relative z-10">
+          <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
+            {search ? search : category || "Todos los productos"}
           </h1>
         </div>
       </div>
