@@ -86,6 +86,8 @@ export default function NavBar({
           {/* LINKS */}
           <div className="hidden md:flex items-center gap-6">
 
+
+
             {isSeller ? (
               <Link
                 to="/my-products"
@@ -102,6 +104,13 @@ export default function NavBar({
                 Productos
               </button>
             )}
+
+            <Link
+              to="/community"
+              className="hover:text-primary"
+            >
+              Comunidad
+            </Link>
 
             {!isSeller && (
               <div className="relative">
@@ -205,6 +214,13 @@ export default function NavBar({
             >
               Productos
             </button>
+
+            <Link
+              to="/community"
+              className="block py-2"
+            >
+              Comunidad
+            </Link>
 
             {categories.map((cat) => (
               <button

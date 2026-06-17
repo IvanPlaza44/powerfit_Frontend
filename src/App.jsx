@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { fetchFavorites } from "./redux/favoritesSlice";
 import { Toaster } from "react-hot-toast";
 import Payment from "./views/Payment";
+import Community from "./views/Community";
 
 function App() {
 
@@ -86,6 +87,8 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/community"element={<Community />}/>
+        
       </Routes>
 
       <Footer />

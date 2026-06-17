@@ -7,7 +7,7 @@ import cartReducer from "./cartSlice";
 import checkoutReducer from "./checkoutSlice";
 import loginReducer from "./loginSlice"
 import filterReducer from "./filterSlice";
-
+import communityReducer from "./communitySlice";
 
 
 export const store = configureStore({
@@ -20,5 +20,6 @@ export const store = configureStore({
     cart: cartReducer,
     checkout: checkoutReducer,
     filter: filterReducer, 
+    community: communityReducer,
   },
 });
