@@ -6,6 +6,8 @@ import detailProductReducer from "./detailProductSlice";
 import cartReducer from "./cartSlice";
 import checkoutReducer from "./checkoutSlice";
 import loginReducer from "./loginSlice"
+import filterReducer from "./filterSlice";
+
 
 
 export const store = configureStore({
@@ -17,6 +19,6 @@ export const store = configureStore({
     detailProduct: detailProductReducer,
     cart: cartReducer,
     checkout: checkoutReducer,
-
+    filter: filterReducer, 
   },
 });

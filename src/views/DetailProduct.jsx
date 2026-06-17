@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById } from "../redux/detailProductSlice";
 import { addToCart, fetchCart } from "../redux/cartSlice";
 import { addFavoriteAsync } from "../redux/favoritesSlice";
+import { useState } from "react";
 
 const DetailProduct = ({ addToFavorites }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
-
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const { product, loading } = useSelector(
     (state) => state.detailProduct
   );
@@ -16,11 +18,13 @@ const DetailProduct = ({ addToFavorites }) => {
   const handleAddToFavorites = async () => {
     try {
       await dispatch(addFavoriteAsync(product)).unwrap();
+      setMessage("Agregado a favoritos");
+      setTimeout(() => setMessage(""), 2000);
 
-      alert("Producto agregado a favoritos");
     } catch (error) {
       console.error(error);
-      alert("Error al agregar favorito");
+      setError("Error al agregar favorito");
+      setTimeout(() => setError(""), 2000);
     }
   };
 
@@ -33,7 +37,8 @@ const DetailProduct = ({ addToFavorites }) => {
 
     
     if (!userId || userId === "undefined") {
-      alert("Tenés que iniciar sesión");
+      setMessage("Tenes que iniciar sesion");
+      setTimeout(() => setMessage(""), 2000);
       return;
     }
 
@@ -47,10 +52,12 @@ const DetailProduct = ({ addToFavorites }) => {
 
       dispatch(fetchCart(userId));
 
-      alert("Producto agregado al carrito");
+      setMessage("Producto agregado al carrito");
+      setTimeout(() => setMessage(""), 2000);
     } catch (err) {
       console.error(err);
-      alert("Error al agregar al carrito");
+      setError("Error al agregar al carrito");
+      setTimeout(() => setError(""), 2000);
     }
   };
 
@@ -62,6 +69,7 @@ const DetailProduct = ({ addToFavorites }) => {
     ? (product.price / (1 - product.discount / 100)).toFixed(0)
     : null;
 return (
+  
   <div className="min-h-screen bg-black text-white py-10 px-4">
     <div className="max-w-4xl mx-auto flex flex-col items-center">
 
@@ -69,8 +77,19 @@ return (
       <img
         src={product.image}
         alt={product.name}
-        className="w-full max-w-2xl object-contain rounded-xl mb-8"
+        className="w-full max-w-xl h-[400px] object-contain rounded-xl mb-6"
       />
+          {message && (
+        <p className="text-green-400 text-center mb-4">
+          {message}
+        </p>
+      )}
+
+      {error && (
+        <p className="text-red-400 text-center mb-4">
+          {error}
+        </p>
+      )}
 
       {/* Nombre */}
       <h1 className="text-4xl font-bold text-center mb-4">

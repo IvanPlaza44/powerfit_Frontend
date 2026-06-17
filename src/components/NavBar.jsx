@@ -3,9 +3,11 @@ import { ShoppingCart, Heart, User, Menu, X, ChevronDown, LogOut, Package } from
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import SearchBar from './SearchBar'; // Asegúrate de que la ruta coincida con donde creaste el archivo
-import { useDispatch } from "react-redux";
 import { clearCart } from "../redux/cartSlice";
 import { clearFavorites } from "../redux/favoritesSlice";
+import { useDispatch } from "react-redux";
+import { setCategory } from "../redux/filterSlice";
+
 export default function NavBar({ user, logout, favoritesCount
 }) {  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -86,14 +88,17 @@ export default function NavBar({ user, logout, favoritesCount
                 {isDropdownOpen && (
                   <div className="absolute left-0 py-3 bg-card border border-border rounded-md shadow-lg min-w-[150px]">
                     {categories.map((category) => (
-                      <a
+                      <button
                         key={category.name}
-                        href={category.href}
-                        className="block px-4 py-2 text-sm text-foreground hover:text-primary transition-colors"
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={() => {
+                          dispatch(setCategory(category.name.toLowerCase()));
+                          navigate("/products");
+                          setIsDropdownOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-foreground hover:text-primary transition-colors"
                       >
                         {category.name}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -193,18 +198,28 @@ export default function NavBar({ user, logout, favoritesCount
                 </Link>
               ) : (
                 <>
-                  <a href="/products" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100">
+                  <a
+                    onClick={() => {
+                      navigate("/products");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100"
+                  >
                     Productos
                   </a>
+
                   {categories.map((category) => (
-                    <a
+                    <button
                       key={category.name}
-                      href={category.href}
-                      className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => {
+                        dispatch(setCategory(category.name.toLowerCase()));
+                        navigate("/products");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 text-left w-full"
                     >
                       {category.name}
-                    </a>
+                    </button>
                   ))}
                 </>
               )}

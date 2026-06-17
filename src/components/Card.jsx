@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import { addToCart, fetchCart } from "../redux/cartSlice";
 import { toggleFavoriteAsync } from "../redux/favoritesSlice";
 import { Heart } from "lucide-react";
@@ -7,8 +8,11 @@ import { Heart } from "lucide-react";
 const Card = ({ product }) => {
   const dispatch = useDispatch();
 
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
   const favorites = useSelector(
-    (state) => state.favorites.favorites
+    (state) => state.favorites.favorites|| []
   );
 
   const isFavorite = favorites.some(
@@ -23,7 +27,8 @@ const Card = ({ product }) => {
     const userId = localStorage.getItem("userId");
 
     if (!userId || userId === "undefined") {
-      alert("Tenés que iniciar sesión");
+      setError("Tenés que iniciar sesión");
+      setTimeout(() => setError(""), 2000);
       return;
     }
 
@@ -37,10 +42,12 @@ const Card = ({ product }) => {
 
       dispatch(fetchCart(userId));
 
-      alert("Agregado al carrito");
+      setMessage("Agregado al carrito");
+      setTimeout(() => setMessage(""), 2000);
     } catch (err) {
       console.error(err);
-      alert("Error al agregar al carrito");
+      setError("Error al agregar al carrito");
+      setTimeout(() => setError(""), 2000);
     }
   };
 
@@ -52,6 +59,19 @@ const Card = ({ product }) => {
 
   return (
     <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5">
+
+      {/* mensajes */}
+      {message && (
+        <p className="mb-2 text-sm text-green-400">
+          {message}
+        </p>
+      )}
+
+      {error && (
+        <p className="mb-2 text-sm text-red-400">
+          {error}
+        </p>
+      )}
 
       <div className="relative aspect-square overflow-hidden flex items-center justify-center bg-secondary rounded-lg">
         {hasDiscount && (
