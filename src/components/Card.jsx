@@ -1,17 +1,23 @@
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCart } from "../redux/cartSlice";
-import { useSelector } from "react-redux";
+import { toggleFavoriteAsync } from "../redux/favoritesSlice";
 import { Heart } from "lucide-react";
 
-const Card = ({ product, addToFavorites }) => {
-  const { favorites } = useSelector((state) => state.favorites);
+const Card = ({ product }) => {
+  const dispatch = useDispatch();
+
+  const favorites = useSelector(
+    (state) => state.favorites.favorites
+  );
 
   const isFavorite = favorites.some(
     (fav) => fav.product?.id === product.id
   );
 
-  const dispatch = useDispatch();
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavoriteAsync(product));
+  };
 
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
@@ -32,8 +38,6 @@ const Card = ({ product, addToFavorites }) => {
       dispatch(fetchCart(userId));
 
       alert("Agregado al carrito");
-      //toast.success("Prueba");
-
     } catch (err) {
       console.error(err);
       alert("Error al agregar al carrito");
@@ -50,7 +54,6 @@ const Card = ({ product, addToFavorites }) => {
     <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5">
 
       <div className="relative aspect-square overflow-hidden flex items-center justify-center bg-secondary rounded-lg">
-
         {hasDiscount && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
             -{product.discount}%
@@ -78,7 +81,6 @@ const Card = ({ product, addToFavorites }) => {
         )}
       </div>
 
-
       <Link
         to={`/products/${product.id}`}
         className="mt-3 text-center bg-secondary py-2 rounded-md"
@@ -94,7 +96,7 @@ const Card = ({ product, addToFavorites }) => {
       </button>
 
       <button
-        onClick={() => addToFavorites?.(product)}
+        onClick={handleToggleFavorite}
         className={`mt-2 flex items-center justify-center rounded-md border-2 py-2 transition-all duration-300
           ${
             isFavorite
@@ -106,9 +108,7 @@ const Card = ({ product, addToFavorites }) => {
           size={22}
           fill={isFavorite ? "currentColor" : "none"}
           className={
-            isFavorite
-              ? "text-red-500"
-              : "text-gray-400"
+            isFavorite ? "text-red-500" : "text-gray-400"
           }
         />
       </button>
@@ -117,4 +117,3 @@ const Card = ({ product, addToFavorites }) => {
 };
 
 export default Card;
-

@@ -77,7 +77,48 @@ export const removeFavoriteAsync = createAsyncThunk(
   }
 );
 
+export const toggleFavoriteAsync = createAsyncThunk(
+  "favorites/toggleFavorite",
+  async (product, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const favorites = state.favorites.favorites;
 
+    const existing = favorites.find(
+      (fav) => fav.product?.id === product.id
+    );
+
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    // SI YA EXISTE → BORRAR
+    if (existing) {
+      await axios.delete(
+        `http://localhost:4002/favorites/${existing.id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return { removedId: existing.id };
+    }
+
+    // SI NO EXISTE → CREAR
+    const payload = {
+      userId: Number(userId),
+      productId: Number(product.id),
+    };
+
+    const { data } = await axios.post(
+      "http://localhost:4002/favorites",
+      payload,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return { added: data };
+  }
+);
 
 //
 
@@ -134,6 +175,17 @@ const favoritesSlice = createSlice({
 
       .addCase(removeFavoriteAsync.rejected, (state, action) => {
         state.error = action.payload;
+      })
+      .addCase(toggleFavoriteAsync.fulfilled, (state, action) => {
+        const { removedId, added } = action.payload;
+
+        if (removedId) {
+          state.favorites = state.favorites.filter(
+            (fav) => fav.id !== removedId
+          );
+        } else if (added) {
+          state.favorites.push(added);
+        }
       })
 
 
