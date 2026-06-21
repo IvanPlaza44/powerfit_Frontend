@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
-
 export const fetchMyProducts = createAsyncThunk(
   "seller/fetchMyProducts",
   async (_, thunkAPI) => {
@@ -117,7 +115,13 @@ const sellerSlice = createSlice({
     isSeller: false,
   },
 
-  reducers: {},
+  reducers: {
+    clearSeller: (state) => {
+        state.products = [];
+        state.loading = false;
+        state.error = null;
+    },
+    },
 
   extraReducers: (builder) => {
     builder
@@ -173,5 +177,5 @@ const sellerSlice = createSlice({
       });
   },
 });
-
+export const { clearSeller } = sellerSlice.actions;
 export default sellerSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ShoppingCart,
   Heart,
@@ -15,16 +15,12 @@ import SearchBar from "./SearchBar";
 
 import { clearCart } from "../redux/cartSlice";
 import { clearFavorites } from "../redux/favoritesSlice";
+import { clearSeller } from "../redux/sellerSlice";
 import { setCategory, setSearch } from "../redux/filterSlice";
 
-export default function NavBar({
-  user,
-  logout,
-  favoritesCount,
-}) {
+export default function NavBar({ favoritesCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  //const [isSeller, setIsSeller] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,28 +28,12 @@ export default function NavBar({
   const cartItems = useSelector((state) => state.cart.items);
   const cartCount = cartItems?.length || 0;
 
-  const isLogged = user || localStorage.getItem("token");
-  const isSeller =
-    localStorage.getItem("role")?.toUpperCase() === "SELLER";
- /* useEffect(() => {
-    const syncRole = () => {
-      const role = localStorage.getItem("role");
+  // 🔥 SINGLE SOURCE OF TRUTH
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
-      setIsSeller(role?.toUpperCase().includes("SELLER") ?? false);
-    };
-
-    syncRole();
-
-    const handler = () => syncRole();
-
-    window.addEventListener("storage_role_changed", handler);
-    window.addEventListener("storage", handler);
-
-    return () => {
-      window.removeEventListener("storage_role_changed", handler);
-      window.removeEventListener("storage", handler);
-    };
-  }, []); */
+  const isLogged = !!token;
+  const isSeller = role?.toUpperCase() === "SELLER";
 
   const categories = [
     { name: "Indumentaria" },
@@ -75,6 +55,21 @@ export default function NavBar({
     setMobileMenuOpen(false);
   };
 
+  const handleLogout = () => {
+    dispatch(clearCart());
+    dispatch(clearFavorites());
+    dispatch(clearSeller());
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+
+    setIsDropdownOpen(false);
+    setMobileMenuOpen(false);
+
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <nav className="container mx-auto px-4">
@@ -88,8 +83,6 @@ export default function NavBar({
           {/* LINKS */}
           <div className="hidden md:flex items-center gap-6">
 
-
-
             {isSeller ? (
               <Link
                 to="/my-products"
@@ -99,27 +92,19 @@ export default function NavBar({
                 Mis productos
               </Link>
             ) : (
-              <button
-                onClick={goToProducts}
-                className="hover:text-primary"
-              >
+              <button onClick={goToProducts} className="hover:text-primary">
                 Productos
               </button>
             )}
 
-            <Link
-              to="/community"
-              className="hover:text-primary"
-            >
+            <Link to="/community" className="hover:text-primary">
               Comunidad
             </Link>
 
             {!isSeller && (
               <div className="relative">
                 <button
-                  onClick={() =>
-                    setIsDropdownOpen(!isDropdownOpen)
-                  }
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-1 hover:text-primary"
                 >
                   Categorías <ChevronDown size={16} />
@@ -130,9 +115,7 @@ export default function NavBar({
                     {categories.map((cat) => (
                       <button
                         key={cat.name}
-                        onClick={() =>
-                          selectCategory(cat.name)
-                        }
+                        onClick={() => selectCategory(cat.name)}
                         className="block w-full text-left px-4 py-2 hover:text-primary"
                       >
                         {cat.name}
@@ -178,22 +161,7 @@ export default function NavBar({
 
             {/* LOGIN / LOGOUT */}
             {isLogged ? (
-              <button
-                onClick={() => {
-                    dispatch(clearCart());
-                    dispatch(clearFavorites());
-
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("userId");
-                    localStorage.removeItem("role");
-
-                    setIsSeller(false);
-
-                    window.dispatchEvent(new Event("storage_role_changed"));
-
-                    navigate("/");
-                  }}
-              >
+              <button onClick={handleLogout}>
                 <LogOut />
               </button>
             ) : (
@@ -202,33 +170,25 @@ export default function NavBar({
               </Link>
             )}
 
-            {/* MOBILE MENU */}
+            {/* MOBILE */}
             <button
               className="md:hidden"
-              onClick={() =>
-                setMobileMenuOpen(!mobileMenuOpen)
-              }
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
 
-        {/* MOBILE */}
+        {/* MOBILE MENU */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4">
 
-            <button
-              onClick={goToProducts}
-              className="block w-full text-left py-2"
-            >
+            <button onClick={goToProducts} className="block w-full text-left py-2">
               Productos
             </button>
 
-            <Link
-              to="/community"
-              className="block py-2"
-            >
+            <Link to="/community" className="block py-2">
               Comunidad
             </Link>
 
