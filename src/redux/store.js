@@ -8,7 +8,7 @@ import checkoutReducer from "./checkoutSlice";
 import loginReducer from "./loginSlice"
 import filterReducer from "./filterSlice";
 import communityReducer from "./communitySlice";
-
+import sellerReducer from "./sellerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -21,5 +21,6 @@ export const store = configureStore({
     checkout: checkoutReducer,
     filter: filterReducer, 
     community: communityReducer,
+    seller: sellerReducer,
   },
 });

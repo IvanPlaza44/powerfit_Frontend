@@ -2,51 +2,78 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // GET CART
-export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId) => {
-  const token = localStorage.getItem("token");
+export const fetchCart = createAsyncThunk(
+  "cart/fetchCart",
+  async (userId, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
 
-  const { data } = await axios.get(
-    `http://localhost:4002/cart/${userId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
+      if (!token) {
+        return thunkAPI.rejectWithValue("No token");
+      }
+
+      const { data } = await axios.get(
+        `http://localhost:4002/cart/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error fetching cart"
+      );
     }
-  );
-
-  return data;
-});
+  }
+);
 
 // ADD PRODUCT
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ userId, productId }) => {
-    const token = localStorage.getItem("token");
+  async ({ userId, productId }, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.post(
-      `http://localhost:4002/cart/${userId}/products`,
-      { productId, quantity: 1 },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      await axios.post(
+        `http://localhost:4002/cart/${userId}/products`,
+        { productId, quantity: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    return userId;
+      return userId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data);
+    }
   }
 );
 
 // UPDATE PRODUCT
 export const updateCartItem = createAsyncThunk(
   "cart/updateCartItem",
-  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+  async ({ userId, productId, quantity }, thunkAPI) => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.put(
         `http://localhost:4002/cart/${userId}/products/${productId}?quantity=${quantity}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       return userId;
     } catch (error) {
-      return rejectWithValue(error.response?.data);
+      return thunkAPI.rejectWithValue(error.response?.data);
     }
   }
 );
@@ -54,15 +81,23 @@ export const updateCartItem = createAsyncThunk(
 // DELETE PRODUCT
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ userId, productId }) => {
-    const token = localStorage.getItem("token");
+  async ({ userId, productId }, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.delete(
-      `http://localhost:4002/cart/${userId}/products/${productId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      await axios.delete(
+        `http://localhost:4002/cart/${userId}/products/${productId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    return userId;
+      return productId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data);
+    }
   }
 );
 
@@ -91,11 +126,10 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       });
   },
 });
 
 export const { clearCart } = cartSlice.actions;
-
 export default cartSlice.reducer;

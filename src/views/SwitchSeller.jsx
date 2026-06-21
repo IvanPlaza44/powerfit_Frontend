@@ -1,61 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Dumbbell, ShieldCheck, Rocket, CheckCircle } from "lucide-react"; 
+import { useDispatch, useSelector } from "react-redux";
+import { becomeSeller } from "../redux/sellerSlice";
 
 const SwitchSeller = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [isSeller, setIsSeller] = useState(false);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const checkRole = () => {
-      const userRole = localStorage.getItem("role");
-
-      if (userRole && userRole.toUpperCase().includes("SELLER")) {
-        setIsSeller(true);
-      } else {
-        setIsSeller(false);
-      }
-    };
-
-    checkRole();
-
-  }, []);
-
+  const { loading, isSeller } = useSelector(
+    (state) => state.seller
+  );
+  
   const handleBecomeSeller = async () => {
     if (isSeller) return;
 
     const token = localStorage.getItem("token");
+
     if (!token) {
       alert("Debes iniciar sesión para realizar esta acción.");
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:4002/users/become-seller", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
+    const result = await dispatch(
+      becomeSeller()
+    );
 
-      if (response.ok) {
-        localStorage.setItem("role", "SELLER"); 
-        setIsSeller(true); 
+    if (becomeSeller.fulfilled.match(result)) {
+      localStorage.setItem("role", "SELLER");
 
-        alert("¡Felicitaciones! Ahora sos vendedor oficial de POWERFIT 🎉");
-        
-        navigate("/login"); 
-      } else {
-        alert("Hubo un problema al procesar tu solicitud. Intentá nuevamente.");
-      }
-    } catch (error) {
-      console.error("Error al cambiar de rol:", error);
-      alert("Error de conexión con el servidor.");
-    } finally {
-      setLoading(false);
+      window.dispatchEvent(new Event("storage_role_changed"));
+      alert(
+        "¡Felicitaciones! Ahora sos vendedor oficial de POWERFIT 🎉"
+      );
+
+      navigate("/login");
+    }
+
+    if (becomeSeller.rejected.match(result)) {
+      alert(
+        "Hubo un problema al procesar tu solicitud."
+      );
     }
   };
 

@@ -1,65 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  fetchMyProducts,
+  deleteProduct,
+  updateProduct
+} from "../redux/sellerSlice";
 
 export default function SellerDashboard() {
-  const [myProducts, setMyProducts] = useState([]);
+  const dispatch = useDispatch();
+
+  const { products: myProducts, loading } = useSelector(
+    (state) => state.seller
+  );
+
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "" });
-  const [currentSellerId, setCurrentSellerId] = useState(null); 
-
-  const token = localStorage.getItem("token");
+  
 
   useEffect(() => {
-    if (token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
-        
-        console.log("Payload completo del token en Dashboard:", payload);
-        
-        const sellerId = payload.id || payload.userId || payload.user_id;
-        setCurrentSellerId(sellerId);
-      } catch (error) {
-        console.error("Error al decodificar token en Dashboard:", error);
-      }
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (!currentSellerId) return; 
-
-    fetch("http://localhost:4002/products")
-      .then((res) => res.json())
-      .then((data) => {
-        const allProducts = data.content || [];
-        
-        const filtered = allProducts.filter((p) => {
-          const productSellerId = p.seller?.id || p.sellerId || p.seller_id;
-          return Number(productSellerId) === Number(currentSellerId);
-        });
-
-        setMyProducts(filtered);
-      })
-      .catch((err) => console.error("Error al cargar productos:", err));
-  }, [currentSellerId]); 
+    dispatch(fetchMyProducts());
+  }, [dispatch]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de que querés eliminar este producto?")) return;
+    if (!window.confirm("¿Estás seguro de que querés eliminar este producto?"))
+      return;
 
-    try {
-      const res = await fetch(`http://localhost:4002/products/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const result = await dispatch(deleteProduct(id));
 
-      if (res.ok) {
-        alert("Producto eliminado con éxito.");
-        setMyProducts(myProducts.filter((p) => p.id !== id));
-      } else {
-        alert("No tenés permisos para eliminar este producto.");
-      }
-    } catch (error) {
-      console.error("Error al eliminar:", error);
+    if (deleteProduct.fulfilled.match(result)) {
+      alert("Producto eliminado con éxito.");
+    } else {
+      alert("No tenés permisos para eliminar este producto.");
     }
   };
 
@@ -73,32 +45,26 @@ export default function SellerDashboard() {
     });
   };
 
+
   const handleUpdate = async (e) => {
     e.preventDefault();
-    try {
-      const res = await fetch(`http://localhost:4002/products/${editingProduct.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
 
-      if (res.ok) {
-        const updatedProduct = await res.json();
-        alert("¡Producto actualizado exitosamente!");
-        
-        setMyProducts(myProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
-        setEditingProduct(null);
-      } else {
-        alert("Hubo un error al actualizar el producto.");
-      }
-    } catch (error) {
-      console.error("Error al actualizar:", error);
+    const result = await dispatch(
+      updateProduct({
+        id: editingProduct.id,
+        productData: formData,
+      })
+    );
+
+    if (updateProduct.fulfilled.match(result)) {
+      alert("¡Producto actualizado exitosamente!");
+      setEditingProduct(null);
+    } else {
+      alert("Hubo un error al actualizar el producto.");
     }
   };
 
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-black uppercase text-foreground mb-6">Mis productos pblicados </h1>

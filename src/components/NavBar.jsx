@@ -24,7 +24,7 @@ export default function NavBar({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSeller, setIsSeller] = useState(false);
+  //const [isSeller, setIsSeller] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,25 +33,27 @@ export default function NavBar({
   const cartCount = cartItems?.length || 0;
 
   const isLogged = user || localStorage.getItem("token");
+  const isSeller =
+    localStorage.getItem("role")?.toUpperCase() === "SELLER";
+ /* useEffect(() => {
+    const syncRole = () => {
+      const role = localStorage.getItem("role");
 
-  useEffect(() => {
-    const checkRole = () => {
-      const userRole = localStorage.getItem("role");
-
-      setIsSeller(
-        userRole?.toUpperCase().includes("SELLER") || false
-      );
+      setIsSeller(role?.toUpperCase().includes("SELLER") ?? false);
     };
 
-    checkRole();
+    syncRole();
 
-    window.addEventListener("storage_role_changed", checkRole);
-    return () =>
-      window.removeEventListener(
-        "storage_role_changed",
-        checkRole
-      );
-  }, []);
+    const handler = () => syncRole();
+
+    window.addEventListener("storage_role_changed", handler);
+    window.addEventListener("storage", handler);
+
+    return () => {
+      window.removeEventListener("storage_role_changed", handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []); */
 
   const categories = [
     { name: "Indumentaria" },
@@ -178,11 +180,19 @@ export default function NavBar({
             {isLogged ? (
               <button
                 onClick={() => {
-                  dispatch(clearCart());
-                  dispatch(clearFavorites());
-                  localStorage.clear();
-                  navigate("/");
-                }}
+                    dispatch(clearCart());
+                    dispatch(clearFavorites());
+
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("userId");
+                    localStorage.removeItem("role");
+
+                    setIsSeller(false);
+
+                    window.dispatchEvent(new Event("storage_role_changed"));
+
+                    navigate("/");
+                  }}
               >
                 <LogOut />
               </button>

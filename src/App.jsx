@@ -32,13 +32,18 @@ function App() {
   );
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
-  const role = localStorage.getItem("role")?.toUpperCase() || "";
+  //const role = localStorage.getItem("role")?.toUpperCase() || "";
 
   useEffect(() => {
-    if (token && userId) {
-      dispatch(fetchCart(userId));
-      dispatch(fetchFavorites());
-    }
+    if (!token || !userId) return;
+
+    const role = localStorage.getItem("role");
+
+    // SOLO buyer puede tener cart
+    if (role?.toUpperCase() !== "BUYER") return;
+
+    dispatch(fetchCart(userId));
+    dispatch(fetchFavorites());
   }, [dispatch, token, userId]);
 
   return (

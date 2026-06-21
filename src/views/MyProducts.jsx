@@ -1,39 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom"; 
 import { Plus, SearchX } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMyProducts } from "../redux/sellerSlice";
 
 const MyProducts = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
+  const dispatch = useDispatch();
+
+  //const sellerState = useSelector((state) => state.seller);
+
+  //const products = sellerState?.products ?? [];
+  //const loading = sellerState?.loading ?? false;
+  const sellerState = useSelector((state) => state.seller ?? {
+    products: [],
+    loading: false
+  });
+
+  const { products, loading } = sellerState;
+
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
 
   useEffect(() => {
-    const fetchMyProducts = async () => {
-      const token = localStorage.getItem("token");
-      try {
-  
-        const res = await fetch("http://localhost:4002/products/seller", {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-        if (res.ok) {
-          const data = await res.json();
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-          setProducts(data.content || data); 
-        }
-      } catch (error) {
-        console.error("Error al cargar tus productos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyProducts();
-  }, []);
-
+    dispatch(fetchMyProducts());
+  }, [dispatch]);
  
   const filteredProducts = products.filter((product) => {
     if (!searchQuery.trim()) return true;
@@ -45,6 +38,7 @@ const MyProducts = () => {
     return productName.includes(query) || productDesc.includes(query);
   });
 
+  console.log("SELLER STATE:", sellerState);
   return (
     <div className="min-h-screen bg-background text-foreground p-6 md:p-12">
       <div className="container mx-auto max-w-5xl">
