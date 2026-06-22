@@ -39,9 +39,6 @@ const Card = ({ product }) => {
           productId: product.id,
         })
       ).unwrap();
-
-      dispatch(fetchCart(userId));
-
       setMessage("Agregado al carrito");
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
@@ -58,20 +55,26 @@ const Card = ({ product }) => {
     : product.price;
 
   return (
-    <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5">
+    <div className="flex flex-col w-[260px] rounded-xl border border-border bg-card p-5 relative">
 
-      {/* mensajes */}
-      {message && (
-        <p className="mb-2 text-sm text-green-400">
-          {message}
-        </p>
-      )}
+        <button
+          onClick={handleToggleFavorite}
+          className={`absolute top-3 right-3 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:scale-110 transition
+            ${
+              isFavorite
+                ? "border-red-500 "
+                : "border-gray-500 hover:border-red-500"
+            }`}
+        >
+          <Heart
+            size={25}
+            fill={isFavorite ? "currentColor" : "none"}
+            className={
+              isFavorite ? "text-red-500" : "text-gray-400"
+            }
+          />
+        </button>
 
-      {error && (
-        <p className="mb-2 text-sm text-red-400">
-          {error}
-        </p>
-      )}
 
       <div className="relative aspect-square overflow-hidden flex items-center justify-center bg-secondary rounded-lg">
         {hasDiscount && (
@@ -115,23 +118,6 @@ const Card = ({ product }) => {
         Añadir al carrito
       </button>
 
-      <button
-        onClick={handleToggleFavorite}
-        className={`mt-2 flex items-center justify-center rounded-md border-2 py-2 transition-all duration-300
-          ${
-            isFavorite
-              ? "border-red-500 bg-red-500/10"
-              : "border-gray-500 hover:border-red-500"
-          }`}
-      >
-        <Heart
-          size={22}
-          fill={isFavorite ? "currentColor" : "none"}
-          className={
-            isFavorite ? "text-red-500" : "text-gray-400"
-          }
-        />
-      </button>
     </div>
   );
 };

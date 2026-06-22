@@ -1,14 +1,11 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchCart,
-  updateCartItem,
-  removeFromCart,
-} from "../redux/cartSlice";
-import toast from "react-hot-toast";
+import { fetchCart, updateCartItem, removeFromCart } from "../redux/cartSlice";
+import { toast }from "react-toastify";
+import { ScaleLoader } from "react-spinners";
 
-export const ShoppinngCart = () => {
+export default function ShoppinngCart () {
   const dispatch = useDispatch();
 
   const { items: cart, loading } = useSelector((state) => state.cart);
@@ -21,44 +18,23 @@ export const ShoppinngCart = () => {
     }
   }, [dispatch, userId]);
 
-  /*
-  const increase = (p) => {
-    dispatch(
+const increase = async (p) => {
+  try {
+    await dispatch(
       updateCartItem({
         userId,
         productId: p.product.id,
         quantity: p.quantity + 1,
       })
-    )
-      .unwrap()
-      .then(() => {
-        dispatch(fetchCart(userId));
-      })
-      .catch(() => {
-        toast.error("No hay stock suficiente");
-      });
-  };
-  */
-const increase = (p) => {
-  dispatch(
-    updateCartItem({
-      userId,
-      productId: p.product.id,
-      quantity: p.quantity + 1,
-    })
-  ).then((result) => {
-    console.log("RESULTADO:", result);
-
-    if (result.type.includes("rejected")) {
-      alert("No hay stock suficiente");
-      return;
-    }
-
-    dispatch(fetchCart(userId));
-  });
+    ).unwrap();
+  } catch {
+    toast.error("No hay stock suficiente", {
+      toastId: "stock-error",
+    });
+  }
 };
 
-  const decrease = (p) => {
+  const decrease = (p) => { //Funcion para decrementar cantidad
     if (p.quantity <= 1) return;
 
     dispatch(
@@ -67,12 +43,11 @@ const increase = (p) => {
         productId: p.product.id,
         quantity: p.quantity - 1,
       })
-    ).then(() => dispatch(fetchCart(userId)));
+    )
   };
 
   const remove = (productId) => {
     dispatch(removeFromCart({ userId, productId }))
-      .then(() => dispatch(fetchCart(userId)));
   };
 
   const total = cart.reduce((acc, p) => {
@@ -84,16 +59,14 @@ const increase = (p) => {
     return acc + finalPrice * p.quantity;
   }, 0);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <h1 className="text-2xl font-bold">Cargando carrito...</h1>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
+      {loading && (
+        <div className="fixed inset-0 bg-white/20 flex items-center justify-center z-[9999]">
+          <ScaleLoader />
+        </div>
+      )}
       <h1 className="text-3xl font-black mb-8 text-foreground">
         Tu Carrito
       </h1>
@@ -105,8 +78,8 @@ const increase = (p) => {
           </p>
 
           <Link
-            to="/"
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-white"
+            to="/products"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-bold text-black"
           >
             Explorar productos
           </Link>

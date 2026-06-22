@@ -28,7 +28,6 @@ export default function NavBar({ favoritesCount }) {
   const cartItems = useSelector((state) => state.cart.items);
   const cartCount = cartItems?.length || 0;
 
-  // 🔥 SINGLE SOURCE OF TRUTH
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -76,8 +75,8 @@ export default function NavBar({ favoritesCount }) {
         <div className="flex h-25 items-center justify-between">
 
           {/* LOGO */}
-          <Link to="/" className="flex items-center gap-2 size-40">
-            <img src="Logo.png" alt="Logo" />
+          <Link to="/" className="flex items-center justify-center gap-2 size-40">
+            <img src="/Logo.png" alt="Logo" />
           </Link>
 
           {/* LINKS */}
@@ -134,7 +133,7 @@ export default function NavBar({ favoritesCount }) {
           />
 
           {/* ICONOS */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-8">
 
             {!isSeller && (
               <>
