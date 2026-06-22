@@ -15,12 +15,22 @@ export default function SellerDashboard() {
   );
 
   const [editingProduct, setEditingProduct] = useState(null);
-  const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "" });
-  
-
+  const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "", discount: 0 , image: "" });
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   useEffect(() => {
     dispatch(fetchMyProducts());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [message]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("¿Estás seguro de que querés eliminar este producto?"))
@@ -29,9 +39,11 @@ export default function SellerDashboard() {
     const result = await dispatch(deleteProduct(id));
 
     if (deleteProduct.fulfilled.match(result)) {
-      alert("Producto eliminado con éxito.");
+      setMessage("Producto eliminado con éxito.");
+      setMessageType("success");
     } else {
-      alert("No tenés permisos para eliminar este producto.");
+      setMessage(result.payload || "Error al eliminar el producto.");
+      setMessageType("error");
     }
   };
 
@@ -42,7 +54,8 @@ export default function SellerDashboard() {
       description: product.description,
       price: product.price,
       stock: product.stock,
-      discount: product.discount || 0, //
+      discount: product.discount || 0, 
+      image: product.image || ""
     });
   };
 
@@ -58,18 +71,32 @@ export default function SellerDashboard() {
     );
 
     if (updateProduct.fulfilled.match(result)) {
-      alert("¡Producto actualizado exitosamente!");
+      setMessage("Producto actualizado exitosamente.");
+      setMessageType("success");
+      dispatch(fetchMyProducts());
+
       setEditingProduct(null);
     } else {
-      alert("Hubo un error al actualizar el producto.");
-    }
+      setMessage(result.payload || "Error al actualizar el producto.");
+      setMessageType("error");
+}
   };
 
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black uppercase text-foreground mb-6">Mis productos pblicados </h1>
-
+      <h1 className="text-3xl font-black uppercase text-foreground mb-6">Mis productos publicados </h1>
+      {message && (
+        <div
+          className={`mb-4 p-3 rounded-lg font-medium ${
+            messageType === "success"
+              ? "bg-green-100 text-green-700 border border-green-300"
+              : "bg-red-100 text-red-700 border border-red-300"
+          }`}
+        >
+          {message}
+        </div>
+      )}
       {editingProduct && (
         <div className="mb-8 p-6 border border-border bg-card rounded-xl max-w-lg">
           <h2 className="text-xl font-bold mb-4">Editar Producto: {editingProduct.name}</h2>
@@ -108,7 +135,7 @@ export default function SellerDashboard() {
               />
               {/* */}
               <input
-                type="numer"
+                type="number"
                 min="0"
                 max="100"
                 className="p-2 border border-border bg-background rounded col-span-2"
