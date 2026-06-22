@@ -49,6 +49,12 @@ const MyProducts = () => {
             <h1 className="text-3xl font-black uppercase tracking-wide">Mis Productos</h1>
             <p className="text-sm text-muted-foreground">Administrá las publicaciones de tu tienda.</p>
           </div>
+          <div className="flex gap-3">
+            <Link to="/seller-dashboard">
+              <button className="flex items-center gap-2 bg-secondary text-secondary-foreground font-bold px-5 py-3 rounded-lg hover:scale-105 transition-all cursor-pointer">
+                Gestionar productos
+              </button>
+            </Link>
           
           {/* Botón de Cargar un nuevo producto */}
           <Link to="/create-product">
@@ -57,6 +63,7 @@ const MyProducts = () => {
               Cargar un nuevo producto
             </button>
           </Link>
+        </div>
         </div>
 
         {/* Listado de productos */}

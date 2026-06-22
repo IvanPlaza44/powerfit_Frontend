@@ -41,7 +41,8 @@ export default function SellerDashboard() {
       name: product.name,
       description: product.description,
       price: product.price,
-      stock: product.stock
+      stock: product.stock,
+      discount: product.discount || 0, //
     });
   };
 
@@ -104,6 +105,16 @@ export default function SellerDashboard() {
                 value={formData.stock}
                 onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
                 required
+              />
+              {/* */}
+              <input
+                type="numer"
+                min="0"
+                max="100"
+                className="p-2 border border-border bg-background rounded col-span-2"
+                placeholder="Descuento (%) - ej 20 para 20%"
+                value={formData.discount}
+                onChange={(e) => setFormData({ ...formData, discount: parseInt(e.target.value) || 0 })}
               />
             </div>
             <div className="flex gap-2 mt-2">
