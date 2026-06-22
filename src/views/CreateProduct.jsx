@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createProduct } from "../redux/sellerSlice";
 
 export default function CreateProduct() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     discount: "0",
     stock: "",
-    categoryId: "", 
+    categoryId: "",
   });
-
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const IMGBBB_API_KEY = "addff561790a76132ef3c2fbd7b280b3";
 
@@ -31,7 +33,7 @@ export default function CreateProduct() {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); 
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -52,7 +54,7 @@ export default function CreateProduct() {
     setLoading(true);
 
     try {
-      // SUBIR LA IMAGEN A IMGBB 
+      // SUBIR LA IMAGEN A IMGBB (servicio externo, se deja con fetch)
       const imageData = new FormData();
       imageData.append("image", imageFile);
 
@@ -68,29 +70,22 @@ export default function CreateProduct() {
       const imgbbData = await imgbbRes.json();
       const uploadedImageUrl = imgbbData.data.url;
 
-      const res = await fetch("http://localhost:4002/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          image: uploadedImageUrl, 
-          price: parseFloat(formData.price),
-          discount: parseInt(formData.discount || 0, 10), 
-          stock: parseInt(formData.stock, 10),
-          categoryId: parseInt(formData.categoryId, 10), 
-        }),
-      });
+      // CREAR EL PRODUCTO VÍA REDUX
+      const result = await dispatch(createProduct({
+        name: formData.name,
+        description: formData.description,
+        image: uploadedImageUrl,
+        price: parseFloat(formData.price),
+        discount: parseInt(formData.discount || 0, 10),
+        stock: parseInt(formData.stock, 10),
+        categoryId: parseInt(formData.categoryId, 10),
+      }));
 
-      if (res.ok) {
+      if (createProduct.fulfilled.match(result)) {
         alert("¡Producto publicado con éxito!");
-        navigate("/my-products"); 
+        navigate("/my-products");
       } else {
-        const errorData = await res.json().catch(() => ({}));
-        alert(`Error al publicar en backend: ${errorData.message || "Verificá tu rol de vendedor"}`);
+        alert(`Error al publicar: ${result.payload?.message || "Verificá tu rol de vendedor"}`);
       }
     } catch (error) {
       console.error("Error en el proceso:", error);
@@ -102,7 +97,7 @@ export default function CreateProduct() {
 
   return (
     <div className="container mx-auto max-w-lg px-4 py-12">
-      <div className="rounded-xl border border-border bg-card p-6 shadow-md transition-all ">
+      <div className="rounded-xl border border-border bg-card p-6 shadow-md transition-all">
         
         <h2 className="mb-6 text-3xl font-black uppercase tracking-wide text-foreground text-center">
           Publicar <span className="text-primary">Nuevo Producto</span>
@@ -153,9 +148,9 @@ export default function CreateProduct() {
             
             {previewUrl && (
               <div className="mt-3 flex justify-center border border-border rounded-lg p-2 bg-background">
-                <img 
-                  src={previewUrl} 
-                  alt="Previsualización" 
+                <img
+                  src={previewUrl}
+                  alt="Previsualización"
                   className="max-h-40 rounded-md object-contain"
                 />
               </div>
