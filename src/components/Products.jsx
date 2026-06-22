@@ -8,14 +8,11 @@ import {
 } from "../redux/favoritesSlice";
 import { fetchProducts } from "../redux/productSlice";
 import { setSortOrder } from "../redux/filterSlice";
-import { useSearchParams } from "react-router-dom";
 import { setCategory, setSearch } from "../redux/filterSlice";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const [params] = useSearchParams();
 
-  const [showFilters, setShowFilters] = useState(false);
 
   const { category, search, sortOrder } = useSelector(
     (state) => state.filter
@@ -34,25 +31,21 @@ const Products = () => {
       "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=1600&auto=format&fit=crop",
     equipamiento:
       "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1600&auto=format&fit=crop",
+    todos:
+    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop",
   };
 
-  useEffect(() => {
+useEffect(() => {
+  if (products.length === 0) {
     dispatch(fetchProducts());
+  }
+
+  const token = localStorage.getItem("token");
+
+  if (token && favorites.length === 0) {
     dispatch(fetchFavorites());
-  }, [dispatch]);
-  
-  useEffect(() => {
-    const categoryParam = params.get("category");
-    const searchParam = params.get("search");
-
-    if (categoryParam) {
-      dispatch(setCategory(categoryParam));
-    }
-
-    if (searchParam) {
-      dispatch(setSearch(searchParam));
-    }
-  }, [params, dispatch]);
+  }
+}, [dispatch, products.length, favorites.length]);
 
   let filteredProducts = [...products];
 
@@ -93,7 +86,6 @@ const Products = () => {
     );
   }
 
- 
   const handleAddToFavorites = async (product) => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
@@ -148,26 +140,15 @@ const Products = () => {
   return (
     <div className="container mx-auto px-4 py-8">
 
-      {/* HEADER 
-      <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden mb-8 flex items-center p-8 md:p-12 border border-border">
-        <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl font-black uppercase text-white">
-            {search
-              ? search
-              : category || "Todos los productos"}
-          </h1>
-        </div>
-      </div> */}
       <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden mb-8 flex items-center p-8 md:p-12 border border-border">
 
         {/* IMAGEN DE FONDO */}
-        {category && categoryImages[category.toLowerCase()] && (
           <img
-            src={categoryImages[category.toLowerCase()]}
+            src={categoryImages[category?.toLowerCase()] || categoryImages.todos}
             alt={category}
             className="absolute inset-0 w-full h-full object-cover brightness-[0.4]"
           />
-        )}
+    
 
         {/* OVERLAY (para que el texto se lea bien) */}
         <div className="absolute inset-0 bg-black/40" />
@@ -180,38 +161,18 @@ const Products = () => {
         </div>
       </div>
 
-      {/* BOTÓN ORDENAR */}
-      <div className="mb-6">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
-        >
-          Ordenar
-        </button>
-      </div>
-
       {/* FILTRO SORT */}
-      {showFilters && (
-        <div className="mb-6 border border-border p-4 rounded-xl bg-card">
-          <label className="block mb-2 font-semibold">
-            Ordenar por precio
-          </label>
+      <select
+        value={sortOrder}
+        onChange={(e) => dispatch(setSortOrder(e.target.value))}
+        className="w-56 rounded-lg border border-border px-3 py-2 bg-card "
+      >
+        <option value="">Ordenar por precio</option>
+        <option value="asc">↑ Menor a mayor</option>
+        <option value="desc">↓ Mayor a menor</option>
+      </select>
 
-          <select
-            value={sortOrder}
-            onChange={(e) =>
-              dispatch(setSortOrder(e.target.value))
-            }
-            className="w-full p-2 rounded bg-background border border-border"
-          >
-            <option value="">Sin ordenar</option>
-            <option value="asc">Menor a mayor</option>
-            <option value="desc">Mayor a menor</option>
-          </select>
-        </div>
-      )}
-
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="m-6 text-sm text-muted-foreground">
         Cantidad de productos: {filteredProducts.length}
       </p>
 

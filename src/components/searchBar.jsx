@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setSearch } from "../redux/filterSlice";
+import { setSearch, setCategory } from "../redux/filterSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchBar({ isSeller, formClassName }) {
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
-
-  const applySearch = (value) => {
-    dispatch(setSearch(value.trim()));
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    applySearch(searchQuery);
-  };
+  e.preventDefault();
+
+  dispatch(setSearch(searchQuery.trim()));
+  dispatch(setCategory(null));
+
+  navigate("/products");
+};
 
   return (
     <form onSubmit={handleSubmit} className={formClassName}>

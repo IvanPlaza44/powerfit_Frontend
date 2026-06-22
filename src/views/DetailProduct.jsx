@@ -1,44 +1,67 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById } from "../redux/detailProductSlice";
-import { addToCart, fetchCart } from "../redux/cartSlice";
-import { addFavoriteAsync } from "../redux/favoritesSlice";
-import { useState } from "react";
+import { Heart, ShoppingCart } from "lucide-react";
 
-const DetailProduct = ({ addToFavorites }) => {
+import { fetchProductById } from "../redux/detailProductSlice";
+import { addToCart } from "../redux/cartSlice";
+import { addFavoriteAsync } from "../redux/favoritesSlice";
+import { toggleFavoriteAsync } from "../redux/favoritesSlice";
+
+
+const DetailProduct = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+
   const { product, loading } = useSelector(
     (state) => state.detailProduct
   );
-  
-  const handleAddToFavorites = async () => {
-    try {
-      await dispatch(addFavoriteAsync(product)).unwrap();
-      setMessage("Agregado a favoritos");
-      setTimeout(() => setMessage(""), 2000);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const favorites = useSelector(
+    (state) => state.favorites.favorites|| []
+  );
 
-    } catch (error) {
-      console.error(error);
-      setError("Error al agregar favorito");
-      setTimeout(() => setError(""), 2000);
-    }
+  const isFavorite = favorites.some(
+  (fav) => fav?.product?.id === product?.id
+);
+
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavoriteAsync(product));
   };
+
+
 
   useEffect(() => {
     dispatch(fetchProductById(id));
   }, [dispatch, id]);
 
+  const handleAddToFavorites = async () => {
+    try {
+      await dispatch(addFavoriteAsync(product)).unwrap();
+
+      setMessage("Producto agregado a favoritos");
+      setError("");
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+    } catch (err) {
+      setError("Error al agregar favorito");
+      setMessage("");
+
+      setTimeout(() => {
+        setError("");
+      }, 2500);
+    }
+  };
+
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
 
-    
     if (!userId || userId === "undefined") {
-      setMessage("Tenes que iniciar sesion");
-      setTimeout(() => setMessage(""), 2000);
+      setError("Tenés que iniciar sesión");
+      setTimeout(() => setError(""), 2500);
       return;
     }
 
@@ -50,100 +73,172 @@ const DetailProduct = ({ addToFavorites }) => {
         })
       ).unwrap();
 
-      dispatch(fetchCart(userId));
+      setMessage("Producto agregado al carrito 🛒");
+      setError("");
 
-      setMessage("Producto agregado al carrito");
-      setTimeout(() => setMessage(""), 2000);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
     } catch (err) {
-      console.error(err);
-      setError("Error al agregar al carrito");
-      setTimeout(() => setError(""), 2000);
+      setError(
+        typeof err === "string"
+          ? err
+          : "Error al agregar al carrito"
+      );
+
+      setMessage("");
+
+      setTimeout(() => {
+        setError("");
+      }, 2500);
     }
   };
 
-  if (loading || !product) return <h1>Cargando...</h1>;
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <h2 className="text-2xl font-bold">
+          Cargando producto...
+        </h2>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="flex justify-center py-20">
+        <h2 className="text-2xl font-bold">
+          Producto no encontrado
+        </h2>
+      </div>
+    );
+  }
 
   const hasDiscount = product.discount > 0;
 
-  const originalPrice = hasDiscount
-    ? (product.price / (1 - product.discount / 100)).toFixed(0)
-    : null;
-return (
-  
-  <div className="min-h-screen bg-black text-white py-10 px-4">
-    <div className="max-w-4xl mx-auto flex flex-col items-center">
+  const discountedPrice = hasDiscount
+    ? product.price - (product.price * product.discount) / 100
+    : product.price;
 
-      {/* Imagen */}
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-full max-w-xl h-[400px] object-contain rounded-xl mb-6"
-      />
-          {message && (
-        <p className="text-green-400 text-center mb-4">
-          {message}
-        </p>
-      )}
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-      {error && (
-        <p className="text-red-400 text-center mb-4">
-          {error}
-        </p>
-      )}
+        {/* IMAGEN */}
+        <div className="rounded-3xl border border-border bg-card p-6">
+          <div className="relative">
 
-      {/* Nombre */}
-      <h1 className="text-4xl font-bold text-center mb-4">
-        {product.name}
-      </h1>
+            {hasDiscount && (
+              <span className="absolute top-4 left-4 z-10 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                -{product.discount}% OFF
+              </span>
+            )}
 
-      {/* Precio */}
-      {hasDiscount ? (
-        <div className="text-center mb-6">
-          <span className="text-gray-500 line-through text-2xl mr-3">
-            ${originalPrice}
-          </span>
-
-          <span className="text-green-500 text-4xl font-black">
-            ${product.price}
-          </span>
-
-          <div className="mt-2">
-            <span className="bg-green-500 text-black px-3 py-1 rounded-full font-bold">
-              -{product.discount}%
-            </span>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-[500px] object-contain"
+            />
           </div>
         </div>
-      ) : (
-        <p className="text-green-500 text-4xl font-black mb-6">
-          ${product.price}
-        </p>
-      )}
 
-      {/* Descripción */}
-      <p className="text-gray-300 text-center text-lg max-w-2xl mb-8">
-        {product.description}
-      </p>
+        {/* INFORMACIÓN */}
+        <div>
 
-      {/* Botones */}
-      <div className="flex gap-4">
-        <button
-          onClick={handleAddToCart}
-          className="border-2 border-green-500 text-green-500 px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-green-500 hover:text-black"
-        >
-          Añadir al carrito
-        </button>
+          <span className="text-sm uppercase tracking-widest text-primary font-bold">
+            {product.category?.description || "General"}
+          </span>
 
-        <button
-          onClick={handleAddToFavorites}
-          className="border-2 border-green-500 text-green-500 px-6 py-3 rounded-lg transition-all duration-300 hover:bg-green-500 hover:text-black"
-        >
-          ❤️
-        </button>
+          <h1 className="text-4xl md:text-5xl font-black mt-3">
+            {product.name}
+          </h1>
+
+          <p className="mt-6 text-muted-foreground leading-relaxed">
+            {product.description}
+          </p>
+
+          {/* PRECIO */}
+          <div className="mt-8 flex items-center gap-4 flex-wrap">
+
+            {hasDiscount && (
+              <span className="text-2xl text-muted-foreground line-through">
+                ${product.price}
+              </span>
+            )}
+
+            <span className="text-5xl font-black text-primary">
+              ${discountedPrice}
+            </span>
+
+            {hasDiscount && (
+              <span className="bg-green-500/10 text-green-500 font-bold px-3 py-1 rounded-full">
+                Ahorrás {product.discount}%
+              </span>
+            )}
+          </div>
+
+          {/* STOCK */}
+          <div className="mt-6">
+            {product.stock > 0 ? (
+              <span className="bg-green-500/10 text-green-500 px-4 py-2 rounded-full font-semibold">
+                Stock disponible: {product.stock} unidades
+              </span>
+            ) : (
+              <span className="bg-red-500/10 text-red-500 px-4 py-2 rounded-full font-semibold">
+                Sin stock
+              </span>
+            )}
+          </div>
+
+          {/* MENSAJES */}
+          {message && (
+            <div className="mt-6 rounded-xl bg-green-500/10 border border-green-500/20 p-3 text-green-500 font-medium">
+              {message}
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-6 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-red-500 font-medium">
+              {error}
+            </div>
+          )}
+
+          {/* BOTONES */}
+          <div className="mt-10 flex gap-4">
+
+            <button
+              onClick={handleAddToCart}
+              disabled={product.stock <= 0}
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 font-bold text-primary-foreground transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ShoppingCart size={20} />
+              Añadir al carrito
+            </button>
+
+            <button
+              onClick={handleToggleFavorite}
+              className={`top-3 right-3 z-10 backdrop-blur-sm rounded-full p-2 shadow-md hover:scale-110 transition
+                ${
+                  isFavorite
+                    ? "border-red-500 "
+                    : "border-gray-500 hover:border-red-500"
+                }`}
+            >
+              <Heart
+                size={35}
+                fill={isFavorite ? "currentColor" : "none"}
+                className={
+                  isFavorite ? "text-red-500" : "text-gray-400"
+                }
+              />
+            </button>
+
+          </div>
+        </div>
+
       </div>
-
     </div>
-  </div>
-);
+  );
 };
 
 export default DetailProduct;
