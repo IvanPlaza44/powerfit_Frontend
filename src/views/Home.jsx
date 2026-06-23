@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import Hero from "../components/Hero";
 import { Receipt } from "lucide-react";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector  } from "react-redux";
 import { setCategory } from "../redux/filterSlice";
+import { fetchProducts } from "../redux/productSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,15 @@ const Home = () => {
     dispatch(setCategory(category));
     navigate("/products");
   };
+  const { products } = useSelector(
+    (state) => state.products
+  );
+  const latestProducts = [...products]
+  .sort((a, b) => b.id - a.id)
+  .slice(0, 4);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -91,6 +101,50 @@ const Home = () => {
           </button>
         </Link>
       </div>
+
+       {/* ultimos prod */}
+      <section className="container mx-auto px-6 py-12">
+        <h2 className="text-3xl font-bold text-center mb-2">
+          Últimos lanzamientos
+        </h2>
+
+        <p className="text-center text-muted-foreground mb-8">
+          Descubrí los productos más recientes publicados en PowerFit.
+        </p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+          {latestProducts.map((product) => (
+            <Link
+              key={product.id}
+              to={`/products/${product.id}`}
+            >
+              <div className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary hover:scale-105 transition-all">
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-32 object-cover"
+                  />
+                )}
+
+                <div className="p-3">
+                  <h3 className="font-semibold text-sm line-clamp-1">
+                    {product.name}
+                  </h3>
+
+                  <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
+                    {product.description}
+                  </p>
+
+                  <p className="text-primary font-bold text-base mt-2">
+                    ${product.price}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* Estadísticas */}
       <section className="container mx-auto px-6 py-12">

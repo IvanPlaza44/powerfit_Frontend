@@ -25,6 +25,25 @@ export const fetchMyProducts = createAsyncThunk(
   }
 );
 
+export const createProduct = createAsyncThunk(
+  "seller/createProduct",
+  async (productData, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+      const { data } = await axios.post(
+        "http://localhost:4002/products",
+        productData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error al crear el producto"
+      );
+    }
+  }
+);
+
 
 
 export const deleteProduct = createAsyncThunk(
@@ -140,6 +159,10 @@ const sellerSlice = createSlice({
       .addCase(fetchMyProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.products.push(action.payload);
       })
 
       // borrar
