@@ -15,7 +15,8 @@ export default function CreateProduct() {
     stock: "",
     categoryId: "",
   });
-
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,12 +43,14 @@ export default function CreateProduct() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("No estás autenticado. Por favor, iniciá sesión.");
+      setMessage("No estás autenticado. Por favor, iniciá sesión.");
+      setMessageType("error");
       return;
     }
 
     if (!imageFile) {
-      alert("Por favor, seleccioná una imagen para el producto.");
+      setMessage("Por favor, seleccioná una imagen para el producto.");
+      setMessageType("error");
       return;
     }
 
@@ -82,14 +85,24 @@ export default function CreateProduct() {
       }));
 
       if (createProduct.fulfilled.match(result)) {
-        alert("¡Producto publicado con éxito!");
-        navigate("/my-products");
+        setMessage("¡Producto publicado con éxito!");
+        setMessageType("success");
+
+        setTimeout(() => {
+          navigate("/my-products");
+        }, 1200);
       } else {
-        alert(`Error al publicar: ${result.payload?.message || "Verificá tu rol de vendedor"}`);
+        setMessage(
+          `Error al publicar: ${
+            result.payload?.message || "Verificá tu rol de vendedor"
+          }`
+        );
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Error en el proceso:", error);
-      alert(error.message || "Hubo un problema de red.");
+      setMessage(error.message || "Hubo un problema de red.");
+      setMessageType("error");
     } finally {
       setLoading(false);
     }
@@ -102,6 +115,18 @@ export default function CreateProduct() {
         <h2 className="mb-6 text-3xl font-black uppercase tracking-wide text-foreground text-center">
           Publicar <span className="text-primary">Nuevo Producto</span>
         </h2>
+
+        {message && (
+          <div
+            className={`mb-4 p-3 rounded-lg font-medium ${
+              messageType === "success"
+                ? "bg-green-100 text-green-700 border border-green-300"
+                : "bg-red-100 text-red-700 border border-red-300"
+            }`}
+          >
+            {message}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
