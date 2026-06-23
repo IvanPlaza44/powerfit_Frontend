@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../redux/cartSlice";
 import { loginUser } from "../redux/loginSlice";
 import { fetchFavorites } from "../redux/favoritesSlice"; 
+import { toast }from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -40,13 +41,13 @@ export default function Login() {
       const token = data.access_token;
 
       if (!token) {
-        alert("No se recibió token");
+        toast.error("Token invalido", {
+            toastId: "token-error",
+        });
         return;
       }
 
       const decoded = jwtDecode(token);
-
-      console.log("DECODED TOKEN:", decoded);
 
       localStorage.setItem("token", token);
       localStorage.setItem("userId", decoded.userId);
@@ -64,7 +65,9 @@ export default function Login() {
     }
 
     if (loginUser.rejected.match(result)) {
-      alert(error || "Login incorrecto");
+      toast.error("La combinacion de Usuario y contraseña son invalidas", {
+            toastId: "login-error",
+          });
     }
 };
 
