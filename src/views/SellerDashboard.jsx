@@ -54,7 +54,7 @@ export default function SellerDashboard() {
       setMessageType("success");
       dispatch(fetchMyProducts());
     } else {
-      setMessage(result.payload || `Error al ${action} el producto.`);
+      setMessage(result.payload?.message || `Error al ${action} el producto.`);
       setMessageType("error");
     }
   };
@@ -67,7 +67,8 @@ export default function SellerDashboard() {
       price: product.price,
       stock: product.stock,
       discount: product.discount || 0, 
-      image: product.image || ""
+      image: product.image || "",
+      active: product.active
     });
     setTimeout(() => {
       formRef.current?.scrollIntoView({
@@ -82,11 +83,19 @@ export default function SellerDashboard() {
     e.preventDefault();
 
     const result = await dispatch(
-      updateProduct({
-        id: editingProduct.id,
-        productData: formData,
-      })
-    );
+    updateProduct({
+      id: editingProduct.id,
+      productData: {
+        name: formData.name,
+        description: formData.description,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        discount: Number(formData.discount || 0),
+        image: formData.image || editingProduct.image,
+        active: editingProduct.active
+      },
+    })
+);
 
     if (updateProduct.fulfilled.match(result)) {
       setMessage("Producto actualizado exitosamente.");
@@ -95,7 +104,7 @@ export default function SellerDashboard() {
 
       setEditingProduct(null);
     } else {
-      setMessage(result.payload || "Error al actualizar el producto.");
+      setMessage(result.payload?.message || "Error al actualizar el producto.");
       setMessageType("error");
 }
   };
