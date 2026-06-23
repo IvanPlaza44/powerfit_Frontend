@@ -7,7 +7,6 @@ export const fetchProducts = createAsyncThunk(
     const { data } = await axios.get(
       "http://localhost:4002/products"
     );
-
     return data.content;
   }
 );

@@ -100,6 +100,10 @@ export default function NavBar({ favoritesCount }) {
               Comunidad
             </Link>
 
+            <Link to="/benefits">
+              Beneficios
+            </Link>
+
             {!isSeller && (
               <div className="relative">
                 <button
