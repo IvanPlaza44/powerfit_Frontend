@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Dumbbell, ShieldCheck, Rocket, CheckCircle } from "lucide-react"; 
 import { useDispatch, useSelector } from "react-redux";
 import { becomeSeller } from "../redux/sellerSlice";
+import { toast } from "react-toastify";
 
 const SwitchSeller = () => {
   const navigate = useNavigate();
@@ -18,7 +19,10 @@ const SwitchSeller = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Debes iniciar sesión para realizar esta acción.");
+      toast.info("Debes iniciar sesión para realizar esta acción.", {
+              toastId: "login",
+              })
+      navigate("/login")
       return;
     }
 
@@ -30,17 +34,17 @@ const SwitchSeller = () => {
       localStorage.setItem("role", "SELLER");
 
       window.dispatchEvent(new Event("storage_role_changed"));
-      alert(
-        "¡Felicitaciones! Ahora sos vendedor oficial de POWERFIT 🎉"
-      );
+      toast.success("¡Felicitaciones! Ahora sos vendedor oficial de POWERFIT 🎉", {
+              toastId: "Seller",
+              })
 
-      navigate("/login");
+      navigate("/");
     }
 
     if (becomeSeller.rejected.match(result)) {
-      alert(
-        "Hubo un problema al procesar tu solicitud."
-      );
+      toast.success("Hubo un problema al procesar tu solicitud.", {
+              toastId: "Seller",
+              })
     }
   };
 

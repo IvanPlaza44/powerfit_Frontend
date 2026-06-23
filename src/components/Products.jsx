@@ -101,7 +101,6 @@ useEffect(() => {
       toast.error("Los vendedores no pueden usar favoritos.", {
       toastId: "fav-seller",
       })
-      alert("");
       return;
     }
 

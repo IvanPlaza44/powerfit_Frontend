@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../redux/communitySlice";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,9 @@ const Community = () => {
         !form.testimonial ||
         !imageFile
     ) {
-        alert("Completá todos los campos");
+        toast.error("Debes completar todos los campos", {
+              toastId: "fav-seller",
+              })
         return;
     }
 
@@ -85,8 +88,9 @@ const Community = () => {
         setPreviewUrl("");
 
     } catch (error) {
-        console.error(error);
-        alert("Error al subir imagen");
+        toast.error("Error al subir imagen", {
+              toastId: "img-error",
+              })
     }
     };
 
