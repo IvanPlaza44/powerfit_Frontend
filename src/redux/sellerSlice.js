@@ -176,9 +176,15 @@ const sellerSlice = createSlice({
       // update
 
       .addCase(updateProduct.fulfilled, (state, action) => {
+        const updated = action.payload;
+
         state.products = state.products.map((p) =>
-          p.id === action.payload.id
-            ? action.payload
+          p.id === updated.id
+            ? {
+                ...p,
+                ...updated,
+                active: updated.active ?? !p.active,
+              }
             : p
         );
       })

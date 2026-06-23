@@ -28,15 +28,20 @@ const MyProducts = () => {
     dispatch(fetchMyProducts());
   }, [dispatch]);
  
-  const filteredProducts = products.filter((product) => {
-    if (!searchQuery.trim()) return true;
-    
-    const query = searchQuery.toLowerCase().trim();
-    const productName = product.name ? product.name.toLowerCase() : "";
-    const productDesc = product.description ? product.description.toLowerCase() : "";
+  const filteredProducts = products
+    .filter((product) => product.active) // 👈 solo activos
+    .filter((product) => {
+      if (!searchQuery.trim()) return true;
 
-    return productName.includes(query) || productDesc.includes(query);
-  });
+      const query = searchQuery.toLowerCase().trim();
+      const productName = product.name ? product.name.toLowerCase() : "";
+      const productDesc = product.description ? product.description.toLowerCase() : "";
+
+      return (
+        productName.includes(query) ||
+        productDesc.includes(query)
+      );
+    });
 
   console.log("SELLER STATE:", sellerState);
   return (
@@ -84,7 +89,14 @@ const MyProducts = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (
-              <div key={product.id} className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary transition-all flex flex-col justify-between">
+              <div
+                key={product.id}
+                className={`border rounded-xl overflow-hidden flex flex-col justify-between transition-all ${
+                  !product.active
+                    ? "bg-gray-100 opacity-60 grayscale"
+                    : "bg-card hover:border-primary"
+                }`}
+              >
                 {product.image && (
                   <img 
                     src={product.image} 

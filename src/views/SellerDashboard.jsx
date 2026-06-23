@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useRef } from "react";
 import {
   fetchMyProducts,
   deleteProduct,
@@ -8,6 +8,7 @@ import {
 } from "../redux/sellerSlice";
 
 export default function SellerDashboard() {
+  const formRef = useRef(null);
   const dispatch = useDispatch();
 
   const { products: myProducts, loading } = useSelector(
@@ -18,6 +19,7 @@ export default function SellerDashboard() {
   const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "", discount: 0 , image: "" });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+
   useEffect(() => {
     dispatch(fetchMyProducts());
   }, [dispatch]);
@@ -32,17 +34,27 @@ export default function SellerDashboard() {
     return () => clearTimeout(timer);
   }, [message]);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de que querés eliminar este producto?"))
-      return;
+  const handleToggleActive = async (product) => {
+    const action = product.active ? "inactivar" : "activar";
 
-    const result = await dispatch(deleteProduct(id));
+    if (!window.confirm(`¿Querés ${action} este producto?`)) return;
 
-    if (deleteProduct.fulfilled.match(result)) {
-      setMessage("Producto eliminado con éxito.");
+    const result = await dispatch(
+      updateProduct({
+        id: product.id,
+        productData: {
+          ...product,
+          active: !product.active,
+        },
+      })
+    );
+
+    if (updateProduct.fulfilled.match(result)) {
+      setMessage(`Producto ${action === "inactivar" ? "inactivado" : "activado"} con éxito.`);
       setMessageType("success");
+      dispatch(fetchMyProducts());
     } else {
-      setMessage(result.payload || "Error al eliminar el producto.");
+      setMessage(result.payload || `Error al ${action} el producto.`);
       setMessageType("error");
     }
   };
@@ -57,6 +69,12 @@ export default function SellerDashboard() {
       discount: product.discount || 0, 
       image: product.image || ""
     });
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 0);
   };
 
 
@@ -98,7 +116,9 @@ export default function SellerDashboard() {
         </div>
       )}
       {editingProduct && (
-        <div className="mb-8 p-6 border border-border bg-card rounded-xl max-w-lg">
+        <div 
+        ref={formRef}
+        className="mb-8 p-6 border border-border bg-card rounded-xl max-w-lg">
           <h2 className="text-xl font-bold mb-4">Editar Producto: {editingProduct.name}</h2>
           <form onSubmit={handleUpdate} className="flex flex-col gap-3">
             <input
@@ -150,7 +170,8 @@ export default function SellerDashboard() {
             </div>
           </form>
         </div>
-      )}
+      )} 
+      
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-left border-collapse">
@@ -166,23 +187,31 @@ export default function SellerDashboard() {
           <tbody>
             {myProducts.length > 0 ? (
               myProducts.map((product) => (
-                <tr key={product.id} className="border-b border-border text-sm hover:bg-muted/20 transition-colors">
-                  <td className="p-4 font-mono text-muted-foreground">{product.id}</td>
-                  <td className="p-4 font-medium">{product.name}</td>
-                  <td className="p-4">${product.price}</td>
+                <tr
+                  key={product.id}
+                  className={`border-b text-sm transition-colors ${
+                  !product.active
+                    ? "bg-white/60 text-black/40 opacity-70"
+                    : "hover:bg-muted/20"               
+                  }`}
+                >
+                <td className="p-4 font-mono text-muted-foreground">{product.id}</td>                  
+                <td className={`p-4 font-medium ${!product.active ? "opacity-50" : ""}`}>
+                  {product.name}
+                </td>
+                <td className="p-4">${product.price}</td>
                   <td className="p-4">{product.stock} u.</td>
                   <td className="p-4 flex justify-center gap-2">
                     <button
                       onClick={() => startEdit(product)}
-                      className="bg-blue-600 text-white px-3 py-1.5 rounded font-medium text-xs hover:bg-blue-700"
-                    >
+                      className="bg-green-600 text-white px-3 py-1.5 rounded font-medium text-xs hover:bg-green-700"                    >
                       Editar
                     </button>
                     <button
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() => handleToggleActive(product)}
                       className="bg-red-600 text-white px-3 py-1.5 rounded font-medium text-xs hover:bg-red-700"
                     >
-                      Eliminar
+                      {product.active ? "Inactivar" : "Activar"}
                     </button>
                   </td>
                 </tr>
