@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetCheckout } from "../redux/checkoutSlice";
@@ -7,7 +7,8 @@ import { clearCart } from "../redux/cartSlice";
 const Payment = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const checkout = useSelector((state) => state.checkout);
   const cartItems = useSelector((state) => state.cart.items);
 
@@ -36,7 +37,8 @@ const Payment = () => {
 
   const handlePayment = async () => {
     if (!paymentMethod) {
-      alert("Seleccioná un método de pago.");
+      setMessage("Seleccioná un método de pago.");
+      setMessageType("error");
       return;
     }
 
@@ -48,7 +50,8 @@ const Payment = () => {
         !cardData.name.trim()
       )
     ) {
-      alert("Completá correctamente los datos de la tarjeta.");
+      setMessage("Completá correctamente los datos de la tarjeta.");
+      setMessageType("error");
       return;
     }
 
@@ -68,27 +71,54 @@ const Payment = () => {
       });
 
       if (!res.ok) {
-        alert("Error al procesar la compra.");
+        setMessage("Error al procesar la compra.");
+        setMessageType("error")
         return;
       }
       
       dispatch(clearCart());
       dispatch(resetCheckout());
 
-      alert("Pago realizado con éxito.");
+      setMessage("Pago realizado con éxito.");
+      setMessageType("success");
 
-      navigate("/products");
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
     } catch (error) {
       console.error(error);
-      alert("Error de conexión.");
+      setMessage("Error de conexión.");
+      setMessageType("error");
     }
   };
+
+  useEffect(() => {
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [message]);
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="mb-8 text-4xl font-black">
         Método de Pago
       </h1>
+
+      {message && (
+        <div
+          className={`mb-4 p-3 rounded-xl font-medium ${
+            messageType === "error"
+              ? "bg-red-100 text-red-700"
+              : "bg-green-100 text-green-700"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       <div className="space-y-5 rounded-3xl border border-border bg-card p-8 shadow-sm">
 
@@ -121,9 +151,10 @@ const Payment = () => {
           type="button"
           onClick={() => {
             setPaymentMethod("transfer");
-            alert(
+            setMessage(
               "Por mail recibirás los datos de contacto para realizar la transferencia."
             );
+            setMessageType("success");
           }}
           className={`w-full rounded-xl border p-4 text-left ${
             paymentMethod === "transfer"
