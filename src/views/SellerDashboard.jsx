@@ -119,8 +119,9 @@ export default function SellerDashboard() {
         <div 
         ref={formRef}
         className="mb-8 p-6 border border-border bg-card rounded-xl max-w-lg">
-          <h2 className="text-xl font-bold mb-4">Editar Producto: {editingProduct.name}</h2>
+          <h2 className="text-xl font-bold mb-4 text-green-400 mb-1">Editar Producto: {editingProduct.name}</h2>
           <form onSubmit={handleUpdate} className="flex flex-col gap-3">
+            <label className="text-sm font-semibold text-green-400 mb-1">Nombre</label>
             <input
               type="text"
               className="p-2 border border-border bg-background rounded"
@@ -129,6 +130,7 @@ export default function SellerDashboard() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
             />
+            <label className="text-sm font-semibold text-green-400 mb-1">Descripcion</label>
             <textarea
               className="p-2 border border-border bg-background rounded"
               placeholder="Descripcion"
@@ -136,7 +138,8 @@ export default function SellerDashboard() {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
             />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-green-400 mb-1"> Precio </label>
               <input
                 type="number"
                 className="p-2 border border-border bg-background rounded"
@@ -145,6 +148,9 @@ export default function SellerDashboard() {
                 onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
                 required
               />
+              </div> 
+              <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-green-400 mb-1">Stock</label>
               <input
                 type="number"
                 className="p-2 border border-border bg-background rounded"
@@ -153,7 +159,10 @@ export default function SellerDashboard() {
                 onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
                 required
               />
-              {/* */}
+              </div>
+
+              <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-green-400 mb-1">Descuento (%)</label>
               <input
                 type="number"
                 min="0"
@@ -163,7 +172,8 @@ export default function SellerDashboard() {
                 value={formData.discount}
                 onChange={(e) => setFormData({ ...formData, discount: parseInt(e.target.value) || 0 })}
               />
-            </div>
+              </div>
+            
             <div className="flex gap-2 mt-2">
               <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700">Guardar Cambios</button>
               <button type="button" onClick={() => setEditingProduct(null)} className="bg-gray-500 text-white px-4 py-2 rounded font-bold hover:bg-gray-600">Cancelar</button>
