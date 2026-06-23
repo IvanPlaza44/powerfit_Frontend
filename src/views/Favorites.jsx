@@ -32,8 +32,7 @@ const Favorites = () => {
           <div key={fav.id} className="relative" >
             <button
               onClick={() => handleRemoveFavorite(fav.id)}
-              className="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full w-8 h-8"
-            >
+className="absolute top-2 left-2 z-20 bg-red-500 text-white rounded-full w-8 h-8"            >
               ✕
             </button>
             <Card product={fav.product} />
