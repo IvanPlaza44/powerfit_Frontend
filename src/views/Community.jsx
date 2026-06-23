@@ -10,12 +10,13 @@ const Community = () => {
     (state) => state.community.posts
   );
 
-  const user = useSelector(
-    (state) => state.login.user
-  );
-console.log(user);
-  const isLogged =
-    user || localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+
+  const username =
+    useSelector((state) => state.login.user?.username) ||
+    localStorage.getItem("username");
+
+  const isLogged = !!token;
 
     const IMGBBB_API_KEY = "addff561790a76132ef3c2fbd7b280b3";
 
@@ -35,7 +36,9 @@ console.log(user);
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
-
+  const handleDelete = (id) => {
+    dispatch(deletePost(id));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,10 +69,7 @@ console.log(user);
         dispatch(
         addPost({
             id: Date.now(),
-            user:
-            user?.username ||
-            localStorage.getItem("username") ||
-            "Usuario PowerFit",
+            user: username || "Usuario PowerFit",
             product: form.product,
             image: imgbbData.data.url,
             testimonial: form.testimonial,
@@ -116,6 +116,16 @@ console.log(user);
                 key={post.id}
                 className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
               >
+                {/* boton para borrar exp */}
+                {post.user === username && (
+                  <button
+                    onClick={() => handleDelete(post.id)}
+                    className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                  >
+                    Borrar
+                  </button>
+                )}
+
                 <div className="md:flex">
 
                   <img

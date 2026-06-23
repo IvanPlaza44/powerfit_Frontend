@@ -9,7 +9,6 @@ import { loginUser } from "../redux/loginSlice";
 import { fetchFavorites } from "../redux/favoritesSlice"; 
 
 export default function Login() {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -33,11 +32,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(userData);
-
-    const result = await dispatch(
-      loginUser(userData)
-    );
+    const result = await dispatch(loginUser(userData));
 
     if (loginUser.fulfilled.match(result)) {
       const data = result.payload;
@@ -51,14 +46,15 @@ export default function Login() {
 
       const decoded = jwtDecode(token);
 
+      console.log("DECODED TOKEN:", decoded);
+
       localStorage.setItem("token", token);
       localStorage.setItem("userId", decoded.userId);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("username", decoded.sub || decoded.username);
 
       dispatch(fetchCart(decoded.userId));
       dispatch(fetchFavorites());
-      
-      console.log("ROL:", data.role);
 
       if (data.role?.toUpperCase().includes("SELLER")) {
         navigate("/my-products");
@@ -70,7 +66,7 @@ export default function Login() {
     if (loginUser.rejected.match(result)) {
       alert(error || "Login incorrecto");
     }
-  };
+};
 
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center px-4 py-16">

@@ -24,7 +24,7 @@ const loginSlice = createSlice({
   name: "login",
 
   initialState: {
-    items: [],
+    user: null,
     loading: false,
     error: null,
   },
@@ -41,7 +41,10 @@ const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.items.push(action.payload);
+        state.user = {
+          token: action.payload.access_token,
+          role: action.payload.role,
+        };
       })
 
       .addCase(loginUser.rejected, (state, action) => {

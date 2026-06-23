@@ -22,22 +22,36 @@ const savedPosts =
     },
   ];
 
-const communitySlice = createSlice({
-  name: "community",
-  initialState: {
-    posts: savedPosts,
-  },
-  reducers: {
-    addPost: (state, action) => {
-      state.posts.unshift(action.payload);
-
-      localStorage.setItem(
-        "communityPosts",
-        JSON.stringify(state.posts)
-      );
+  const communitySlice = createSlice({
+    name: "community",
+    initialState: {
+      posts: savedPosts,
     },
-  },
-});
 
-export const { addPost } = communitySlice.actions;
+    reducers: {
+      addPost: (state, action) => {
+        state.posts.unshift(action.payload);
+
+        localStorage.setItem(
+          "communityPosts",
+          JSON.stringify(state.posts)
+        );
+      },
+
+      deletePost: (state, action) => {
+        const id = action.payload;
+
+        state.posts = state.posts.filter(
+          (post) => post.id !== id
+        );
+
+        localStorage.setItem(
+          "communityPosts",
+          JSON.stringify(state.posts)
+        );
+      },
+    },
+  });
+
+export const { addPost, deletePost  } = communitySlice.actions;
 export default communitySlice.reducer;
