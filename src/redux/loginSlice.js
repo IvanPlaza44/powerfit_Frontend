@@ -9,7 +9,6 @@ export const loginUser = createAsyncThunk(
         "http://localhost:4002/auth/authenticate",
         loginData
       );
-
       return data;
 
     } catch (error) {
@@ -22,7 +21,6 @@ export const loginUser = createAsyncThunk(
 
 const loginSlice = createSlice({
   name: "login",
-
   initialState: {
     user: null,
     loading: false,
@@ -40,7 +38,6 @@ const loginSlice = createSlice({
 
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-
         state.user = {
           token: action.payload.access_token,
           role: action.payload.role,
@@ -49,7 +46,6 @@ const loginSlice = createSlice({
 
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-
         state.error = action.payload;
       });
   },

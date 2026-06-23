@@ -26,9 +26,9 @@ const Hero = () => {
                   </button>
                 </Link>
 
-                <Link to="/products?category=equipamiento">
+                <Link to="/whyChooseUs">
                   <button className="gap-2 rounded-md p-2 flex items-center transition-transform hover:scale-105">
-                    Ver Equipamiento 
+                    Por qué elegirnos?
                   </button>
                 </Link>
               </div>

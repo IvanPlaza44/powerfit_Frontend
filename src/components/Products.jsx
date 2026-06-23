@@ -9,6 +9,7 @@ import {
 import { fetchProducts } from "../redux/productSlice";
 import { setSortOrder } from "../redux/filterSlice";
 import { setCategory, setSearch } from "../redux/filterSlice";
+import { toast }from "react-toastify";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -90,12 +91,16 @@ useEffect(() => {
     const role = localStorage.getItem("role")?.toUpperCase() || "";
 
     if (!token || !userId || userId === "undefined") {
-      alert("Tenés que iniciar sesión.");
+      toast.error("No hay stock suficiente", {
+      toastId: "stock-error",
+    })
       return;
     }
 
     if (role.includes("SELLER")) {
-      alert("Los vendedores no pueden usar favoritos.");
+      toast.error("Los vendedores no pueden usar favoritos.", {
+      toastId: "fav-seller",
+      })
       return;
     }
 

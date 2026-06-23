@@ -79,7 +79,7 @@ export default function NavBar({ favoritesCount }) {
             <img src="/Logo.png" alt="Logo" />
           </Link>
 
-          {/* LINKS */}
+          {/* LINKS (ESCRITORIO) */}
           <div className="hidden md:flex items-center gap-6">
 
             {isSeller ? (
@@ -96,13 +96,18 @@ export default function NavBar({ favoritesCount }) {
               </button>
             )}
 
-            <Link to="/community" className="hover:text-primary">
-              Comunidad
-            </Link>
+            {/* OCULTADO PARA VENDEDORES */}
+            {!isSeller && (
+              <>
+                <Link to="/community" className="hover:text-primary">
+                  Comunidad
+                </Link>
 
-            <Link to="/benefits">
-              Beneficios
-            </Link>
+                <Link to="/benefits" className="hover:text-primary">
+                  Beneficios
+                </Link>
+              </>
+            )}
 
             {!isSeller && (
               <div className="relative">
@@ -173,7 +178,7 @@ export default function NavBar({ favoritesCount }) {
               </Link>
             )}
 
-            {/* MOBILE */}
+            {/* MOBILE TOGGLE */}
             <button
               className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -185,25 +190,44 @@ export default function NavBar({ favoritesCount }) {
 
         {/* MOBILE MENU */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4">
+          <div className="md:hidden mt-4 pb-4 space-y-2">
 
-            <button onClick={goToProducts} className="block w-full text-left py-2">
-              Productos
-            </button>
-
-            <Link to="/community" className="block py-2">
-              Comunidad
-            </Link>
-
-            {categories.map((cat) => (
-              <button
-                key={cat.name}
-                onClick={() => selectCategory(cat.name)}
-                className="block w-full text-left py-2"
+            {isSeller ? (
+              <Link
+                to="/my-products"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block font-bold text-primary py-2"
               >
-                {cat.name}
+                Mis productos
+              </Link>
+            ) : (
+              <button onClick={goToProducts} className="block w-full text-left py-2">
+                Productos
               </button>
-            ))}
+            )}
+
+            {/* OCULTADO PARA VENDEDORES EN MOBILE */}
+            {!isSeller && (
+              <>
+                <Link to="/community" onClick={() => setMobileMenuOpen(false)} className="block py-2">
+                  Comunidad
+                </Link>
+
+                <Link to="/benefits" onClick={() => setMobileMenuOpen(false)} className="block py-2">
+                  Beneficios
+                </Link>
+
+                {categories.map((cat) => (
+                  <button
+                    key={cat.name}
+                    onClick={() => selectCategory(cat.name)}
+                    className="block w-full text-left py-2 text-neutral-400 pl-2"
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </>
+            )}
 
             <SearchBar isSeller={isSeller} />
           </div>

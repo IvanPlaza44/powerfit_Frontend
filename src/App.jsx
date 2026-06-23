@@ -28,6 +28,7 @@ import { useSelector } from "react-redux";
 import { fetchFavorites } from "./redux/favoritesSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WhyChooseUs from "./views/WhyChooseUs";
 
 function App() {
 
@@ -64,6 +65,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products/>}/>
+        <Route path="/whyChooseUs" element={<WhyChooseUs/>}/>
         <Route path="/products/:id" element={<DetailProduct/>}/>
         <Route path="/favorites" element={<Favorites/>}/>
         <Route path="/cart" element={<ShoppinngCart />} />
