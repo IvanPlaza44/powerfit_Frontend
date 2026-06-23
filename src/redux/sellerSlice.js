@@ -38,7 +38,7 @@ export const createProduct = createAsyncThunk(
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Error al crear el producto"
+        error.response?.data?.message || "Error al crear el producto"
       );
     }
   }
@@ -64,7 +64,7 @@ export const deleteProduct = createAsyncThunk(
       return productId;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Error al eliminar"
+        error.response?.data?.message || "Error al eliminar"
       );
     }
   }
@@ -91,7 +91,7 @@ export const updateProduct = createAsyncThunk(
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Error al actualizar"
+        error.response?.data?.message || "Error al actualizar"
       );
     }
   }

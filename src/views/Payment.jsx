@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetCheckout } from "../redux/checkoutSlice";
@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 const Payment = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const checkout = useSelector((state) => state.checkout);
   const cartItems = useSelector((state) => state.cart.items);
 
@@ -48,8 +49,24 @@ const Payment = () => {
   };
 
   const handlePayment = async () => {
+    if (!paymentMethod) {
+      setMessage("Seleccioná un método de pago.");
+      setMessageType("error");
+      return;
+    }
 
-    if (isButtonDisabled) return;
+    if (
+      paymentMethod === "card" &&
+      (
+        cardData.number.length !== 16 ||
+        cardData.cvv.length !== 3 ||
+        !cardData.name.trim()
+      )
+    ) {
+      setMessage("Completá correctamente los datos de la tarjeta.");
+      setMessageType("error");
+      return;
+    }
 
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
@@ -67,24 +84,52 @@ const Payment = () => {
       });
 
       if (!res.ok) {
-        toast.error("Error al procesar la compra. Intentalo de nuevo.");
+        setMessage("Error al procesar la compra.");
+        setMessageType("error")
         return;
       }
 
       dispatch(clearCart());
       dispatch(resetCheckout());
 
-      toast.success("¡Pago realizado con éxito!");
-      navigate("/products");
+      setMessage("Pago realizado con éxito.");
+      setMessageType("success");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
     } catch (error) {
       console.error(error);
-      toast.error("Error de conexión con el servidor.");
+      setMessage("Error de conexión.");
+      setMessageType("error");
     }
   };
+
+  useEffect(() => {
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [message]);
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="mb-8 text-4xl font-black">Método de Pago</h1>
+
+      {message && (
+        <div
+          className={`mb-4 p-3 rounded-xl font-medium ${
+            messageType === "error"
+              ? "bg-red-100 text-red-700"
+              : "bg-green-100 text-green-700"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       <div className="space-y-5 rounded-3xl border border-border bg-card p-8 shadow-sm">
         
@@ -114,24 +159,23 @@ const Payment = () => {
         </div>
 
         {/* TRANSFERENCIA */}
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={() => setPaymentMethod("transfer")}
-            className={`w-full rounded-xl border p-4 text-left font-medium transition-all ${
-              paymentMethod === "transfer"
-                ? "border-primary bg-primary/10 ring-2 ring-primary"
-                : "border-border hover:bg-secondary/50"
-            }`}
-          >
-            Mercado Pago / Transferencia
-          </button>
-          {paymentMethod === "transfer" && (
-            <p className="text-xs text-muted-foreground bg-secondary/50 p-3 rounded-lg border border-dashed">
-              ℹ️ Por mail recibirás los datos de la cuenta para realizar la transferencia.
-            </p>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setPaymentMethod("transfer");
+            setMessage(
+              "Por mail recibirás los datos de contacto para realizar la transferencia."
+            );
+            setMessageType("success");
+          }}
+          className={`w-full rounded-xl border p-4 text-left ${
+            paymentMethod === "transfer"
+              ? "border-primary bg-primary/10"
+              : ""
+          }`}
+        >
+          Mercado Pago / Transferencia
+        </button>
 
         {/* TARJETA */}
         <div className="space-y-3">
