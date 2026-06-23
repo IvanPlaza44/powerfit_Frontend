@@ -5,9 +5,10 @@ import { addToCart, fetchCart } from "../redux/cartSlice";
 import { toggleFavoriteAsync } from "../redux/favoritesSlice";
 import { Heart } from "lucide-react";
 
-const Card = ({ product, setMessage, setMessageType  }) => {
+const Card = ({ product  }) => {
   const dispatch = useDispatch();
-
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const favorites = useSelector(
     (state) => state.favorites.favorites|| []
   );
@@ -125,7 +126,17 @@ const Card = ({ product, setMessage, setMessageType  }) => {
       >
         Ver detalle
       </Link>
-
+        {message && (
+          <div
+            className={`mt-2 text-sm text-center ${
+              messageType === "success"
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            {message}
+          </div>
+        )}
       <button
         onClick={handleAddToCart}
         className="mt-2 bg-primary text-white py-2 rounded-md"

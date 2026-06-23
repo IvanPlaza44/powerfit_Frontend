@@ -12,8 +12,8 @@ import { setCategory, setSearch } from "../redux/filterSlice";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("");
+  //const [message, setMessage] = useState("");
+  //const [messageType, setMessageType] = useState("");
 
   const { category, search, sortOrder } = useSelector(
     (state) => state.filter
@@ -157,18 +157,6 @@ useEffect(() => {
         </div>
       </div>
 
-      {message && (
-        <div
-          className={`mb-4 p-3 rounded-lg font-medium ${
-            messageType === "success"
-              ? "bg-green-100 text-green-700 border border-green-300"
-              : "bg-red-100 text-red-700 border border-red-300"
-          }`}
-        >
-          {message}
-        </div>
-      )}
-
       {/* FILTRO SORT */}
       <select
         value={sortOrder}
@@ -189,8 +177,8 @@ useEffect(() => {
         <CardList
           products={filteredProducts}
           //addToFavorites={handleAddToFavorites}
-          setMessage={setMessage}
-          setMessageType={setMessageType}
+          //setMessage={setMessage}
+          //setMessageType={setMessageType}
         />
       ) : (
         <div className="text-center py-12 border border-dashed border-border rounded-xl">
