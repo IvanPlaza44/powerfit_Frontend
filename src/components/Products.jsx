@@ -22,7 +22,7 @@ const Products = () => {
     (state) => state.products
   );
 
-  const { favorites } = useSelector((state) => state.favorites);
+  const { favorites,  loading: favoritesLoading, } = useSelector((state) => state.favorites);
   
   const categoryImages = {
     indumentaria:
@@ -40,12 +40,7 @@ useEffect(() => {
     dispatch(fetchProducts());
   }
 
-  const token = localStorage.getItem("token");
-
-  if (token && favorites.length === 0) {
-    dispatch(fetchFavorites());
-  }
-}, [dispatch, products.length, favorites.length]);
+}, [dispatch, products.length]);
 
   let filteredProducts = [...products];
 

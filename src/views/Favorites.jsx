@@ -7,10 +7,6 @@ import { removeFavoriteAsync } from "../redux/favoritesSlice";
 const Favorites = () => {
     const dispatch = useDispatch();
     const {favorites,error,loading} = useSelector((state)=>state.favorites)
-
-    useEffect(()=>{
-      dispatch(fetchFavorites())
-    },[dispatch])
     
     const handleRemoveFavorite = (favoriteId) => {
         dispatch(removeFavoriteAsync(favoriteId));
@@ -30,11 +26,7 @@ const Favorites = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
           {favorites.map((fav) => (
           <div key={fav.id} className="relative" >
-            <button
-              onClick={() => handleRemoveFavorite(fav.id)}
-className="absolute top-2 left-2 z-20 bg-red-500 text-white rounded-full w-8 h-8"            >
-              ✕
-            </button>
+          
             <Card product={fav.product} />
 
           </div>

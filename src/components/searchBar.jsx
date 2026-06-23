@@ -16,13 +16,14 @@ export default function SearchBar({ isSeller, formClassName }) {
   dispatch(setCategory(null));
 
   navigate("/products");
+  setSearchQuery("")
 };
 
   return (
     <form onSubmit={handleSubmit} className={formClassName}>
       <div className="relative w-full">
 
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+        <Search onClick={handleSubmit} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
 
         <input
           type="search"
@@ -35,10 +36,6 @@ export default function SearchBar({ isSeller, formClassName }) {
           onChange={(e) => {
             const val = e.target.value;
             setSearchQuery(val);
-
-            if (val === "") {
-              dispatch(setSearch(""));
-            }
           }}
           className="w-full bg-secondary py-2 pl-10 pr-4 rounded-md"
         />

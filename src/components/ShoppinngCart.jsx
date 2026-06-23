@@ -12,11 +12,10 @@ export default function ShoppinngCart () {
 
   const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(fetchCart(userId));
-    }
-  }, [dispatch, userId]);
+  const getFinalPrice = (product) =>
+  product.discount > 0
+    ? product.price - (product.price * product.discount) / 100
+    : product.price;
 
 const increase = async (p) => {
   try {
@@ -34,30 +33,30 @@ const increase = async (p) => {
   }
 };
 
-  const decrease = (p) => { //Funcion para decrementar cantidad
-    if (p.quantity <= 1) return;
+  const decrease = async (p) => {
+  if (p.quantity <= 1) return;
 
-    dispatch(
+  try {
+    await dispatch(
       updateCartItem({
         userId,
         productId: p.product.id,
         quantity: p.quantity - 1,
       })
-    )
-  };
+    ).unwrap();
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const remove = (productId) => {
     dispatch(removeFromCart({ userId, productId }))
   };
 
-  const total = cart.reduce((acc, p) => {
-    const finalPrice =
-      p.product.discount > 0
-        ? p.product.price - (p.product.price * p.product.discount) / 100
-        : p.product.price;
-
-    return acc + finalPrice * p.quantity;
-  }, 0);
+  const total = cart.reduce(
+  (acc, p) => acc + getFinalPrice(p.product) * p.quantity,
+  0
+);
 
 
   return (
@@ -102,11 +101,7 @@ const increase = async (p) => {
                   <div>
                     <h2 className="font-bold">{p.product.name}</h2>
                     <p className="text-sm text-muted-foreground">
-                      $
-                      {p.product.discount > 0
-                        ? p.product.price - (p.product.price * p.product.discount) / 100
-                        : p.product.price}
-                      {" "}c/u
+                      ${getFinalPrice(p.product).toFixed(2)} c/u
                     </p>
                   </div>
                 </div>
@@ -133,10 +128,7 @@ const increase = async (p) => {
                 {/* Total + delete */}
                 <div className="flex items-center gap-4">
                   <p className="font-black">
-                    $
-                    {(p.product.discount > 0
-                      ? p.product.price - (p.product.price * p.product.discount) / 100
-                      : p.product.price) * p.quantity}
+                    ${(getFinalPrice(p.product) * p.quantity).toFixed(2)}
                   </p>
 
                   <button
@@ -153,7 +145,7 @@ const increase = async (p) => {
           {/* TOTAL */}
           <div className="mt-6 flex justify-between items-center">
             <h2 className="text-2xl font-black">
-              Total: ${total}
+              Total: ${total.toFixed(2)}
             </h2>
 
             <Link

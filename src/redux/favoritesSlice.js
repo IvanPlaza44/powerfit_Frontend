@@ -30,8 +30,8 @@ export const addFavoriteAsync = createAsyncThunk('favorites/addFavorite',
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const payload = {
-        userId: Number(userId),      // ¿En tu FavoriteRequest se llama userId?
-        productId: Number(product.id) // ¿O tal vez se llama idProducto / productoId?
+        userId: Number(userId),      
+        productId: Number(product.id) 
       };
     console.log("PAYLOAD:", payload);
 
@@ -47,7 +47,7 @@ export const addFavoriteAsync = createAsyncThunk('favorites/addFavorite',
       );
     console.log("RESPUESTA FAVORITO:", response.data);
 
-    return response.data; // Devuelve el registro creado
+    return response.data; 
   }
 
   
@@ -67,7 +67,6 @@ export const removeFavoriteAsync = createAsyncThunk(
           },
         }
       );
-
       return favoriteId;
     } catch (error) {
       return thunkAPI.rejectWithValue(

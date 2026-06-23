@@ -43,9 +43,10 @@ function App() {
 
     if (role?.toUpperCase() !== "BUYER") return;
 
+  
     dispatch(fetchCart(userId));
     dispatch(fetchFavorites());
-  }, [dispatch, token, userId]);
+  }, [dispatch, token, userId, role]);
 
   return (
     <>
