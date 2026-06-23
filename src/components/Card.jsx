@@ -5,11 +5,8 @@ import { addToCart, fetchCart } from "../redux/cartSlice";
 import { toggleFavoriteAsync } from "../redux/favoritesSlice";
 import { Heart } from "lucide-react";
 
-const Card = ({ product }) => {
+const Card = ({ product, setMessage, setMessageType  }) => {
   const dispatch = useDispatch();
-
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   const favorites = useSelector(
     (state) => state.favorites.favorites|| []
@@ -20,15 +17,30 @@ const Card = ({ product }) => {
   );
 
   const handleToggleFavorite = () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId || userId === "undefined") {
+      setMessageType("error");
+      setMessage("Debes iniciar sesión para usar favoritos");
+      setTimeout(() => setMessage(""), 2000);
+      return;
+    }
+
     dispatch(toggleFavoriteAsync(product));
+
+    setMessageType("success");
+    setMessage("Producto agregado a favoritos");
+
+    setTimeout(() => setMessage(""), 2000);
   };
 
   const handleAddToCart = async () => {
     const userId = localStorage.getItem("userId");
 
     if (!userId || userId === "undefined") {
-      setError("Tenés que iniciar sesión");
-      setTimeout(() => setError(""), 2000);
+      setMessageType("error");
+      setMessage("Debes iniciar sesión para agregar al carrito");
+      setTimeout(() => setMessage(""), 2000);
       return;
     }
 
@@ -39,15 +51,18 @@ const Card = ({ product }) => {
           productId: product.id,
         })
       ).unwrap();
-      setMessage("Agregado al carrito");
+
+      setMessageType("success");
+      setMessage("Producto agregado al carrito");
+
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
-      console.error(err);
-      setError("Error al agregar al carrito");
-      setTimeout(() => setError(""), 2000);
+      setMessageType("error");
+      setMessage("Error al agregar al carrito");
+
+      setTimeout(() => setMessage(""), 2000);
     }
   };
-
   const hasDiscount = Number(product.discount) > 0;
 
   const discountPrice = hasDiscount
