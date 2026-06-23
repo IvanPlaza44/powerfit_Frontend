@@ -15,6 +15,7 @@ import SwitchSeller from "./views/SwitchSeller";
 import MyProducts from "./views/MyProducts";
 import Payment from "./views/Payment";
 import Community from "./views/Community";
+import Benefits from "./views/Benefits";
 
 import NavBar from "./components/NavBar";
 import Products from "./components/Products";
@@ -76,6 +77,7 @@ function App() {
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/community"element={<Community />}/>
+        <Route path="/benefits" element={<Benefits />}/>
       </Routes>
 
       <Footer />
