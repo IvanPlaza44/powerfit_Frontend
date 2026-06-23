@@ -90,7 +90,7 @@ console.log(user);
     }
     };
 
-  return (
+    return (
     <div className="min-h-screen bg-black text-white p-10">
 
       <div className="max-w-7xl mx-auto">

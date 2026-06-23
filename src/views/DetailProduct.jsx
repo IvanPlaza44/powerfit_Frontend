@@ -73,7 +73,7 @@ const DetailProduct = () => {
         })
       ).unwrap();
 
-      setMessage("Producto agregado al carrito 🛒");
+      setMessage("Producto agregado al carrito ");
       setError("");
 
       setTimeout(() => {
