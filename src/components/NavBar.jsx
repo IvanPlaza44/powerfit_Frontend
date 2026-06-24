@@ -75,12 +75,12 @@ export default function NavBar({ favoritesCount }) {
         <div className="flex h-25 items-center justify-between">
 
           {/* LOGO */}
-          <Link to="/" className="flex items-center justify-center gap-2 size-40">
+          <Link to="/" className="flex items-center justify-center gap-2 size-40 mr-5">
             <img src="/Logo.png" alt="Logo" />
           </Link>
 
           {/* LINKS (ESCRITORIO) */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
 
             {isSeller ? (
               <Link
@@ -142,7 +142,7 @@ export default function NavBar({ favoritesCount }) {
           />
 
           {/* ICONOS */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6 ml-3">
 
             {!isSeller && (
               <>

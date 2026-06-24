@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../redux/communitySlice";
+import { addPost, deletePost } from "../redux/communitySlice";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -116,21 +116,23 @@ const Community = () => {
           <div className="lg:col-span-2 space-y-6">
 
             {posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
-              >
-                {/* boton para borrar exp */}
-                {post.user === username && (
-                  <button
-                    onClick={() => handleDelete(post.id)}
-                    className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-                  >
-                    Borrar
-                  </button>
-                )}
+  <div
+    key={post.id}
+    // Agregamos "relative" aquí para que el botón se posicione correctamente
+    className="relative bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
+  >
+    {/* Boton para borrar exp */}
+    {post.user === username && (
+      <button
+        onClick={() => handleDelete(post.id)}
+        // Subimos el z-index con z-10 para asegurar que quede por encima de la imagen
+        className="absolute top-3 right-3 z-10 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition"
+      >
+        Borrar
+      </button>
+    )}
 
-                <div className="md:flex">
+    <div className="md:flex">
 
                   <img
                     src={post.image}

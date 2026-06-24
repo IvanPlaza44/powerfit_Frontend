@@ -21,7 +21,7 @@ export default function SearchBar({ isSeller, formClassName }) {
 
   return (
     <form onSubmit={handleSubmit} className={formClassName}>
-      <div className="relative w-full">
+      <div className="relative w-70 ml-5">
 
         <Search onClick={handleSubmit} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
 

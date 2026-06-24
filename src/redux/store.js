@@ -25,4 +25,5 @@ export const store = configureStore({
     seller: sellerReducer,
     points: pointsReducer
   },
+  devTools: true,
 });

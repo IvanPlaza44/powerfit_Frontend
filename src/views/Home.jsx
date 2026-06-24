@@ -22,8 +22,10 @@ const Home = () => {
   .sort((a, b) => b.id - a.id)
   .slice(0, 4);
   useEffect(() => {
+    if (products.length === 0) {
     dispatch(fetchProducts());
-  }, [dispatch]);
+  }
+  }, [dispatch, products.length]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">

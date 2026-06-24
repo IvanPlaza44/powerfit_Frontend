@@ -93,6 +93,9 @@ const Payment = () => {
       dispatch(resetCheckout());
 
       setMessage("Pago realizado con éxito.");
+      toast.success("Compra Realizada, te enviaremos detalles al mail", {
+              toastId: "compra",
+              })
       setMessageType("success");
 
       setTimeout(() => {
