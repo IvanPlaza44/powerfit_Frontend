@@ -7,8 +7,17 @@ export const fetchPosts = createAsyncThunk(
   "community/fetchPosts",
   async (_, thunkAPI) => {
     try {
-      const { data } = await axios.get(API_URL);
+
+      const token = localStorage.getItem("token");
+
+      const { data } = await axios.get(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       return data;
+
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Error al cargar publicaciones"
