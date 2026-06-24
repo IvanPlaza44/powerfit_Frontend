@@ -23,6 +23,7 @@ export const store = configureStore({
     filter: filterReducer, 
     community: communityReducer,
     seller: sellerReducer,
-    points: pointsReducer
+    points: pointsReducer,
+    community : communityReducer
   },
 });

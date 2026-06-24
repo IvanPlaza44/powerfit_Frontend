@@ -1,57 +1,100 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-const savedPosts =
-  JSON.parse(localStorage.getItem("communityPosts")) || [
-    {
-      id: 1,
-      user: "Camila R.",
-      product: "Proteína Whey Gold",
-      image:
-        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
-      testimonial:
-        "Después de dos meses de entrenamiento y una buena alimentación, noté una mejora importante en mi recuperación muscular.",
-    },
-    {
-      id: 2,
-      user: "Matías S.",
-      product: "Set de Mancuernas Ajustables",
-      image:
-        "https://images.unsplash.com/photo-1534367610401-9f5ed68180aa",
-      testimonial:
-        "Me permitió entrenar desde casa sin necesidad de ir al gimnasio. Muy práctico y de excelente calidad.",
-    },
-  ];
+const API_URL = "http://localhost:4002/community";
 
-  const communitySlice = createSlice({
-    name: "community",
-    initialState: {
-      posts: savedPosts,
-    },
+export const fetchPosts = createAsyncThunk(
+  "community/fetchPosts",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axios.get(API_URL);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error al cargar publicaciones"
+      );
+    }
+  }
+);
 
-    reducers: {
-      addPost: (state, action) => {
+export const addPost = createAsyncThunk(
+  "community/addPost",
+  async (postData) => {
+
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      API_URL,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  "community/deletePost",
+  async (id) => {
+
+    const token = localStorage.getItem("token");
+
+    await axios.delete(
+      `${API_URL}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return id;
+  }
+);
+
+const communitySlice = createSlice({
+  name: "community",
+
+  initialState: {
+    posts: [],
+    loading: false,
+    error: null,
+  },
+
+  reducers: {},
+
+  extraReducers: (builder) => {
+    builder
+
+      .addCase(fetchPosts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.posts = action.payload || [];
+      })
+
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(addPost.fulfilled, (state, action) => {
         state.posts.unshift(action.payload);
+      })
 
-        localStorage.setItem(
-          "communityPosts",
-          JSON.stringify(state.posts)
-        );
-      },
-
-      deletePost: (state, action) => {
-        const id = action.payload;
-
+      .addCase(deletePost.fulfilled, (state, action) => {
         state.posts = state.posts.filter(
-          (post) => post.id !== id
+          (post) => post.id !== action.payload
         );
+      });
+  },
+});
 
-        localStorage.setItem(
-          "communityPosts",
-          JSON.stringify(state.posts)
-        );
-      },
-    },
-  });
-
-export const { addPost, deletePost  } = communitySlice.actions;
 export default communitySlice.reducer;
