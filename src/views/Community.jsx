@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../redux/communitySlice";
+import { addPost, deletePost  } from "../redux/communitySlice";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -118,7 +118,7 @@ const Community = () => {
             {posts.map((post) => (
               <div
                 key={post.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
+                className="relative bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
               >
                 {/* boton para borrar exp */}
                 {post.user === username && (
